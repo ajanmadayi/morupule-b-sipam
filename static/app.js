@@ -2243,7 +2243,9 @@ function permitTypeLabel(value) {
     electrical_ptw: "Electrical PTW",
     mechanical_ptw: "Mechanical PTW",
     electrical_loa: "Electrical LoA",
-    mechanical_loa: "Mechanical LoA"
+    mechanical_loa: "Mechanical LoA",
+    electrical_sft: "Electrical SFT",
+    mechanical_sft: "Mechanical SFT"
   }[value] || value;
 }
 
@@ -2307,7 +2309,7 @@ function renderSafetyPermitDetail() {
       <div><span>Prepared by</span><strong>${escapeHtml(item.prepared_by)}</strong></div>
     </div>
     <div class="permit-detail-section">
-      <div class="section-title"><strong>Isolation and access</strong><span>${escapeHtml(item.form_type.includes("loa") ? "LoA" : "PTW")}</span></div>
+      <div class="section-title"><strong>Isolation and access</strong><span>${escapeHtml(item.form_type.includes("loa") ? "LoA" : (item.form_type.includes("sft") ? "SFT" : "PTW"))}</span></div>
       ${item.electrical_isolations ? `<article class="permit-text"><span>Electrical isolations</span><p>${escapeHtml(item.electrical_isolations)}</p></article>` : ""}
       ${item.mechanical_isolations ? `<article class="permit-text"><span>Mechanical isolations</span><p>${escapeHtml(item.mechanical_isolations)}</p></article>` : ""}
       ${item.circuit_main_earths ? `<article class="permit-text"><span>Circuit main earths</span><p>${escapeHtml(item.circuit_main_earths)} / Additional: ${item.additional_earths}</p></article>` : ""}
@@ -2850,7 +2852,7 @@ async function loadSystemStatus() {
     work_requests: "Work requests",
     recurrent_tasks: "Recurrent schedules",
     preventive_tasks: "Preventive tasks",
-    permits: "Permits / LoA",
+    permits: "PTW / LoA / SFT",
     active_users: "Active users",
     attachments: "Attachment records",
     audit_records: "Audit records"

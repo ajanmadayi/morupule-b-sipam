@@ -29,7 +29,7 @@
         <span class="nav-label secondary-label">Maintenance</span>
         <button class="nav-item" data-view="corrective"><i data-lucide="wrench"></i><span>Corrective Maintenance</span><b id="requestBadge">0</b></button>
         <button class="nav-item" data-view="preventive"><i data-lucide="calendar-clock"></i><span>Preventive Maintenance</span><b id="preventiveBadge">0</b></button>
-        <button class="nav-item" data-view="permits"><i data-lucide="shield-check"></i><span>Permits &amp; LoA</span><b id="permitBadge">0</b></button>
+        <button class="nav-item" data-view="permits"><i data-lucide="shield-check"></i><span>PTW, LoA &amp; SFT</span><b id="permitBadge">0</b></button>
         <span class="nav-label secondary-label admin-navigation" hidden>Administration</span>
         <button class="nav-item admin-navigation" data-view="users" hidden><i data-lucide="users"></i><span>Users &amp; Roles</span></button>
         <button class="nav-item admin-navigation" data-view="logbookadmin" hidden><i data-lucide="book-marked"></i><span>Logbooks</span></button>
@@ -276,7 +276,7 @@
             <div class="permit-filters">
               <label class="search-field"><i data-lucide="search"></i><input id="permitSearch" type="search" placeholder="Search form, work, location, or KKS"></label>
               <select id="permitStatusFilter"><option value="">All states</option><option value="prepared">Prepared</option><option value="issued">Issued</option><option value="received">Received</option><option value="cleared">Cleared</option><option value="cancelled">Cancelled</option></select>
-              <select id="permitTypeFilter"><option value="">All forms</option><option value="electrical_ptw">Electrical PTW</option><option value="mechanical_ptw">Mechanical PTW</option><option value="electrical_loa">Electrical LoA</option><option value="mechanical_loa">Mechanical LoA</option></select>
+              <select id="permitTypeFilter"><option value="">All forms</option><option value="electrical_ptw">Electrical PTW</option><option value="mechanical_ptw">Mechanical PTW</option><option value="electrical_loa">Electrical LoA</option><option value="mechanical_loa">Mechanical LoA</option><option value="electrical_sft">Electrical SFT</option><option value="mechanical_sft">Mechanical SFT</option></select>
               <button class="icon-button" id="resetPermitFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
             </div>
             <div class="permit-list-heading"><span>Form</span><span>Work / Asset</span><span>Issued to</span><span>Status</span><span></span></div>
@@ -688,7 +688,7 @@
       <div class="modal-header"><div><span class="eyebrow">Safety permit</span><h2 id="safetyPermitModalTitle">Prepare permit</h2></div><button class="icon-button" id="closeSafetyPermitModal" aria-label="Close"><i data-lucide="x"></i></button></div>
       <form id="safetyPermitForm">
         <div class="form-grid">
-          <label><span>Form type</span><select name="form_type" id="safetyPermitType" required><option value="electrical_ptw">Electrical Permit to Work</option><option value="mechanical_ptw">Mechanical Permit to Work</option><option value="electrical_loa">Electrical Limitation of Access</option><option value="mechanical_loa">Mechanical Limitation of Access</option></select></label>
+          <label><span>Form type</span><select name="form_type" id="safetyPermitType" required><option value="electrical_ptw">Electrical Permit to Work</option><option value="mechanical_ptw">Mechanical Permit to Work</option><option value="electrical_loa">Electrical Limitation of Access</option><option value="mechanical_loa">Mechanical Limitation of Access</option><option value="electrical_sft">Electrical Sanction for Test</option><option value="mechanical_sft">Mechanical Sanction for Test</option></select></label>
           <label><span>Linked work order</span><select name="work_order_id" id="safetyPermitWorkOrder"><option value="">No linked work order</option></select></label>
           <div class="form-field span-2"><span>Asset to be worked on</span><div class="asset-picker" data-asset-picker="safetyPermitAsset"><input type="hidden" name="asset_id" id="safetyPermitAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search KKS, description, or responsible area" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div></div>
           <label class="span-2"><span>Work to be carried out</span><textarea name="work_description" rows="3" required></textarea></label>

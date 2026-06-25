@@ -64,6 +64,15 @@ ROLE_GROUPS = {
     "System Administrator": (),
 }
 
+SAFETY_FORM_TYPES = (
+    "electrical_ptw",
+    "mechanical_ptw",
+    "electrical_loa",
+    "mechanical_loa",
+    "electrical_sft",
+    "mechanical_sft",
+)
+
 ATTACHMENT_ENTITIES = {
     "event": ("event_entries", "id"),
     "corrective": ("work_requests", "id"),
@@ -575,7 +584,11 @@ def init_db() -> None:
             work_order_id INTEGER REFERENCES work_orders(id),
             asset_id INTEGER NOT NULL REFERENCES assets(id),
             form_type TEXT NOT NULL CHECK (
-                form_type IN ('electrical_ptw', 'mechanical_ptw', 'electrical_loa', 'mechanical_loa')
+                form_type IN (
+                    'electrical_ptw', 'mechanical_ptw',
+                    'electrical_loa', 'mechanical_loa',
+                    'electrical_sft', 'mechanical_sft'
+                )
             ),
             status TEXT NOT NULL CHECK (
                 status IN ('prepared', 'issued', 'received', 'cleared', 'cancelled')
@@ -763,6 +776,7 @@ def init_db() -> None:
         );
         """
     )
+    ensure_safety_permit_form_types(database)
     ensure_asset_columns(database)
     ensure_work_request_columns(database)
     ensure_work_order_columns(database)
@@ -951,6 +965,89 @@ def ensure_preventive_task_columns(database: sqlite3.Connection) -> None:
         database.execute(
             "ALTER TABLE preventive_tasks ADD COLUMN actual_man_hours REAL"
         )
+
+
+def ensure_safety_permit_form_types(database: sqlite3.Connection) -> None:
+    row = database.execute(
+        """
+        SELECT sql FROM sqlite_master
+        WHERE type = 'table' AND name = 'safety_permits'
+        """
+    ).fetchone()
+    if not row or "electrical_sft" in (row["sql"] or ""):
+        return
+
+    database.commit()
+    database.execute("PRAGMA foreign_keys = OFF")
+    try:
+        database.executescript(
+            """
+            CREATE TABLE safety_permits_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                permit_no TEXT NOT NULL UNIQUE,
+                work_order_id INTEGER REFERENCES work_orders(id),
+                asset_id INTEGER NOT NULL REFERENCES assets(id),
+                form_type TEXT NOT NULL CHECK (
+                    form_type IN (
+                        'electrical_ptw', 'mechanical_ptw',
+                        'electrical_loa', 'mechanical_loa',
+                        'electrical_sft', 'mechanical_sft'
+                    )
+                ),
+                status TEXT NOT NULL CHECK (
+                    status IN ('prepared', 'issued', 'received', 'cleared', 'cancelled')
+                ),
+                work_description TEXT NOT NULL,
+                location TEXT NOT NULL,
+                issued_to TEXT NOT NULL,
+                employer TEXT NOT NULL,
+                electrical_isolations TEXT,
+                mechanical_isolations TEXT,
+                circuit_main_earths TEXT,
+                additional_earths INTEGER NOT NULL DEFAULT 0,
+                identity_wristlets INTEGER NOT NULL DEFAULT 0,
+                limits_of_access TEXT,
+                precautions_confirmed INTEGER NOT NULL DEFAULT 0,
+                prepared_by TEXT NOT NULL,
+                issued_by TEXT,
+                controller_name TEXT,
+                received_by TEXT,
+                cleared_by TEXT,
+                cancelled_by TEXT,
+                issued_at TEXT,
+                received_at TEXT,
+                cleared_at TEXT,
+                cancelled_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            INSERT INTO safety_permits_new (
+                id, permit_no, work_order_id, asset_id, form_type, status,
+                work_description, location, issued_to, employer,
+                electrical_isolations, mechanical_isolations, circuit_main_earths,
+                additional_earths, identity_wristlets, limits_of_access,
+                precautions_confirmed, prepared_by, issued_by, controller_name,
+                received_by, cleared_by, cancelled_by, issued_at, received_at,
+                cleared_at, cancelled_at, created_at, updated_at
+            )
+            SELECT
+                id, permit_no, work_order_id, asset_id, form_type, status,
+                work_description, location, issued_to, employer,
+                electrical_isolations, mechanical_isolations, circuit_main_earths,
+                additional_earths, identity_wristlets, limits_of_access,
+                precautions_confirmed, prepared_by, issued_by, controller_name,
+                received_by, cleared_by, cancelled_by, issued_at, received_at,
+                cleared_at, cancelled_at, created_at, updated_at
+            FROM safety_permits;
+
+            DROP TABLE safety_permits;
+            ALTER TABLE safety_permits_new RENAME TO safety_permits;
+            """
+        )
+        database.commit()
+    finally:
+        database.execute("PRAGMA foreign_keys = ON")
 
 
 def ensure_user_columns(database: sqlite3.Connection) -> None:
@@ -2043,11 +2140,12 @@ def print_document(entity_type: str, entity_id: int):
                 (entity_id,),
             ).fetchall()
         ]
-        title = (
-            "Permit to Work"
-            if record["form_type"].endswith("ptw")
-            else "Limitation of Access"
-        )
+        if record["form_type"].endswith("sft"):
+            title = "Sanction for Test"
+        elif record["form_type"].endswith("ptw"):
+            title = "Permit to Work"
+        else:
+            title = "Limitation of Access"
         document_no = record["permit_no"]
     elif entity_type == "asset":
         record = asset_detail(entity_id).get_json()
@@ -2496,7 +2594,7 @@ def export_activity_report():
             JOIN assets a ON a.id = rt.primary_asset_id
             WHERE date(pt.target_date) BETWEEN date(?) AND date(?)
             UNION ALL
-            SELECT p.created_at, 'Permit to Work / LoA', p.permit_no,
+            SELECT p.created_at, 'PTW / LoA / SFT', p.permit_no,
                 p.status, a.kks_code, p.work_description,
                 COALESCE(a.responsible_area, ''), p.prepared_by,
                 NULL, NULL, COALESCE(
@@ -5341,7 +5439,7 @@ def list_safety_permits():
     if status in {"prepared", "issued", "received", "cleared", "cancelled"}:
         filters.append("p.status = ?")
         parameters.append(status)
-    if form_type in {"electrical_ptw", "mechanical_ptw", "electrical_loa", "mechanical_loa"}:
+    if form_type in SAFETY_FORM_TYPES:
         filters.append("p.form_type = ?")
         parameters.append(form_type)
     sql = """
@@ -5431,7 +5529,7 @@ def create_safety_permit():
     if missing:
         return jsonify({"error": "Missing required fields", "fields": missing}), 400
     form_type = str(payload["form_type"]).lower()
-    if form_type not in {"electrical_ptw", "mechanical_ptw", "electrical_loa", "mechanical_loa"}:
+    if form_type not in SAFETY_FORM_TYPES:
         return jsonify({"error": "Invalid permit form type"}), 400
     database = get_db()
     if database.execute("SELECT id FROM assets WHERE id = ?", (payload["asset_id"],)).fetchone() is None:
@@ -5453,7 +5551,7 @@ def create_safety_permit():
             return jsonify({
                 "error": "A linked permit can only be prepared after plan approval"
             }), 409
-        form_requirement = "loa" if form_type.endswith("loa") else "ptw"
+        form_requirement = "loa" if form_type.endswith("loa") else ("sft" if form_type.endswith("sft") else "ptw")
         if linked_order["permit_requirement"] != form_requirement:
             return jsonify({
                 "error": f"This work order requires {linked_order['permit_requirement'].upper()}"
@@ -5472,7 +5570,7 @@ def create_safety_permit():
             return jsonify({
                 "error": f"{active_permit['permit_no']} is already active for this work order"
             }), 409
-    prefix = "LOA" if form_type.endswith("loa") else "PTW"
+    prefix = "LOA" if form_type.endswith("loa") else ("SFT" if form_type.endswith("sft") else "PTW")
     next_number = database.execute(
         "SELECT COALESCE(MAX(CAST(substr(permit_no, 10) AS INTEGER)), 0) + 1 FROM safety_permits WHERE permit_no LIKE ?",
         (f"{prefix}-%",),
@@ -5631,10 +5729,11 @@ def get_safety_permit(permit_id: int) -> dict:
         """
         SELECT
             p.*, a.kks_code, a.description AS asset_description,
-            wo.order_no
+            wo.order_no, wr.request_no
         FROM safety_permits p
         JOIN assets a ON a.id = p.asset_id
         LEFT JOIN work_orders wo ON wo.id = p.work_order_id
+        LEFT JOIN work_requests wr ON wr.id = wo.work_request_id
         WHERE p.id = ?
         """,
         (permit_id,),
