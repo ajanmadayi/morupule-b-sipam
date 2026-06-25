@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ document_no }} | {{ title }}</title>
+  <style>
+    @page { size: A4; margin: 14mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #18252b; font: 10px Arial, sans-serif; }
+    header { display: grid; grid-template-columns: 58px 1fr 155px; border: 1px solid #263b43; }
+    .mark { display: grid; place-items: center; background: #18343c; color: white; font-size: 17px; font-weight: bold; }
+    .heading { padding: 10px 12px; }
+    .heading strong, .heading span { display: block; }
+    .heading strong { font-size: 16px; }
+    .heading span { margin-top: 4px; color: #52636a; }
+    .document-meta { border-left: 1px solid #263b43; }
+    .document-meta div { padding: 5px 7px; display: flex; justify-content: space-between; border-bottom: 1px solid #cfd8dc; }
+    .document-meta div:last-child { border-bottom: 0; }
+    h1 { margin: 18px 0 8px; font-size: 18px; }
+    h2 { margin: 15px 0 0; padding: 6px 8px; background: #eaf0f2; border: 1px solid #b9c7cc; font-size: 11px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; border-left: 1px solid #b9c7cc; }
+    .grid div { min-height: 43px; padding: 7px 8px; border-right: 1px solid #b9c7cc; border-bottom: 1px solid #b9c7cc; }
+    label { display: block; margin-bottom: 4px; color: #68777e; font-size: 8px; font-weight: bold; text-transform: uppercase; }
+    p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
+    .text-block { min-height: 70px; padding: 9px; border: 1px solid #b9c7cc; border-top: 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 6px; border: 1px solid #b9c7cc; text-align: left; vertical-align: top; }
+    th { background: #f2f5f6; font-size: 8px; text-transform: uppercase; }
+    .check { font-weight: bold; }
+    .signatures { display: grid; grid-template-columns: 1fr 1fr; }
+    .signature { min-height: 65px; padding: 8px; border: 1px solid #b9c7cc; border-top: 0; }
+    footer { margin-top: 16px; padding-top: 6px; display: flex; justify-content: space-between; border-top: 1px solid #b9c7cc; color: #68777e; font-size: 8px; }
+    .print-command { position: fixed; top: 12px; right: 12px; padding: 9px 13px; border: 0; background: #397b58; color: white; font-weight: bold; cursor: pointer; }
+    @media print { .print-command { display: none; } }
+  </style>
+</head>
+<body>
+  <button class="print-command" onclick="window.print()">Print / Save PDF</button>
+  <header>
+    <div class="mark">SP</div>
+    <div class="heading"><strong>Morupule B Power Station</strong><span>SI/PAM Controlled Record</span></div>
+    <div class="document-meta">
+      <div><span>Document</span><strong>{{ document_no }}</strong></div>
+      <div><span>Revision</span><strong>Live</strong></div>
+      <div><span>Status</span><strong>{{ record.status or record.state }}</strong></div>
+    </div>
+  </header>
+  <h1>{{ title }}</h1>
+
+  {% if entity_type == "event" %}
+  <div class="grid">
+    <div><label>Entry number</label>{{ record.entry_no }}</div><div><label>Event date</label>{{ record.event_date }}</div>
+    <div><label>Logbook</label>{{ record.source_logbook_name }}</div><div><label>KKS</label>{{ record.kks_code or "-" }}</div>
+    <div><label>Informant</label>{{ record.informant or "-" }}</div><div><label>Created by</label>{{ record.created_by }}</div>
+  </div>
+  <h2>Subject</h2><div class="text-block">{{ record.subject }}</div>
+  <h2>Observation</h2><div class="text-block">{{ record.observation }}</div>
+  <h2>Sub-entries</h2>
+  <table><tr><th>Entry</th><th>Observation</th><th>Author / Time</th></tr>
+    {% for row in record.comments %}<tr><td>{{ row.entry_no }}</td><td>{{ row.observation }}</td><td>{{ row.created_by }}<br>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No sub-entries.</td></tr>{% endfor %}
+  </table>
+  {% elif entity_type == "corrective" %}
+  <div class="grid">
+    <div><label>Work request</label>{{ record.request_no }}</div><div><label>Work order</label>{{ record.order_no or "-" }}</div>
+    <div><label>Source event</label>{{ record.source_event_no or "Direct request" }}</div><div><label>Event state</label>{{ record.source_event_state or "-" }}</div>
+    <div><label>KKS</label>{{ record.kks_code }}</div><div><label>Priority</label>{{ record.priority }}</div>
+    <div><label>Department</label>{{ record.main_department }}</div><div><label>Workflow</label>{{ record.workflow_step or record.status }}</div>
+    <div><label>Planned start</label>{{ record.planned_start or "-" }}</div><div><label>Planned end</label>{{ record.planned_end or "-" }}</div>
+    <div><label>Execution started</label>{{ record.execution_started_at or "-" }}</div><div><label>Released by</label>{{ record.execution_confirmed_by or "-" }}</div>
+    <div><label>CMPT response target</label>{{ record.target_response_at or "User defined" }}</div><div><label>Response overdue</label>{{ "Yes" if record.is_response_overdue else "No" }}</div>
+    {% if record.cmpt_primary %}<div><label>CMPT primary consequence</label>{{ record.cmpt_primary }}</div><div><label>CMPT severity / likelihood</label>{{ record.cmpt_severity }} / {{ record.cmpt_likelihood }}</div>
+    <div><label>CMPT impacted areas</label>{{ record.cmpt_impacts|join(", ") }}</div><div><label>Calculated priority</label>{{ record.priority }}</div>{% endif %}
+  </div>
+  <h2>Work request</h2><div class="text-block"><strong>{{ record.name }}</strong><br><br>{{ record.observation }}</div>
+  <h2>Execution plan</h2>
+  <div class="grid"><div><label>Maintenance code</label>{{ record.maintenance_code or "-" }}</div><div><label>Equipment condition</label>{{ record.equipment_condition or "-" }}</div><div><label>Expected man-hours</label>{{ record.expected_man_hours }}</div><div><label>Permit decision</label>{{ record.permit_requirement }}</div></div>
+  <div class="text-block">{{ record.description_of_work or "Not yet planned." }}<br><br><strong>Workplace requirements:</strong> {{ record.workplace_requirements or "-" }}</div>
+  <h2>Completion and reliability record</h2>
+  <div class="grid"><div><label>Actual man-hours</label>{{ record.actual_man_hours if record.actual_man_hours is not none else "-" }}</div><div><label>Failure mode</label>{{ record.failure_mode or "Not classified" }}</div><div><label>Downtime started</label>{{ record.downtime_started_at or "-" }}</div><div><label>Equipment restored</label>{{ record.restored_at or "-" }}</div><div><label>Downtime hours</label>{{ record.downtime_hours if record.downtime_hours is not none else "-" }}</div><div><label>Completed by</label>{{ record.execution_completed_by or "Pending" }}</div></div>
+  <div class="text-block"><strong>Work performed:</strong> {{ record.completion_summary or "Completion pending." }}<br><br><strong>Failure cause / finding:</strong> {{ record.failure_cause or "Not recorded." }}</div>
+  <h2>Supply and artisans</h2>
+  <table><tr><th>Type</th><th>Description / Person</th><th>Quantity / Hours</th></tr>
+    {% for row in record.supplies %}<tr><td>{{ row.supply_type }}</td><td>{{ row.description }}</td><td>{{ row.quantity or "-" }} {{ row.unit or "" }}</td></tr>{% endfor %}
+    {% for row in record.artisans %}<tr><td>{{ row.trade }}</td><td>{{ row.person_name }}</td><td>Planned {{ row.planned_hours }} h / Actual {{ row.actual_hours if row.actual_hours is not none else "-" }} h</td></tr>{% endfor %}
+  </table>
+  <h2>Workflow history</h2>
+  <table><tr><th>Step</th><th>Action</th><th>Performed by</th><th>Time</th></tr>
+    {% for row in record.history %}<tr><td>{{ row.workflow_step }}</td><td>{{ row.action }}</td><td>{{ row.performed_by }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="4">No workflow history.</td></tr>{% endfor %}
+  </table>
+  {% elif entity_type == "preventive_task" %}
+  <div class="grid">
+    <div><label>Task number</label>{{ record.task_no }}</div><div><label>Status</label>{{ record.status }}</div>
+    <div><label>Recurrent schedule</label>{{ record.recurrent_no }}</div><div><label>Schedule type</label>{{ record.schedule_type_name }}</div>
+    <div><label>Department</label>{{ record.main_department }}</div><div><label>Type of work</label>{{ record.type_of_work }}</div>
+    <div><label>Target date</label>{{ record.target_date }}</div><div><label>Execution window</label>{{ record.early_date }} to {{ record.late_date }}</div>
+    <div><label>Planned duration</label>{{ record.duration_hours }} hours</div><div><label>Strategy</label>{{ record.strategy }}</div>
+  </div>
+  <h2>Work instruction</h2><div class="text-block"><strong>{{ record.name }}</strong><br><br>{{ record.work_schedule or "No additional work instruction recorded." }}</div>
+  <h2>Asset group</h2>
+  <table><tr><th>KKS</th><th>Description</th></tr>{% for row in record.assets %}<tr><td>{{ row.kks_code }}</td><td>{{ row.description }}</td></tr>{% endfor %}</table>
+  <h2>Completion record</h2>
+  <div class="grid">
+    <div><label>Completed by</label>{{ record.completed_by or "Pending execution" }}</div><div><label>Completion time</label>{{ record.completed_at or "-" }}</div>
+    <div><label>Actual man-hours</label>{{ record.actual_man_hours if record.actual_man_hours is not none else "-" }}</div><div><label>Final status</label>{{ record.status }}</div>
+  </div>
+  <h2>Feedback / Work performed</h2><div class="text-block">{{ record.feedback or "Completion feedback pending." }}</div>
+  <div class="signatures">
+    <div class="signature"><label>Maintenance technician</label>{{ record.completed_by or "Name / Signature / Date" }}</div>
+    <div class="signature"><label>Supervisor verification</label>Name / Signature / Date</div>
+  </div>
+  {% elif entity_type == "preventive" %}
+  <div class="grid">
+    <div><label>Schedule</label>{{ record.recurrent_no }}</div><div><label>Status</label>{{ record.status }}</div>
+    <div><label>Schedule type</label>{{ record.schedule_type_name }}</div><div><label>Strategy</label>{{ record.strategy }}</div>
+    <div><label>Interval</label>Every {{ record.interval_count }} {{ record.calendar_unit }}</div><div><label>Next target</label>{{ record.next_target_date }}</div>
+    <div><label>Department</label>{{ record.main_department }}</div><div><label>Created by</label>{{ record.created_by }}</div>
+  </div>
+  <h2>Work schedule</h2><div class="text-block">{{ record.work_schedule or record.schedule_description }}</div>
+  <h2>Asset group</h2>
+  <table><tr><th>KKS</th><th>Description</th></tr>{% for row in record.assets %}<tr><td>{{ row.kks_code }}</td><td>{{ row.description }}</td></tr>{% endfor %}</table>
+  <h2>Generated tasks</h2>
+  <table><tr><th>Task</th><th>Target</th><th>Window</th><th>Status / Completion</th></tr>
+    {% for row in record.generated_tasks %}<tr><td>{{ row.task_no }}</td><td>{{ row.target_date }}</td><td>{{ row.early_date }} to {{ row.late_date }}</td><td>{{ row.status }}{% if row.completed_by %}<br>{{ row.completed_by }} / {{ row.completed_at }}{% endif %}</td></tr>{% else %}<tr><td colspan="4">No generated tasks.</td></tr>{% endfor %}
+  </table>
+  {% elif entity_type == "asset" %}
+  <div class="grid">
+    <div><label>KKS code</label>{{ record.kks_code }}</div><div><label>Status</label>{{ record.status }}</div>
+    <div><label>Description</label>{{ record.description }}</div><div><label>Hierarchy level</label>{{ record.hierarchy_level }}</div>
+    <div><label>Responsible area</label>{{ record.responsible_area or "-" }}</div><div><label>Parent asset</label>{{ record.parent_kks_code or "Top-level plant unit" }}</div>
+    <div><label>Source</label>{{ record.source_kind }}</div><div><label>Child assets</label>{{ record.children|length }}</div>
+  </div>
+  <h2>Event Log history</h2>
+  <table><tr><th>Entry</th><th>Date / State</th><th>Subject</th><th>Observation</th></tr>{% for row in record.events %}<tr><td>{{ row.entry_no }}</td><td>{{ row.event_date }}<br>{{ row.state }}</td><td>{{ row.subject }}</td><td>{{ row.observation }}</td></tr>{% else %}<tr><td colspan="4">No Event Log history.</td></tr>{% endfor %}</table>
+  <h2>Corrective maintenance history</h2>
+  <table><tr><th>Request / Order</th><th>Priority</th><th>Work</th><th>Status</th></tr>{% for row in record.corrective %}<tr><td>{{ row.request_no }}<br>{{ row.order_no or "-" }}</td><td>{{ row.priority }}</td><td>{{ row.name }}</td><td>{{ row.workflow_step or row.status }}</td></tr>{% else %}<tr><td colspan="4">No corrective history.</td></tr>{% endfor %}</table>
+  <h2>Preventive maintenance history</h2>
+  <table><tr><th>Task</th><th>Target</th><th>Schedule</th><th>Status / Completion</th></tr>{% for row in record.preventive %}<tr><td>{{ row.task_no }}</td><td>{{ row.target_date }}</td><td>{{ row.recurrent_name }}</td><td>{{ row.status }}{% if row.completed_at %}<br>{{ row.completed_at }}{% endif %}</td></tr>{% else %}<tr><td colspan="4">No preventive task history.</td></tr>{% endfor %}</table>
+  <h2>PTW / LoA history</h2>
+  <table><tr><th>Permit</th><th>Type</th><th>Work description</th><th>Status / Created</th></tr>{% for row in record.permits %}<tr><td>{{ row.permit_no }}</td><td>{{ row.form_type }}</td><td>{{ row.work_description }}</td><td>{{ row.status }}<br>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="4">No permit history.</td></tr>{% endfor %}</table>
+  {% else %}
+  <div class="grid">
+    <div><label>Permit number</label>{{ record.permit_no }}</div><div><label>Form type</label>{{ record.form_type }}</div>
+    <div><label>KKS</label>{{ record.kks_code }}</div><div><label>Work order</label>{{ record.order_no or "-" }}</div>
+    <div><label>Location</label>{{ record.location }}</div><div><label>Issued to</label>{{ record.issued_to }}</div>
+    <div><label>Employer</label>{{ record.employer }}</div><div><label>Prepared by</label>{{ record.prepared_by }}</div>
+  </div>
+  <h2>Work to be carried out</h2><div class="text-block">{{ record.work_description }}</div>
+  <h2>Isolation and access conditions</h2>
+  <div class="grid">
+    <div><label>Electrical isolations</label>{{ record.electrical_isolations or "-" }}</div><div><label>Mechanical isolations</label>{{ record.mechanical_isolations or "-" }}</div>
+    <div><label>Circuit main earths</label>{{ record.circuit_main_earths or "-" }}</div><div><label>Limits of access</label>{{ record.limits_of_access or "-" }}</div>
+  </div>
+  <h2>Safety precautions</h2>
+  <table>{% for row in record.precautions %}<tr><td class="check">{{ "YES" if row.selected else "NO" }}</td><td>{{ row.precaution_text }}</td></tr>{% endfor %}</table>
+  <h2>Special assessments</h2>
+  <table><tr><th>Assessment</th><th>Answer</th><th>Remarks</th></tr>{% for row in record.assessments %}<tr><td>{{ row.assessment_type }}</td><td>{{ row.answer }}</td><td>{{ row.remarks or "-" }}</td></tr>{% endfor %}</table>
+  <h2>Authorization</h2>
+  <div class="signatures">
+    <div class="signature"><label>Issued by</label>{{ record.issued_by or "-" }}</div><div class="signature"><label>Controller</label>{{ record.controller_name or "-" }}</div>
+    <div class="signature"><label>Received by</label>{{ record.received_by or "-" }}</div><div class="signature"><label>Cleared / Cancelled by</label>{{ record.cleared_by or record.cancelled_by or "-" }}</div>
+  </div>
+  {% endif %}
+
+  <h2>Supporting attachments</h2>
+  <table><tr><th>Filename</th><th>Uploaded by</th><th>Time</th></tr>
+    {% for row in record.attachments %}<tr><td>{{ row.original_name }}</td><td>{{ row.uploaded_by_name }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No attachments.</td></tr>{% endfor %}
+  </table>
+  <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station SI/PAM</span></footer>
+</body>
+</html>

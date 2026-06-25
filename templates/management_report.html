@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Maintenance Performance Report | Morupule B</title>
+  <style>
+    :root { --ink:#17272d; --muted:#5f7077; --line:#cfd9dc; --green:#2f7555; --red:#a53f42; --blue:#2e687b; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #eef2f3; font: 10px Arial, sans-serif; }
+    .toolbar { position: sticky; top: 0; z-index: 2; padding: 10px; background: #17272d; text-align: right; }
+    .toolbar button { padding: 9px 14px; border: 0; border-radius: 3px; color: #fff; background: var(--green); font-weight: 700; cursor: pointer; }
+    main { width: min(1120px, calc(100% - 28px)); margin: 18px auto; padding: 24px 28px; background: #fff; box-shadow: 0 2px 12px #1b343d22; }
+    header { display: flex; justify-content: space-between; gap: 24px; padding-bottom: 14px; border-bottom: 3px solid var(--green); }
+    .brand { font-size: 15px; font-weight: 800; letter-spacing: 0; }
+    h1 { margin: 5px 0 0; font-size: 22px; letter-spacing: 0; }
+    .meta { min-width: 270px; display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; align-content: end; }
+    .meta span { color: var(--muted); }
+    .meta strong { text-align: right; }
+    h2 { margin: 18px 0 8px; font-size: 13px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .metric { min-height: 66px; padding: 10px; border: 1px solid var(--line); border-top: 3px solid var(--blue); }
+    .metric.green { border-top-color: var(--green); }
+    .metric.red { border-top-color: var(--red); }
+    .metric small, .metric strong, .metric span { display: block; }
+    .metric small { color: var(--muted); font-weight: 700; text-transform: uppercase; }
+    .metric strong { margin: 5px 0 3px; font-size: 20px; }
+    .metric span { color: var(--muted); }
+    .two-column { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 6px 7px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #edf2f3; font-size: 9px; text-transform: uppercase; }
+    td.number, th.number { text-align: right; }
+    .status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .status-box { border: 1px solid var(--line); }
+    .status-box h3 { margin: 0; padding: 7px; background: #edf2f3; font-size: 10px; }
+    .status-row { display: flex; justify-content: space-between; padding: 5px 7px; border-top: 1px solid var(--line); text-transform: capitalize; }
+    .empty { padding: 8px; color: var(--muted); }
+    footer { margin-top: 18px; padding-top: 8px; display: flex; justify-content: space-between; color: var(--muted); border-top: 1px solid var(--line); }
+    @media print { body { background: #fff; } .toolbar { display: none; } main { width: 100%; margin: 0; padding: 0; box-shadow: none; } @page { size: A4 landscape; margin: 10mm; } }
+  </style>
+</head>
+<body>
+  <div class="toolbar"><button type="button" onclick="window.print()">Print / Save PDF</button></div>
+  <main>
+    <header>
+      <div><div class="brand">SI/PAM | Morupule B Power Station</div><h1>Monthly Maintenance Performance Report</h1></div>
+      <div class="meta">
+        <span>Reporting period</span><strong>{{ period_start }} to {{ period_end }}</strong>
+        <span>Generated</span><strong>{{ generated_at }}</strong>
+        <span>Prepared by</span><strong>{{ generated_by }}</strong>
+      </div>
+    </header>
+
+    <h2>Operational Overview</h2>
+    <section class="metrics">
+      <article class="metric"><small>Event entries</small><strong>{{ report.counts.events }}</strong><span>{{ report.counts.open_events }} open</span></article>
+      <article class="metric"><small>Work requests</small><strong>{{ report.counts.work_requests }}</strong><span>{{ report.counts.pending_requests }} pending approval</span></article>
+      <article class="metric green"><small>Preventive tasks</small><strong>{{ report.counts.preventive_tasks }}</strong><span>{{ report.counts.overdue_preventive }} overdue</span></article>
+      <article class="metric"><small>Safety permits</small><strong>{{ report.counts.permits }}</strong><span>{{ report.counts.active_permits }} active</span></article>
+    </section>
+
+    <h2>Maintenance Delivery</h2>
+    <section class="metrics">
+      <article class="metric green"><small>Corrective completed</small><strong>{{ report.performance.completed_corrective }}</strong><span>{{ '%.1f'|format(report.performance.corrective_actual_hours) }} actual / {{ '%.1f'|format(report.performance.corrective_planned_hours) }} planned hours</span></article>
+      <article class="metric green"><small>Preventive completed</small><strong>{{ report.performance.completed_preventive }}</strong><span>{{ '%.1f'|format(report.performance.preventive_actual_hours) }} actual / {{ '%.1f'|format(report.performance.preventive_planned_hours) }} planned hours</span></article>
+      <article class="metric green"><small>Accepted work</small><strong>{{ report.performance.accepted_work }}</strong><span>Passed inspection</span></article>
+      <article class="metric red"><small>Rework decisions</small><strong>{{ report.performance.denied_work }}</strong><span>Acceptance denied</span></article>
+    </section>
+
+    <h2>CMPT Response Compliance</h2>
+    <section class="metrics">
+      <article class="metric"><small>Targeted requests</small><strong>{{ report.response_compliance.targeted }}</strong><span>Priorities 1 to 5</span></article>
+      <article class="metric green"><small>Response met</small><strong>{{ report.response_compliance.met }}</strong><span>Closed within target</span></article>
+      <article class="metric red"><small>Response breached</small><strong>{{ report.response_compliance.breached }}</strong><span>Late or overdue</span></article>
+      <article class="metric"><small>Compliance</small><strong>{% if report.response_compliance.compliance_percent is not none %}{{ report.response_compliance.compliance_percent }}%{% else %}-{% endif %}</strong><span>{{ report.response_compliance.pending }} pending</span></article>
+    </section>
+
+    <h2>Equipment Reliability</h2>
+    <section class="metrics">
+      <article class="metric"><small>Classified failures</small><strong>{{ report.reliability.classified_failures }}</strong><span>Completed corrective work</span></article>
+      <article class="metric red"><small>Total downtime</small><strong>{{ '%.2f'|format(report.reliability.total_downtime_hours) }} h</strong><span>{{ report.reliability.downtime_events }} recorded events</span></article>
+      <article class="metric"><small>MTTR</small><strong>{{ '%.2f'|format(report.reliability.mttr_hours) }} h</strong><span>Mean time to restoration</span></article>
+      <article class="metric"><small>Repeat-failure assets</small><strong>{{ report.reliability.repeat_failure_assets }}</strong><span>Two or more classified failures</span></article>
+    </section>
+
+    <h2>Highest-Impact Failure Assets</h2>
+    <table>
+      <thead><tr><th>KKS</th><th>Equipment</th><th class="number">Failures</th><th class="number">Downtime hours</th></tr></thead>
+      <tbody>{% for item in report.reliability.top_failure_assets %}<tr><td>{{ item.kks_code }}</td><td>{{ item.description }}</td><td class="number">{{ item.failures }}</td><td class="number">{{ '%.2f'|format(item.downtime_hours) }}</td></tr>{% else %}<tr><td colspan="4" class="empty">No classified equipment failures in this period.</td></tr>{% endfor %}</tbody>
+    </table>
+
+    <h2>Maintenance Performance KPIs</h2>
+    <section class="metrics">
+      <article class="metric green"><small>PM compliance</small><strong>{% if report.maintenance_kpis.pm_compliance_percent is not none %}{{ report.maintenance_kpis.pm_compliance_percent }}%{% else %}-{% endif %}</strong><span>{{ report.maintenance_kpis.pm_completed_on_time }} of {{ report.maintenance_kpis.pm_due }} within execution window</span></article>
+      <article class="metric green"><small>Corrective on schedule</small><strong>{% if report.maintenance_kpis.corrective_schedule_percent is not none %}{{ report.maintenance_kpis.corrective_schedule_percent }}%{% else %}-{% endif %}</strong><span>{{ report.maintenance_kpis.corrective_on_schedule }} of {{ report.maintenance_kpis.corrective_scheduled_completed }} completed</span></article>
+      <article class="metric"><small>Corrective backlog</small><strong>{{ report.maintenance_kpis.corrective_backlog }}</strong><span>{{ report.maintenance_kpis.backlog_over_30_days }} older than 30 days</span></article>
+      <article class="metric"><small>Average backlog age</small><strong>{{ report.maintenance_kpis.average_backlog_age_days }} days</strong><span>As of reporting period end</span></article>
+    </section>
+
+    <div class="two-column">
+      <section>
+        <h2>Daily Activity</h2>
+        <table>
+          <thead><tr><th>Date</th><th class="number">Events</th><th class="number">Corrective</th><th class="number">Preventive</th><th class="number">Permits</th><th class="number">Total</th></tr></thead>
+          <tbody>
+          {% for item in report.daily %}<tr><td>{{ item.display_date }}</td><td class="number">{{ item.events }}</td><td class="number">{{ item.corrective }}</td><td class="number">{{ item.preventive }}</td><td class="number">{{ item.permits }}</td><td class="number"><strong>{{ item.events + item.corrective + item.preventive + item.permits }}</strong></td></tr>
+          {% else %}<tr><td colspan="6" class="empty">No activity recorded in this period.</td></tr>{% endfor %}
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Responsible-Area Workload</h2>
+        <table>
+          <thead><tr><th>Responsible area</th><th class="number">Records</th></tr></thead>
+          <tbody>{% for item in report.areas %}<tr><td>{{ item.responsible_area }}</td><td class="number">{{ item.total }}</td></tr>{% else %}<tr><td colspan="2" class="empty">No area activity.</td></tr>{% endfor %}</tbody>
+        </table>
+      </section>
+    </div>
+
+    <h2>Status Distribution</h2>
+    <section class="status-grid">
+      {% for module, items in report.statuses.items() %}
+      <article class="status-box"><h3>{{ module|capitalize }}</h3>{% for item in items %}<div class="status-row"><span>{{ item.status|replace('_', ' ') }}</span><strong>{{ item.total }}</strong></div>{% else %}<div class="empty">No records</div>{% endfor %}</article>
+      {% endfor %}
+    </section>
+    <footer><span>Controlled SI/PAM operational report</span><span>Morupule B Power Station</span></footer>
+  </main>
+</body>
+</html>

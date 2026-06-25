@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Morupule B Power Station SIPAM">
+  <title>Morupule B SIPAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260619-readability') }}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark">SP</span>
+        <div><strong>SI/PAM</strong><small>Morupule B Power Station</small></div>
+      </div>
+      <nav>
+        <span class="nav-label">Operations</span>
+        <button class="nav-item active" data-view="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+        <button class="nav-item" data-view="infobox"><i data-lucide="inbox"></i><span>My Infobox</span><b id="infoboxBadge">0</b></button>
+        <button class="nav-item" data-view="events"><i data-lucide="notebook-tabs"></i><span>Event Log</span><b id="openEventBadge">0</b></button>
+        <button class="nav-item" data-view="handovers"><i data-lucide="arrow-left-right"></i><span>Shift Handover</span></button>
+        <button class="nav-item" data-view="assets"><i data-lucide="network"></i><span>Asset Directory</span></button>
+        <button class="nav-item" data-view="reports"><i data-lucide="chart-no-axes-combined"></i><span>Reports</span></button>
+        <span class="nav-label secondary-label">Maintenance</span>
+        <button class="nav-item" data-view="corrective"><i data-lucide="wrench"></i><span>Corrective Maintenance</span><b id="requestBadge">0</b></button>
+        <button class="nav-item" data-view="preventive"><i data-lucide="calendar-clock"></i><span>Preventive Maintenance</span><b id="preventiveBadge">0</b></button>
+        <button class="nav-item" data-view="permits"><i data-lucide="shield-check"></i><span>Permits &amp; LoA</span><b id="permitBadge">0</b></button>
+        <span class="nav-label secondary-label admin-navigation" hidden>Administration</span>
+        <button class="nav-item admin-navigation" data-view="users" hidden><i data-lucide="users"></i><span>Users &amp; Roles</span></button>
+        <button class="nav-item admin-navigation" data-view="logbookadmin" hidden><i data-lucide="book-marked"></i><span>Logbooks</span></button>
+        <button class="nav-item admin-navigation" data-view="audit" hidden><i data-lucide="history"></i><span>Audit Trail</span></button>
+        <button class="nav-item admin-navigation" data-view="system" hidden><i data-lucide="server-cog"></i><span>System Status</span></button>
+        <button class="nav-item admin-navigation" data-view="kksimport" hidden><i data-lucide="file-up"></i><span>KKS Import</span></button>
+      </nav>
+      <div class="sidebar-footer"><span class="online-dot"></span><span>Development system</span></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div class="topbar-title">
+          <button class="icon-button menu-button" id="menuButton" aria-label="Open navigation"><i data-lucide="menu"></i></button>
+          <div><small>Morupule B / Operations</small><h1 id="pageTitle">Operations Dashboard</h1></div>
+        </div>
+        <div class="user-session">
+          <div class="user-box"><span class="avatar">{{ current_user.initials }}</span><span><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role_name }}</small></span></div>
+          <form method="post" action="{{ url_for('logout') }}"><button class="icon-button" type="submit" title="Sign out" aria-label="Sign out"><i data-lucide="log-out"></i></button></form>
+        </div>
+      </header>
+
+      <section class="view active" id="dashboardView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Current plant record</span><h2>Operations overview</h2></div>
+          <button class="button primary" id="dashboardNewEntry"><i data-lucide="plus"></i> New event entry</button>
+        </div>
+        <div class="metric-grid">
+          <article><span class="metric-icon red"><i data-lucide="circle-alert"></i></span><div><small>Open entries</small><strong id="openEvents">0</strong><span>Require follow-up</span></div></article>
+          <article><span class="metric-icon blue"><i data-lucide="calendar-days"></i></span><div><small>Events today</small><strong id="eventsToday">0</strong><span>Across all logbooks</span></div></article>
+          <article><span class="metric-icon green"><i data-lucide="component"></i></span><div><small>Active assets</small><strong id="activeAssets">0</strong><span>KKS records loaded</span></div></article>
+          <article><span class="metric-icon amber"><i data-lucide="book-open"></i></span><div><small>Logbooks</small><strong id="logbookCount">0</strong><span>Operational records</span></div></article>
+        </div>
+        <div class="dashboard-layout">
+          <section class="panel">
+            <div class="panel-header"><div><h3>Latest event entries</h3><p>All authorized operational logbooks</p></div><button class="text-button" id="openAllEvents">Open Event Log</button></div>
+            <div id="recentEvents" class="recent-events"><div class="loading">Loading entries...</div></div>
+          </section>
+          <aside class="panel reference-panel">
+            <div class="panel-header"><div><h3>SIPAM foundation</h3><p>Current commissioned scope</p></div></div>
+            <div class="reference-list">
+              <article><i data-lucide="notebook-tabs"></i><span><strong>Event Log</strong><small>Main entries, comments, logbook visibility</small></span><b>Active</b></article>
+              <article><i data-lucide="network"></i><span><strong>KKS Asset Directory</strong><small>Unit to equipment component hierarchy</small></span><b>Active</b></article>
+              <article><i data-lucide="wrench"></i><span><strong>Corrective Maintenance</strong><small>Work request to work order workflow</small></span><b>Active</b></article>
+              <article><i data-lucide="calendar-clock"></i><span><strong>Preventive Maintenance</strong><small>Schedules and recurrent tasks</small></span><b>Active</b></article>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="infoboxView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Personal information box</span><h2>My Infobox</h2><p>Workflow actions assigned through SIPAM responsibilities</p></div>
+          <div class="signed-in-context"><span class="avatar">{{ current_user.initials }}</span><span><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role_name }}</small></span></div>
+        </div>
+        <div class="infobox-metrics">
+          <article><small id="infoboxTotalLabel">My open items</small><strong id="infoboxTotal">0</strong><span id="infoboxTotalHint">Available or claimed by me</span></article>
+          <article><small>High priority</small><strong id="infoboxHigh">0</strong><span>Immediate attention</span></article>
+          <article><small id="infoboxClaimedLabel">Claimed by me</small><strong id="infoboxClaimed">0</strong><span>Removed from shared queues</span></article>
+          <article><small>Past due</small><strong id="infoboxOverdue">0</strong><span>Target date exceeded</span></article>
+          <article><small>Escalated</small><strong id="infoboxEscalated">0</strong><span id="infoboxCriticalEscalations">0 at level 3</span></article>
+        </div>
+        <section class="panel infobox-panel">
+          <div class="infobox-filters">
+            <div class="infobox-filter-groups">
+              <div class="segmented-filter" id="infoboxScopeFilter">
+                <button class="active" data-scope="my">My Queue</button>
+                <button data-scope="team">Team Queue</button>
+              </div>
+              <div class="segmented-filter" id="infoboxStateFilter">
+                <button class="active" data-state="active">Active</button>
+                <button data-state="completed">Completed <b id="infoboxCompletedCount">0</b></button>
+              </div>
+              <div class="segmented-filter" id="infoboxSourceFilter">
+                <button class="active" data-source="">All</button>
+                <button data-source="work_request">Requests</button>
+                <button data-source="work_order">Orders</button>
+                <button data-source="preventive_task">Preventive</button>
+                <button data-source="permit">Permits</button>
+                <button data-source="shift_handover">Handovers</button>
+              </div>
+            </div>
+            <div class="infobox-filter-actions">
+              <label class="infobox-search"><i data-lucide="search"></i><input id="infoboxSearch" type="search" placeholder="Search task or record"></label>
+              <select id="infoboxGroup" hidden aria-label="Responsibility group"><option value="">All responsibility groups</option></select>
+              <select id="infoboxTiming" aria-label="Due status"><option value="">All due statuses</option><option value="overdue">Overdue</option><option value="due_today">Due today</option><option value="upcoming">Upcoming</option><option value="no_target">No target date</option></select>
+              <select id="infoboxPriority"><option value="">All priorities</option><option value="high">High</option><option value="medium">Medium</option><option value="normal">Normal</option></select>
+              <a class="icon-button" id="downloadInfoboxHistory" href="/api/infobox/history.csv" download title="Download filtered work history" aria-label="Download filtered work history"><i data-lucide="download"></i></a>
+            </div>
+          </div>
+          <div class="team-workload" id="teamWorkload" hidden></div>
+          <div class="infobox-heading"><span>Priority</span><span>Required action</span><span>Responsibility</span><span>Due / Finished</span><span>Status</span><span></span></div>
+          <div id="infoboxList" class="infobox-list"><div class="loading">Loading personal tasks...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="eventsView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Operation / Event logs</span><h2>Event Log</h2><p>Unexpected events and mandatory shift information</p></div>
+          <div class="page-actions"><button class="button secondary" id="newSubEntry" disabled><i data-lucide="message-square-plus"></i> New sub-entry</button><button class="button primary" id="newMainEntry"><i data-lucide="plus"></i> New main entry</button></div>
+        </div>
+        <div class="event-layout">
+          <section class="panel event-register">
+            <div class="event-filters">
+              <label class="search-field"><i data-lucide="search"></i><input id="eventSearch" type="search" placeholder="Search entry, subject, observation, or KKS"></label>
+              <div class="logbook-multi-filter" id="logbookFilter">
+                <button type="button" id="logbookFilterButton" aria-haspopup="true" aria-expanded="false"><span>All logbooks</span><i data-lucide="chevron-down"></i></button>
+                <div class="logbook-filter-menu" id="logbookFilterMenu" hidden></div>
+              </div>
+              <input id="startDate" type="date" aria-label="Start date">
+              <input id="endDate" type="date" aria-label="End date">
+              <select id="stateFilter" aria-label="State"><option value="">All states</option><option value="open">Open</option><option value="closed">Closed</option></select>
+              <button class="icon-button" id="resetEventFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
+            </div>
+            <div class="event-range-controls">
+              <div>
+                <button class="icon-button" id="previousEventRange" title="Previous date range" aria-label="Previous date range"><i data-lucide="chevron-left"></i></button>
+                <button class="button secondary" id="todayEventRange"><i data-lucide="calendar-days"></i> Today</button>
+                <button class="icon-button" id="nextEventRange" title="Next date range" aria-label="Next date range"><i data-lucide="chevron-right"></i></button>
+              </div>
+              <div>
+                <small id="eventLastRefresh">Not refreshed</small>
+                <button class="button secondary" id="toggleEventAutoRefresh" aria-pressed="false"><i data-lucide="refresh-cw"></i><span>Auto-refresh off</span></button>
+                <a class="icon-button" id="printShiftHandover" href="/print/shift-handover" target="_blank" title="Print filtered shift handover" aria-label="Print filtered shift handover"><i data-lucide="printer"></i></a>
+                <a class="icon-button" id="downloadEventLog" href="/api/events.csv" download title="Download filtered Event Log CSV" aria-label="Download filtered Event Log CSV"><i data-lucide="download"></i></a>
+              </div>
+            </div>
+            <div class="event-list-heading"><span>Entry</span><span>Subject / Observation</span><span>Asset</span><span>State</span><span></span></div>
+            <div id="eventList" class="event-list"><div class="loading">Loading event log...</div></div>
+          </section>
+          <aside class="panel event-detail" id="eventDetail">
+            <div class="empty-detail"><i data-lucide="notebook-tabs"></i><strong>Select an event entry</strong><p>Attributes and sub-entries will appear here.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="handoversView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Operations / Shift control</span><h2>Shift Handover</h2><p>Controlled transfer of open events and plant status</p></div>
+          <button class="button primary" id="newShiftHandover"><i data-lucide="plus"></i> New handover</button>
+        </div>
+        <div class="handover-layout">
+          <section class="panel handover-register">
+            <div class="handover-filters"><select id="handoverStatusFilter"><option value="">All states</option><option value="draft">Draft</option><option value="submitted">Awaiting acceptance</option><option value="accepted">Accepted</option></select></div>
+            <div class="handover-list-heading"><span>Handover</span><span>Shift / Leaders</span><span>Status</span><span></span></div>
+            <div id="handoverList" class="handover-list"><div class="loading">Loading shift handovers...</div></div>
+          </section>
+          <aside class="panel handover-detail" id="handoverDetail"><div class="empty-detail"><i data-lucide="arrow-left-right"></i><strong>Select a handover</strong><p>Shift notes, captured entries, and acceptance will appear here.</p></div></aside>
+        </div>
+      </section>
+
+      <section class="view" id="correctiveView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Tasks / Corrective maintenance</span><h2>Corrective Maintenance</h2><p>Work requests, approval, planning, execution, and acceptance</p></div>
+          <div class="page-actions"><a class="button secondary" id="downloadCorrectiveCsv" href="/api/corrective.csv" download><i data-lucide="download"></i> Export</a><button class="button primary" id="newWorkRequest"><i data-lucide="plus"></i> Create work request</button></div>
+        </div>
+        <div class="corrective-metrics">
+          <article><small>Total requests</small><strong id="totalRequests">0</strong><span>All corrective notifications</span></article>
+          <article><small>Pending approval</small><strong id="pendingRequests">0</strong><span>Maintenance decision required</span></article>
+          <article><small>Active orders</small><strong id="activeOrders">0</strong><span>Approved work in progress</span></article>
+          <article><small>Awaiting check</small><strong id="awaitingCheck">0</strong><span>Execution completed</span></article>
+          <article><small>Response overdue</small><strong id="overdueRequests">0</strong><span>CMPT target exceeded</span></article>
+        </div>
+        <div class="corrective-layout">
+          <section class="panel corrective-register">
+            <div class="corrective-filters">
+              <label class="search-field"><i data-lucide="search"></i><input id="correctiveSearch" type="search" placeholder="Search request, work, observation, or KKS"></label>
+              <select id="correctiveStatus"><option value="">All request states</option><option value="submitted">Submitted</option><option value="approved">Approved</option><option value="declined">Declined</option></select>
+              <select id="correctiveDepartment"><option value="">All departments</option><option>Mechanical Maintenance</option><option>Electrical Maintenance</option><option>Control &amp; Instrumentation</option><option>Operations</option></select>
+              <button class="icon-button" id="resetCorrectiveFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
+            </div>
+            <div class="corrective-list-heading"><span>Request</span><span>Work / Asset</span><span>Department</span><span>Workflow</span><span></span></div>
+            <div id="correctiveList" class="corrective-list"><div class="loading">Loading corrective tasks...</div></div>
+          </section>
+          <aside class="panel corrective-detail" id="correctiveDetail">
+            <div class="empty-detail"><i data-lucide="wrench"></i><strong>Select a work request</strong><p>Workflow, planning, supply, and artisans will appear here.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="preventiveView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Tasks / Schedules</span><h2>Preventive Maintenance</h2><p>Schedule types, recurrent tasks, tolerance windows, and generated work</p></div>
+          <div class="page-actions">
+            <div class="segmented-filter" id="preventiveViewMode"><button class="active" data-preventive-mode="list">List</button><button data-preventive-mode="calendar">Calendar</button></div>
+            <button class="button secondary" id="newScheduleType"><i data-lucide="settings-2"></i> Schedule type</button><button class="button primary" id="newRecurrentTask"><i data-lucide="plus"></i> Recurrent task</button>
+          </div>
+        </div>
+        <div class="preventive-metrics">
+          <article><small>Active schedules</small><strong id="activeSchedules">0</strong><span>Recurring maintenance plans</span></article>
+          <article><small>Due</small><strong id="preventiveDue">0</strong><span>Inside execution window</span></article>
+          <article><small>Overdue</small><strong id="preventiveOverdue">0</strong><span>Past late tolerance</span></article>
+          <article><small>Completed</small><strong id="preventiveCompleted">0</strong><span>Generated tasks finished</span></article>
+        </div>
+        <div class="preventive-layout">
+          <aside class="panel schedule-type-panel">
+            <div class="panel-header"><div><h3>Schedule types</h3><p>Intervals and deadline strategies</p></div></div>
+            <div id="scheduleTypeList" class="schedule-type-list"><div class="loading">Loading schedule types...</div></div>
+          </aside>
+          <section class="panel preventive-register">
+            <div class="preventive-filters">
+              <label class="search-field"><i data-lucide="search"></i><input id="preventiveSearch" type="search" placeholder="Search recurrent task, KKS, or department"></label>
+              <select id="preventiveStatus"><option value="">All states</option><option value="active">Active</option><option value="suspended">Suspended</option><option value="completed">Completed</option></select>
+              <button class="icon-button" id="resetPreventiveFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
+            </div>
+            <div class="preventive-list-heading"><span>Recurrent task</span><span>Asset / Department</span><span>Schedule</span><span>Next target</span><span></span></div>
+            <div id="preventiveList" class="preventive-list"><div class="loading">Loading recurrent tasks...</div></div>
+          </section>
+          <aside class="panel preventive-detail" id="preventiveDetail">
+            <div class="empty-detail"><i data-lucide="calendar-clock"></i><strong>Select a recurrent task</strong><p>Schedule settings, asset group, and generated tasks will appear here.</p></div>
+          </aside>
+        </div>
+        <section class="panel preventive-calendar-panel" id="preventiveCalendarPanel" hidden>
+          <div class="preventive-calendar-toolbar">
+            <button class="icon-button" id="previousPreventiveMonth" title="Previous month" aria-label="Previous month"><i data-lucide="chevron-left"></i></button>
+            <strong id="preventiveCalendarTitle"></strong>
+            <button class="icon-button" id="nextPreventiveMonth" title="Next month" aria-label="Next month"><i data-lucide="chevron-right"></i></button>
+            <select id="preventiveCalendarDepartment" aria-label="Department"><option value="">All departments</option><option>Control &amp; Instrumentation</option><option>Electrical Maintenance</option><option>Mechanical Maintenance</option><option>Operations</option></select>
+            <select id="preventiveCalendarStatus" aria-label="Task status"><option value="">All task states</option><option value="planned">Planned</option><option value="due">Due</option><option value="overdue">Overdue</option><option value="completed">Completed</option></select>
+            <button class="button secondary" id="currentPreventiveMonth">Current month</button>
+            <button class="button primary" id="generatePreventiveMonth"><i data-lucide="sparkles"></i> Generate month</button>
+            <a class="icon-button" id="downloadPreventiveCalendar" href="#" download title="Download calendar CSV" aria-label="Download calendar CSV"><i data-lucide="download"></i></a>
+          </div>
+          <div class="preventive-calendar-summary" id="preventiveCalendarSummary"></div>
+          <div class="preventive-generation-preview" id="preventiveGenerationPreview" hidden></div>
+          <div class="preventive-calendar-weekdays"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+          <div class="preventive-calendar-grid" id="preventiveCalendarGrid"><div class="loading">Loading preventive calendar...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="permitsView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Tasks / Safety permits</span><h2>Permit to Work &amp; Limitation of Access</h2><p>Electrical and mechanical forms, precautions, issue, receipt, clearance, and cancellation</p></div>
+          <button class="button primary" id="newSafetyPermit"><i data-lucide="plus"></i> Prepare permit</button>
+        </div>
+        <div class="permit-metrics">
+          <article><small>Total forms</small><strong id="permitTotal">0</strong><span>All controlled records</span></article>
+          <article><small>Prepared</small><strong id="permitPrepared">0</strong><span>Awaiting issue</span></article>
+          <article><small>Active</small><strong id="permitActive">0</strong><span>Issued or received</span></article>
+          <article><small>Awaiting cancellation</small><strong id="permitAwaitingCancel">0</strong><span>Work cleared</span></article>
+        </div>
+        <div class="permit-workspace">
+          <section class="panel permit-register">
+            <div class="permit-filters">
+              <label class="search-field"><i data-lucide="search"></i><input id="permitSearch" type="search" placeholder="Search form, work, location, or KKS"></label>
+              <select id="permitStatusFilter"><option value="">All states</option><option value="prepared">Prepared</option><option value="issued">Issued</option><option value="received">Received</option><option value="cleared">Cleared</option><option value="cancelled">Cancelled</option></select>
+              <select id="permitTypeFilter"><option value="">All forms</option><option value="electrical_ptw">Electrical PTW</option><option value="mechanical_ptw">Mechanical PTW</option><option value="electrical_loa">Electrical LoA</option><option value="mechanical_loa">Mechanical LoA</option></select>
+              <button class="icon-button" id="resetPermitFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
+            </div>
+            <div class="permit-list-heading"><span>Form</span><span>Work / Asset</span><span>Issued to</span><span>Status</span><span></span></div>
+            <div id="permitList" class="permit-list"><div class="loading">Loading safety permits...</div></div>
+          </section>
+          <aside class="panel safety-permit-detail" id="safetyPermitDetail">
+            <div class="empty-detail"><i data-lucide="shield-check"></i><strong>Select a permit</strong><p>Isolation, precautions, assessment, and signatures will appear here.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="assetsView">
+        <div class="page-heading"><div><span class="eyebrow">Assets / Asset directory</span><h2>KKS Asset Directory</h2><p>Process-related identification hierarchy supplied for Morupule B</p></div></div>
+        <div class="asset-workspace">
+          <aside class="panel asset-browser">
+            <div class="asset-search"><i data-lucide="search"></i><input id="assetSearch" type="search" placeholder="Search KKS or description"></div>
+            <div id="assetList"><div class="loading">Loading KKS hierarchy...</div></div>
+          </aside>
+          <section class="panel asset-detail-workspace" id="assetDetailWorkspace">
+            <div class="empty-detail"><i data-lucide="component"></i><strong>Select an asset</strong><p>Equipment history and linked SIPAM records will appear here.</p></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="reportsView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Performance / Operational reporting</span><h2>System Reports</h2><p>Event, maintenance, preventive, and permit activity</p></div>
+          <div class="page-actions">
+            <a class="button secondary" id="printManagementReport" href="#" target="_blank" rel="noopener"><i data-lucide="printer"></i> Print report</a>
+            <a class="button secondary" id="downloadActivityReport" href="#"><i data-lucide="download"></i> Download CSV</a>
+          </div>
+        </div>
+        <section class="panel report-filter-panel">
+          <label><span>Start date</span><input id="reportStart" type="date"></label>
+          <label><span>End date</span><input id="reportEnd" type="date"></label>
+          <button class="button primary" id="runReport"><i data-lucide="refresh-cw"></i> Run report</button>
+        </section>
+        <div class="report-metrics">
+          <article><small>Event entries</small><strong id="reportEvents">0</strong><span id="reportOpenEvents">0 open</span></article>
+          <article><small>Work requests</small><strong id="reportRequests">0</strong><span id="reportPendingRequests">0 pending</span></article>
+          <article><small>Preventive tasks</small><strong id="reportPreventive">0</strong><span id="reportOverduePreventive">0 overdue</span></article>
+          <article><small>Safety permits</small><strong id="reportPermits">0</strong><span id="reportActivePermits">0 active</span></article>
+        </div>
+        <div class="report-metrics performance-metrics">
+          <article><small>Corrective completed</small><strong id="reportCorrectiveCompleted">0</strong><span id="reportCorrectiveHours">0 / 0 hours</span></article>
+          <article><small>Preventive completed</small><strong id="reportPreventiveCompleted">0</strong><span id="reportPreventiveHours">0 / 0 hours</span></article>
+          <article><small>Work accepted</small><strong id="reportAcceptedWork">0</strong><span>Inspection accepted</span></article>
+          <article><small>Rework decisions</small><strong id="reportDeniedWork">0</strong><span>Acceptance denied</span></article>
+        </div>
+        <div class="report-metrics response-metrics">
+          <article><small>CMPT targeted</small><strong id="reportResponseTargeted">0</strong><span>Priorities 1 to 5</span></article>
+          <article><small>Response met</small><strong id="reportResponseMet">0</strong><span>Closed within target</span></article>
+          <article><small>Response breached</small><strong id="reportResponseBreached">0</strong><span>Late or overdue</span></article>
+          <article><small>Compliance</small><strong id="reportResponseCompliance">-</strong><span id="reportResponsePending">0 pending</span></article>
+        </div>
+        <div class="report-metrics reliability-metrics">
+          <article><small>Classified failures</small><strong id="reportClassifiedFailures">0</strong><span>Completed corrective work</span></article>
+          <article><small>Equipment downtime</small><strong id="reportDowntimeHours">0.00 h</strong><span id="reportDowntimeEvents">0 recorded events</span></article>
+          <article><small>MTTR</small><strong id="reportMttr">0.00 h</strong><span>Mean time to restoration</span></article>
+          <article><small>Repeat-failure assets</small><strong id="reportRepeatFailureAssets">0</strong><span>Two or more failures</span></article>
+        </div>
+        <div class="report-metrics maintenance-kpi-metrics">
+          <article><small>PM compliance</small><strong id="reportPmCompliance">-</strong><span id="reportPmComplianceDetail">0 of 0 within window</span></article>
+          <article><small>Corrective on schedule</small><strong id="reportCorrectiveSchedule">-</strong><span id="reportCorrectiveScheduleDetail">0 of 0 completed</span></article>
+          <article><small>Corrective backlog</small><strong id="reportCorrectiveBacklog">0</strong><span id="reportOldBacklog">0 older than 30 days</span></article>
+          <article><small>Average backlog age</small><strong id="reportBacklogAge">0.0 days</strong><span>As of report end date</span></article>
+        </div>
+        <div class="report-layout">
+          <section class="panel report-chart-panel">
+            <div class="panel-header"><div><h3>Activity by day</h3><p>Combined records inside the selected period</p></div></div>
+            <div id="reportDailyChart" class="daily-chart"><div class="loading">Run the report to view activity.</div></div>
+          </section>
+          <section class="panel report-area-panel">
+            <div class="panel-header"><div><h3>Responsible-area workload</h3><p>Top areas across all modules</p></div></div>
+            <div id="reportAreaChart" class="area-chart"></div>
+          </section>
+        </div>
+        <section class="panel report-failure-panel">
+          <div class="panel-header"><div><h3>Highest-impact failure assets</h3><p>Classified failures ranked by equipment downtime</p></div></div>
+          <div id="reportFailureAssets" class="failure-assets"></div>
+        </section>
+        <section class="panel report-status-panel">
+          <div class="panel-header"><div><h3>Status distribution</h3><p>Current state of records in the selected period</p></div></div>
+          <div id="reportStatuses" class="report-status-grid"></div>
+        </section>
+      </section>
+
+      <section class="view" id="usersView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / Access control</span><h2>Users &amp; Roles</h2><p>Employee accounts, responsibilities, and system access</p></div>
+          <button class="button primary" id="newUser"><i data-lucide="user-plus"></i> New user</button>
+        </div>
+        <section class="panel user-admin-panel">
+          <div class="user-admin-heading"><span>Employee</span><span>Department</span><span>Role</span><span>Status</span><span>Actions</span></div>
+          <div id="userAdminList"><div class="loading">Loading employee accounts...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="logbookadminView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / Event Log</span><h2>Logbooks</h2><p>Operational books, entry permissions, and shift leader visibility</p></div>
+          <button class="button primary" id="newLogbook"><i data-lucide="plus"></i> New logbook</button>
+        </div>
+        <section class="panel logbook-admin-panel">
+          <div class="logbook-admin-heading"><span>Logbook</span><span>Department</span><span>Entry role</span><span>Usage</span><span>Actions</span></div>
+          <div id="logbookAdminList"><div class="loading">Loading logbooks...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="auditView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / Compliance</span><h2>Audit Trail</h2><p>Authenticated access and system-changing actions</p></div>
+        </div>
+        <section class="panel audit-panel">
+          <div class="audit-filters">
+            <label class="search-field"><i data-lucide="search"></i><input id="auditSearch" type="search" placeholder="Employee, target, or details"></label>
+            <select id="auditAction"><option value="">All actions</option></select>
+            <input id="auditStart" type="date" aria-label="Start date">
+            <input id="auditEnd" type="date" aria-label="End date">
+            <button class="icon-button" id="resetAuditFilters" title="Reset filters" aria-label="Reset filters"><i data-lucide="rotate-ccw"></i></button>
+          </div>
+          <div class="audit-heading"><span>Time</span><span>Employee</span><span>Action</span><span>Target</span><span>Result</span><span></span></div>
+          <div id="auditList"><div class="loading">Loading audit records...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="systemView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / System</span><h2>System Status</h2><p>Database integrity, storage, KKS imports, and backup</p></div>
+          <button class="button primary" id="createSystemBackup"><i data-lucide="archive"></i> Create full backup</button>
+        </div>
+        <div class="system-health-grid">
+          <article><span class="metric-icon green"><i data-lucide="database"></i></span><div><small>Database</small><strong id="systemDatabaseSize">0 MB</strong><span id="systemIntegrity">Checking integrity</span></div></article>
+          <article><span class="metric-icon blue"><i data-lucide="paperclip"></i></span><div><small>Attachments</small><strong id="systemAttachmentSize">0 MB</strong><span id="systemAttachmentCount">0 files</span></div></article>
+          <article><span class="metric-icon amber"><i data-lucide="network"></i></span><div><small>KKS assets</small><strong id="systemAssetCount">0</strong><span>Production hierarchy</span></div></article>
+          <article><span class="metric-icon red"><i data-lucide="shield-check"></i></span><div><small>Foreign keys</small><strong id="systemForeignKeys">0</strong><span>Integrity issues</span></div></article>
+        </div>
+        <div class="system-layout">
+          <section class="panel">
+            <div class="panel-header"><div><h3>Application records</h3><p>Current database volumes</p></div><button class="icon-button" id="refreshSystemStatus" title="Refresh status" aria-label="Refresh status"><i data-lucide="refresh-cw"></i></button></div>
+            <div id="systemRecordCounts" class="system-record-counts"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><div><h3>KKS import history</h3><p>Latest production register loads</p></div></div>
+            <div id="systemImportHistory" class="system-import-history"></div>
+          </section>
+          <section class="panel system-backup-panel">
+            <div class="panel-header"><div><h3>Recovery points</h3><p>Retained backups with integrity verification</p></div></div>
+            <div class="backup-run-heading"><span>Created</span><span>Archive</span><span>Coverage</span><span>Integrity</span><span>Actions</span></div>
+            <div id="systemBackupRuns"><div class="loading">Loading recovery points...</div></div>
+            <div class="panel-header restore-history-header"><div><h3>Restore history</h3><p>Completed controlled recovery operations</p></div></div>
+            <div id="systemRestoreHistory"></div>
+          </section>
+        </div>
+        <section class="panel system-backup-note">
+          <i data-lucide="info"></i>
+          <div><strong>Full backup contents</strong><p>The archive contains a consistent SQLite snapshot, uploaded supporting documents, and a system manifest. Store it in an approved secure location.</p></div>
+        </section>
+      </section>
+
+      <section class="view" id="kksimportView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / Assets</span><h2>KKS Register Import</h2><p>Validate and load revised Morupule B asset registers</p></div>
+        </div>
+        <div class="kks-import-layout">
+          <section class="panel kks-upload-panel">
+            <div class="panel-header"><div><h3>Workbook validation</h3><p>Morupule B KKS register</p></div></div>
+            <div class="kks-upload-control">
+              <input id="kksWorkbookFile" type="file" accept=".xlsx">
+              <button class="button primary" id="validateKksWorkbook"><i data-lucide="scan-search"></i> Validate workbook</button>
+            </div>
+            <div id="kksValidationMessage" class="form-message"></div>
+            <div id="kksValidationResult" class="kks-validation-result">
+              <div class="empty-list">No workbook has been validated.</div>
+            </div>
+          </section>
+          <section class="panel">
+            <div class="panel-header"><div><h3>Import history</h3><p>Validated and committed workbooks</p></div><button class="icon-button" id="refreshKksImports" title="Refresh history" aria-label="Refresh history"><i data-lucide="refresh-cw"></i></button></div>
+            <div id="kksImportHistory" class="kks-import-history"><div class="loading">Loading import history...</div></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="userModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="userModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Access control</span><h2 id="userModalTitle">Create employee account</h2></div><button class="icon-button" id="closeUserModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="userForm">
+        <div class="form-grid">
+          <label><span>Employee number</span><input name="employee_no" required placeholder="MBPS-0501"></label>
+          <label><span>Initials</span><input name="initials" required maxlength="4" placeholder="AB"></label>
+          <label class="span-2"><span>Full name</span><input name="full_name" required></label>
+          <label><span>Department</span><input name="department" required></label>
+          <label><span>Role</span><select name="role_name" required><option>Shift Leader</option><option>Maintenance Approver</option><option>Maintenance Planner</option><option>C&amp;I Technician</option><option>Electrical Technician</option><option>Mechanical Technician</option><option>System Administrator</option></select></label>
+          <label class="span-2"><span>Initial password</span><input name="password" type="password" minlength="8" required autocomplete="new-password"></label>
+        </div>
+        <div class="form-message" id="userFormMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelUser">Cancel</button><button type="submit" class="button primary"><i data-lucide="save"></i> Create account</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="logbookModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="logbookModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Event Log master data</span><h2 id="logbookModalTitle">Create logbook</h2></div><button class="icon-button" id="closeLogbookModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="logbookForm">
+        <input type="hidden" name="id">
+        <div class="form-grid">
+          <label><span>Code</span><input name="code" required maxlength="20" placeholder="OPS"></label>
+          <label><span>Department</span><input name="department" required placeholder="Operations"></label>
+          <label class="span-2"><span>Name</span><input name="name" required placeholder="Operations Shift Log"></label>
+          <label><span>Entry role</span><select name="can_create_role" required><option>Shift Leader</option><option>Maintenance Approver</option><option>Maintenance Planner</option><option>C&amp;I Technician</option><option>Electrical Technician</option><option>Mechanical Technician</option><option>System Administrator</option></select></label>
+          <label class="check-field"><input name="is_shift_leader" type="checkbox"><span>Visible to shift leader handover</span></label>
+        </div>
+        <div class="form-message" id="logbookFormMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelLogbook">Cancel</button><button type="submit" class="button primary" id="saveLogbook"><i data-lucide="save"></i> Save logbook</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="entryModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="entryModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Event Log</span><h2 id="entryModalTitle">New main entry</h2></div><button class="icon-button" id="closeEntryModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="entryForm">
+        <input type="hidden" name="parent_id" id="parentEntryId">
+        <div class="form-grid">
+          <label><span>Logbook</span><select name="logbook_id" id="entryLogbook" required></select></label>
+          <label><span>Entry type</span><input value="Information" disabled></label>
+          <label class="span-2"><span>Subject</span><input name="subject" id="entrySubject" required placeholder="Clear subject visible in the overview"></label>
+          <div class="form-field"><span>Asset</span><div class="asset-picker" data-asset-picker="entryAsset" data-optional="true"><input type="hidden" name="asset_id" id="entryAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search KKS or description" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div></div>
+          <label><span>Event date</span><input name="event_date" id="entryEventDate" type="datetime-local" required></label>
+          <label><span>State</span><select name="state"><option value="open">Open</option><option value="closed">Closed</option></select></label>
+          <label><span>Informant</span><input name="informant" placeholder="Source of request or information"></label>
+          <label class="span-2"><span>Observation</span><textarea name="observation" rows="5" required placeholder="Detailed explanation of the observation"></textarea></label>
+          <label class="span-2"><span>Created by</span><input name="created_by" readonly value="{{ current_user.full_name }}"></label>
+        </div>
+        <div class="form-message" id="entryFormMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelEntry">Cancel</button><button type="submit" class="button primary" id="saveEntry"><i data-lucide="save"></i> Save entry</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="deleteEventModal" aria-hidden="true">
+    <div class="modal delete-event-modal" role="dialog" aria-modal="true" aria-labelledby="deleteEventModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Event Log control</span><h2 id="deleteEventModalTitle">Delete event entry</h2></div><button class="icon-button" id="closeDeleteEventModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="deleteEventForm">
+        <div class="delete-event-warning"><i data-lucide="triangle-alert"></i><div><strong id="deleteEventNumber"></strong><p>This removes the entry from live logbooks. An audit snapshot will be retained.</p></div></div>
+        <div class="form-grid">
+          <label class="span-2"><span>Deletion reason</span><textarea name="reason" rows="4" required placeholder="Explain why this event entry must be deleted"></textarea></label>
+        </div>
+        <div class="form-message" id="deleteEventMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelDeleteEvent">Cancel</button><button type="submit" class="button danger-button" id="confirmDeleteEvent"><i data-lucide="trash-2"></i> Delete entry</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="workRequestModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="workRequestModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Corrective maintenance</span><h2 id="workRequestModalTitle">Create work request</h2></div><button class="icon-button" id="closeWorkRequestModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="workRequestForm">
+        <input type="hidden" name="source_event_id">
+        <div class="form-grid">
+          <label class="span-2"><span>Name</span><input name="name" required placeholder="Clear subject for the corrective task"></label>
+          <div class="form-field span-2"><span>Asset</span><div class="asset-picker" data-asset-picker="workRequestAsset"><input type="hidden" name="asset_id" id="workRequestAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search KKS, description, or responsible area" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div></div>
+          <label><span>Asset type</span><input name="asset_type" placeholder="Actuator, valve, motor..."></label>
+          <label><span>Type of work</span><select name="type_of_work" required><option>Corrective inspection</option><option>Mechanical repair</option><option>Electrical repair</option><option>Control &amp; instrumentation repair</option><option>Housekeeping</option></select></label>
+          <label><span>Main department</span><select name="main_department" required><option>Mechanical Maintenance</option><option>Electrical Maintenance</option><option>Control &amp; Instrumentation</option><option>Operations</option></select></label>
+          <section class="cmpt-panel span-2" aria-labelledby="cmptHeading">
+            <div class="cmpt-heading"><div><strong id="cmptHeading">Corrective Maintenance Prioritization Tool</strong><span>Priority is calculated from consequence severity and likelihood.</span></div><output id="cmptPriorityBadge">Priority 6</output></div>
+            <div class="cmpt-grid">
+              <label><span>Primary consequence</span><select name="cmpt_primary" required><option value="P">P - People (Safety risk)</option><option value="E">E - Environmental</option><option value="A" selected>A - Asset Damage / Production Loss</option><option value="R">R - Reputation / Personnel / Welfare</option></select></label>
+              <label><span>Severity</span><select name="cmpt_severity" required><option value="0" selected>0 - No measurable consequence</option><option value="1">1 - Minor</option><option value="2">2 - Moderate</option><option value="3">3 - Serious</option><option value="4">4 - Major</option><option value="5">5 - Catastrophic</option></select></label>
+              <label class="span-2"><span>Likelihood</span><select name="cmpt_likelihood" required><option value="A" selected>A - Not likely within 12 months</option><option value="B">B - Likely within 3 to 12 months</option><option value="C">C - Likely within 2 weeks to 3 months</option><option value="D">D - Likely within 2 days to 2 weeks</option><option value="E">E - Occurring now or likely within 2 days</option></select></label>
+              <fieldset class="cmpt-impacts span-2"><legend>Additional impacted areas</legend><label><input type="checkbox" name="cmpt_impacts" value="P"><span>P - People</span></label><label><input type="checkbox" name="cmpt_impacts" value="E"><span>E - Environmental</span></label><label><input type="checkbox" name="cmpt_impacts" value="A"><span>A - Asset / Production</span></label><label><input type="checkbox" name="cmpt_impacts" value="R"><span>R - Reputation / Welfare</span></label></fieldset>
+              <input type="hidden" name="priority" value="6">
+              <div class="cmpt-result span-2"><span>Calculated response</span><strong id="cmptPriorityText">6 - User defined / over 6 months</strong></div>
+            </div>
+          </section>
+          <label><span>Planned start</span><input name="planned_start" type="datetime-local"></label>
+          <label><span>Planned end</span><input name="planned_end" type="datetime-local"></label>
+          <label><span>Reminder days</span><input name="reminder_days" type="number" min="0" value="0"></label>
+          <label class="check-field"><input name="show_in_history" type="checkbox" checked><span>Show in asset history</span></label>
+          <label class="span-2"><span>Observation</span><textarea name="observation" rows="4" required placeholder="Describe the defect or abnormality"></textarea></label>
+          <label class="span-2"><span>Author</span><input name="author" readonly value="{{ current_user.full_name }}"></label>
+        </div>
+        <div class="form-message" id="workRequestMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelWorkRequest">Cancel</button><button type="submit" class="button primary" id="saveWorkRequest"><i data-lucide="save"></i> Save request</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="shiftHandoverModal" aria-hidden="true">
+    <div class="modal shift-handover-modal" role="dialog" aria-modal="true" aria-labelledby="shiftHandoverModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Operations control</span><h2 id="shiftHandoverModalTitle">Create shift handover</h2></div><button class="icon-button" id="closeShiftHandoverModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="shiftHandoverForm">
+        <div class="form-grid">
+          <label><span>Shift date</span><input name="shift_date" type="date" required></label>
+          <label><span>Shift</span><select name="shift_name" required><option>Day shift</option><option>Night shift</option><option>A shift</option><option>B shift</option><option>C shift</option><option>D shift</option></select></label>
+          <label class="span-2"><span>Handover summary</span><textarea name="summary" rows="3" required placeholder="Summarize current plant status and priorities"></textarea></label>
+          <label class="span-2"><span>Operational notes</span><textarea name="operational_notes" rows="3" placeholder="Operating restrictions, monitoring, and follow-up"></textarea></label>
+          <label class="span-2"><span>Safety notes</span><textarea name="safety_notes" rows="2" placeholder="Outstanding isolations, permits, and safety concerns"></textarea></label>
+          <fieldset class="span-2 handover-event-selector"><legend>Open Event Log entries</legend><div id="handoverEventChoices"><div class="loading">Loading open entries...</div></div></fieldset>
+        </div>
+        <div class="form-message" id="shiftHandoverMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelShiftHandover">Cancel</button><button type="submit" class="button primary"><i data-lucide="save"></i> Save draft</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="scheduleTypeModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="scheduleTypeModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Preventive maintenance</span><h2 id="scheduleTypeModalTitle">Create schedule type</h2></div><button class="icon-button" id="closeScheduleTypeModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="scheduleTypeForm">
+        <div class="form-grid">
+          <label class="span-2"><span>Name</span><input name="name" required></label>
+          <label><span>Calendar unit</span><select name="calendar_unit" required><option value="day">Days</option><option value="week">Weeks</option><option value="month" selected>Months</option><option value="year">Years</option></select></label>
+          <label><span>Every</span><input name="interval_count" type="number" min="1" value="1" required></label>
+          <label><span>Meter type (optional)</span><input name="meter_type" placeholder="Running hours, starts, cycles..."></label>
+          <label><span>Meter interval</span><input name="meter_interval" type="number" min="0.01" step="any" placeholder="Required with meter type"></label>
+          <label class="span-2"><span>Generated task type</span><select name="task_type"><option>Preventive work order</option><option>Inspection task</option><option>Official inspection</option><option>Service task</option></select></label>
+          <label><span>Early tolerance (days)</span><input name="early_tolerance_days" type="number" min="0" value="0"></label>
+          <label><span>Late tolerance (days)</span><input name="late_tolerance_days" type="number" min="0" value="0"></label>
+          <label><span>Strategy</span><select name="strategy" required><option value="interval_followup">Interval follow-up</option><option value="fixed_schedule">Fixed schedule</option><option value="official_inspection">Official inspection</option></select></label>
+          <label><span>Weekend adjustment</span><select name="weekend_adjustment"><option value="none">No adjustment</option><option value="next_working_day">Next working day</option><option value="previous_working_day">Previous working day</option></select></label>
+          <label class="span-2"><span>Description</span><textarea name="description" rows="3"></textarea></label>
+        </div>
+        <div class="form-message" id="scheduleTypeMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelScheduleType">Cancel</button><button type="submit" class="button primary" id="saveScheduleType"><i data-lucide="save"></i> Save type</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="workCompletionModal" aria-hidden="true">
+    <div class="modal work-completion-modal" role="dialog" aria-modal="true" aria-labelledby="workCompletionModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Corrective maintenance execution</span><h2 id="workCompletionModalTitle">Complete work order</h2></div><button class="icon-button" id="closeWorkCompletionModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="workCompletionForm">
+        <div class="pm-task-summary" id="workCompletionSummary"></div>
+        <div class="form-grid">
+          <label class="span-2"><span>Work performed / completion summary</span><textarea name="completion_summary" rows="4" required placeholder="Record the repair, checks performed, and final equipment condition"></textarea></label>
+          <label><span>Failure mode</span><select name="failure_mode"><option value="">No failure classification</option><option>Mechanical</option><option>Electrical</option><option>Instrumentation / control</option><option>Process</option><option>External cause</option><option>Other</option></select></label>
+          <label><span>Actual man-hours</span><input name="actual_man_hours" type="number" min="0" step=".25" required></label>
+          <label class="span-2"><span>Failure cause / technical finding</span><textarea name="failure_cause" rows="3" placeholder="Record the confirmed or suspected root cause"></textarea></label>
+          <label><span>Equipment downtime started</span><input name="downtime_started_at" type="datetime-local"></label>
+          <label><span>Equipment restored</span><input name="restored_at" type="datetime-local"></label>
+          <fieldset class="span-2 completion-artisans"><legend>Artisan actual hours</legend><div id="workCompletionArtisans"></div></fieldset>
+        </div>
+        <div class="form-message" id="workCompletionMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelWorkCompletion">Cancel</button><button type="submit" class="button primary"><i data-lucide="check-circle-2"></i> Submit for work check</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="recurrentTaskModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="recurrentTaskModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Preventive maintenance</span><h2 id="recurrentTaskModalTitle">Create recurrent task</h2></div><button class="icon-button" id="closeRecurrentTaskModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="recurrentTaskForm">
+        <div class="form-grid">
+          <label class="span-2"><span>Name</span><input name="name" required></label>
+          <label><span>Schedule type</span><select name="schedule_type_id" id="recurrentScheduleType" required></select></label>
+          <div class="form-field"><span>Primary asset</span><div class="asset-picker" data-asset-picker="recurrentPrimaryAsset"><input type="hidden" name="primary_asset_id" id="recurrentPrimaryAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search KKS or description" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div></div>
+          <label><span>Type of work</span><input name="type_of_work" required value="Preventive inspection"></label>
+          <label><span>Main department</span><select name="main_department" required><option>Mechanical Maintenance</option><option>Electrical Maintenance</option><option>Control &amp; Instrumentation</option><option>Operations</option></select></label>
+          <label><span>Start date</span><input name="start_date" type="date" required></label>
+          <label><span>End date</span><input name="end_date" type="date"></label>
+          <label><span>Repetitions</span><input name="repetitions" type="number" min="1" placeholder="Unlimited"></label>
+          <label><span>Reminder days</span><input name="reminder_days" type="number" min="0" value="7"></label>
+          <label><span>Duration hours</span><input name="duration_hours" type="number" min="0" step=".5" value="2"></label>
+          <label class="span-2"><span>Work schedule</span><textarea name="work_schedule" rows="3"></textarea></label>
+          <fieldset class="span-2 recurrent-asset-group"><legend>Asset group <span id="recurrentAssetGroupCount">0 additional</span></legend>
+            <div class="asset-group-add-row">
+              <div class="asset-picker" data-asset-picker="recurrentGroupAsset" data-optional="true"><input type="hidden" id="recurrentGroupAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search additional KKS asset" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div>
+              <button type="button" class="button secondary" id="addRecurrentGroupAsset"><i data-lucide="plus"></i> Add asset</button>
+            </div>
+            <div id="recurrentAssetGroupList" class="recurrent-asset-group-list"><div class="asset-picker-empty">No additional assets selected.</div></div>
+          </fieldset>
+          <label class="span-2"><span>Created by</span><input name="created_by" readonly value="{{ current_user.full_name }}"></label>
+        </div>
+        <div class="form-message" id="recurrentTaskMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelRecurrentTask">Cancel</button><button type="submit" class="button primary" id="saveRecurrentTask"><i data-lucide="save"></i> Save recurrent task</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="preventiveTaskModal" aria-hidden="true">
+    <div class="modal preventive-task-modal" role="dialog" aria-modal="true" aria-labelledby="preventiveTaskModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Preventive maintenance execution</span><h2 id="preventiveTaskModalTitle">Preventive task</h2></div><button class="icon-button" id="closePreventiveTaskModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="preventiveTaskForm">
+        <input type="hidden" name="task_id">
+        <div class="pm-task-summary" id="preventiveTaskSummary"></div>
+        <div class="form-grid">
+          <label><span>Task number</span><input name="task_no" readonly></label>
+          <label><span>Status</span><input name="status" readonly></label>
+          <label><span>Target date</span><input name="target_date" readonly></label>
+          <label><span>Execution window</span><input name="execution_window" readonly></label>
+          <label><span>Completed by</span><input name="completed_by" readonly></label>
+          <label><span>Completion date and time</span><input name="completed_at" type="datetime-local" required></label>
+          <label><span>Actual man-hours</span><input name="actual_man_hours" type="number" min="0" step=".25" required></label>
+          <label class="span-2"><span>Completion feedback / work performed</span><textarea name="feedback" rows="5" required placeholder="Record inspections, work performed, findings, and final equipment condition"></textarea></label>
+        </div>
+        <div class="form-message" id="preventiveTaskMessage"></div>
+        <div class="modal-footer"><a class="button secondary pm-task-print" id="printPreventiveTask" href="#" target="_blank" rel="noopener"><i data-lucide="printer"></i> Print task</a><button type="button" class="button secondary" id="cancelPreventiveTask">Close</button><button type="submit" class="button primary" id="savePreventiveCompletion"><i data-lucide="check-circle-2"></i> Complete task</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="safetyPermitModal" aria-hidden="true">
+    <div class="modal permit-modal" role="dialog" aria-modal="true" aria-labelledby="safetyPermitModalTitle">
+      <div class="modal-header"><div><span class="eyebrow">Safety permit</span><h2 id="safetyPermitModalTitle">Prepare permit</h2></div><button class="icon-button" id="closeSafetyPermitModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+      <form id="safetyPermitForm">
+        <div class="form-grid">
+          <label><span>Form type</span><select name="form_type" id="safetyPermitType" required><option value="electrical_ptw">Electrical Permit to Work</option><option value="mechanical_ptw">Mechanical Permit to Work</option><option value="electrical_loa">Electrical Limitation of Access</option><option value="mechanical_loa">Mechanical Limitation of Access</option></select></label>
+          <label><span>Linked work order</span><select name="work_order_id" id="safetyPermitWorkOrder"><option value="">No linked work order</option></select></label>
+          <div class="form-field span-2"><span>Asset to be worked on</span><div class="asset-picker" data-asset-picker="safetyPermitAsset"><input type="hidden" name="asset_id" id="safetyPermitAsset"><div class="asset-picker-control"><i data-lucide="search"></i><input class="asset-picker-input" type="search" placeholder="Search KKS, description, or responsible area" autocomplete="off"><button type="button" class="asset-picker-clear" aria-label="Clear asset"><i data-lucide="x"></i></button></div><div class="asset-picker-results"></div></div></div>
+          <label class="span-2"><span>Work to be carried out</span><textarea name="work_description" rows="3" required></textarea></label>
+          <label class="span-2"><span>Location</span><input name="location" required></label>
+          <label><span>Issued to</span><input name="issued_to" required></label>
+          <label><span>Employer</span><input name="employer" required value="Morupule B Power Station"></label>
+          <label class="span-2"><span>Electrical isolations</span><textarea name="electrical_isolations" rows="2"></textarea></label>
+          <label class="span-2"><span>Mechanical isolations</span><textarea name="mechanical_isolations" rows="2"></textarea></label>
+          <label class="span-2"><span>Position of circuit main earths</span><input name="circuit_main_earths"></label>
+          <label><span>Additional earths</span><input name="additional_earths" type="number" min="0" value="0"></label>
+          <label><span>Identity wristlets</span><input name="identity_wristlets" type="number" min="0" value="0"></label>
+          <label class="span-2"><span>Limits of access</span><textarea name="limits_of_access" rows="2"></textarea></label>
+          <fieldset class="span-2 precaution-fieldset"><legend>Safety precautions</legend>
+            <label><input type="checkbox" name="precautions" value="isolate_energy"> All energy sources identified and isolated</label>
+            <label><input type="checkbox" name="precautions" value="lock_tag"> Locks and caution tags applied</label>
+            <label><input type="checkbox" name="precautions" value="prove_dead"> Dead condition proven before work</label>
+            <label><input type="checkbox" name="precautions" value="drain_vent"> Pressure released, drained and vented</label>
+            <label><input type="checkbox" name="precautions" value="barrier"> Work area barriers installed</label>
+            <label><input type="checkbox" name="precautions" value="ppe"> Required PPE confirmed</label>
+          </fieldset>
+          <label><span>Hot work</span><select name="hot_work"><option value="na">N/A</option><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label><span>Height work</span><select name="height_work"><option value="na">N/A</option><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label><span>Confined space</span><select name="confined_space"><option value="na">N/A</option><option value="no">No</option><option value="yes">Yes</option></select></label>
+          <label><span>Prepared by</span><input name="prepared_by" readonly value="{{ current_user.full_name }}"></label>
+          <label class="check-field span-2"><input name="precautions_confirmed" type="checkbox"><span>Safety precautions have been checked and selected</span></label>
+        </div>
+        <div class="form-message" id="safetyPermitMessage"></div>
+        <div class="modal-footer"><button type="button" class="button secondary" id="cancelSafetyPermit">Cancel</button><button type="submit" class="button primary" id="saveSafetyPermit"><i data-lucide="save"></i> Save permit</button></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

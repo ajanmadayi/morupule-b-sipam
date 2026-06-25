@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Morupule B Shift Handover</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #18252b; font: 12px/1.45 Arial, sans-serif; }
+    .toolbar { padding: 12px 24px; display: flex; justify-content: flex-end; background: #eef1f3; }
+    button { min-height: 36px; padding: 0 15px; border: 0; border-radius: 4px; background: #397b58; color: #fff; font-weight: 700; cursor: pointer; }
+    main { width: min(1120px, calc(100% - 40px)); margin: 24px auto 40px; }
+    header { padding-bottom: 16px; display: flex; justify-content: space-between; gap: 24px; border-bottom: 3px solid #397b58; }
+    .brand { display: flex; gap: 12px; align-items: center; }
+    .mark { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 4px; background: #dbe9dc; color: #25583d; font-weight: 800; }
+    h1 { margin: 0; font-size: 22px; }
+    header p, header small { margin: 3px 0 0; color: #68777e; }
+    .meta { text-align: right; }
+    .summary { margin: 16px 0; display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #dbe2e5; }
+    .summary div { padding: 10px 12px; border-right: 1px solid #dbe2e5; }
+    .summary div:last-child { border-right: 0; }
+    .summary span, .summary strong { display: block; }
+    .summary span { color: #68777e; font-size: 10px; text-transform: uppercase; }
+    .summary strong { margin-top: 3px; font-size: 17px; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { padding: 8px; background: #eef3f1; border: 1px solid #cfd9d5; font-size: 10px; text-align: left; text-transform: uppercase; }
+    td { padding: 9px 8px; vertical-align: top; border: 1px solid #dbe2e5; overflow-wrap: anywhere; }
+    td strong, td small { display: block; }
+    td small { margin-top: 3px; color: #68777e; }
+    .entry { width: 14%; } .event { width: 42%; } .asset { width: 20%; } .status { width: 24%; }
+    .empty { padding: 28px; text-align: center; color: #68777e; }
+    footer { margin-top: 28px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    footer div { padding-top: 28px; border-bottom: 1px solid #68777e; }
+    footer small { display: block; padding-bottom: 5px; color: #68777e; }
+    @media print { .toolbar { display: none; } main { width: 100%; margin: 0; } @page { size: A4 landscape; margin: 12mm; } }
+  </style>
+</head>
+<body>
+  <div class="toolbar"><button type="button" onclick="window.print()">Print handover</button></div>
+  <main>
+    <header>
+      <div class="brand"><div class="mark">SP</div><div><h1>Operations Shift Handover</h1><p>Morupule B Power Station / SI/PAM</p></div></div>
+      <div class="meta"><strong>{{ start }} to {{ end }}</strong><p>{{ logbooks|join(", ") }}</p><small>Generated {{ generated_at }}</small></div>
+    </header>
+    <section class="summary"><div><span>Entries</span><strong>{{ events|length }}</strong></div><div><span>Open issues</span><strong>{{ open_count }}</strong></div><div><span>Linked work requests</span><strong>{{ linked_request_count }}</strong></div></section>
+    <table>
+      <thead><tr><th class="entry">Entry</th><th class="event">Event / Observation</th><th class="asset">KKS / Logbook</th><th class="status">Status / Corrective action</th></tr></thead>
+      <tbody>
+      {% for event in events %}
+        <tr><td><strong>{{ event.entry_no }}</strong><small>{{ event.event_date }}</small><small>{{ event.entry_type }}</small></td><td><strong>{{ event.subject }}</strong><small>{{ event.observation }}</small></td><td><strong>{{ event.kks_code or "-" }}</strong><small>{{ event.asset_description or "No asset linked" }}</small><small>{{ event.source_logbook_name }}</small></td><td><strong>{{ event.state|upper }}</strong><small>{{ event.comment_count }} sub-entries</small>{% for work in event.work_requests %}<small>{{ work.request_no }} / P{{ work.priority }} / {{ work.status }} / {{ work.main_department }}</small>{% else %}<small>No linked work request</small>{% endfor %}</td></tr>
+      {% else %}<tr><td colspan="4" class="empty">No Event Log entries match this handover period.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+    <footer><div><small>Outgoing Shift Leader / Signature</small></div><div><small>Incoming Shift Leader / Signature</small></div></footer>
+  </main>
+</body>
+</html>

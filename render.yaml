@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: morupule-b-sipam
+    runtime: python
+    plan: starter
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /api/health
+    envVars:
+      - key: SIPAM_DATA_DIR
+        value: /var/data
+      - key: SIPAM_COOKIE_SECURE
+        value: "1"
+      - key: SIPAM_SECRET_KEY
+        sync: false
+    disk:
+      name: sipam-data
+      mountPath: /var/data
+      sizeGB: 5

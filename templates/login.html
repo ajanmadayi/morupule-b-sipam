@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in | Morupule B SIPAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260619-readability') }}">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand">
+      <span class="brand-mark">SP</span>
+      <div><strong>SI/PAM</strong><small>Morupule B Power Station</small></div>
+    </section>
+    <section class="login-panel">
+      <span class="eyebrow">Authorized personnel</span>
+      <h1>Sign in</h1>
+      <p>Use your Morupule B employee number and SIPAM password.</p>
+      <form method="post">
+        <label><span>Employee number</span><input name="employee_no" autocomplete="username" required autofocus placeholder="MBPS-0104"></label>
+        <label><span>Password</span><input name="password" type="password" autocomplete="current-password" required></label>
+        {% if error %}<div class="login-error">{{ error }}</div>{% endif %}
+        <button class="button primary" type="submit">Sign in</button>
+      </form>
+      <small class="login-note">Initial development password: SIPAM@2026</small>
+    </section>
+  </main>
+</body>
+</html>
