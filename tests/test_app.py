@@ -2245,6 +2245,15 @@ class MorupuleSipamTestCase(unittest.TestCase):
             },
         )
         self.assertEqual(issued.status_code, 409)
+        cancelled = self.client.patch(
+            f"/api/permits/{permit_id}/transition",
+            json={
+                "action": "cancel",
+                "remarks": "Prepared permit cancelled after failed issue check.",
+            },
+        )
+        self.assertEqual(cancelled.status_code, 200)
+        self.assertEqual(cancelled.get_json()["status"], "cancelled")
 
     def test_infobox_is_generated_from_workflows(self):
         users = self.client.get("/api/users")

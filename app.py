@@ -5988,6 +5988,7 @@ def transition_safety_permit(permit_id: int):
     if permit is None:
         abort(404)
     transitions = {
+        ("prepared", "cancel"): "cancelled",
         ("prepared", "issue"): "issued",
         ("issued", "receive"): "received",
         ("received", "clear"): "cleared",
