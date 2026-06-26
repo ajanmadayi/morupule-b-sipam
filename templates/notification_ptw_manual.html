@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notification to PTW Manual | Morupule B SIPAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260626-manual') }}">
+</head>
+<body class="manual-page">
+  <main class="manual-shell">
+    <header class="manual-header">
+      <div><span class="brand-mark">SP</span></div>
+      <div>
+        <span class="eyebrow">Morupule B SIPAM user manual</span>
+        <h1>Notification to PTW Workflow</h1>
+        <p>How to create a plant notification, convert it to a Work Request, issue a Work Order, control PTW / LoA / SFT, and close the record.</p>
+      </div>
+      <nav>
+        <a class="button secondary" href="/">Back to SIPAM</a>
+        <button class="button primary" id="printManual" type="button">Print / Save PDF</button>
+      </nav>
+    </header>
+
+    <section class="manual-card">
+      <h2>Process Flow</h2>
+      <div class="manual-flow">
+        <article><strong>1</strong><span>Event / Notification</span></article>
+        <article><strong>2</strong><span>Work Request</span></article>
+        <article><strong>3</strong><span>Work Order</span></article>
+        <article><strong>4</strong><span>PTW / LoA / SFT</span></article>
+        <article><strong>5</strong><span>Execution</span></article>
+        <article><strong>6</strong><span>Acceptance & Close</span></article>
+      </div>
+    </section>
+
+    <section class="manual-card">
+      <h2>Roles</h2>
+      <table class="manual-table">
+        <thead><tr><th>Role</th><th>Main responsibility</th></tr></thead>
+        <tbody>
+          <tr><td>Shift Leader</td><td>Create Event Log notification, prepare and transition permits, release work for execution.</td></tr>
+          <tr><td>Maintenance Approver</td><td>Approve Work Requests, approve planning, accept completed work or return for rework.</td></tr>
+          <tr><td>Maintenance Planner</td><td>Prepare Work Order plan, maintenance code, man-hours, permit requirement, supply and artisans.</td></tr>
+          <tr><td>Technician</td><td>Complete assigned execution and enter actual work completion details.</td></tr>
+          <tr><td>System Administrator</td><td>Can perform all roles during commissioning, testing, and system support.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Step-by-Step Procedure</h2>
+      <ol class="manual-steps">
+        <li>
+          <h3>Create Event / Notification</h3>
+          <p>Open <strong>Event Log</strong>, create a main entry, select the affected KKS asset, enter observation, informant, date/time, and keep state as <strong>Open</strong>.</p>
+          <p class="manual-note">In this application, the operational notification starts as an Event Log entry.</p>
+        </li>
+        <li>
+          <h3>Create Work Request</h3>
+          <p>From the open Event detail, click <strong>Create work request</strong>. The KKS must match the Event KKS. Enter work name, type of work, department, CMPT details, and observation.</p>
+          <p>Status after saving: <code>submitted</code>.</p>
+        </li>
+        <li>
+          <h3>Approve Work Request</h3>
+          <p>The Maintenance Approver reviews the request. If valid, click <strong>Approve request</strong>. SIPAM creates the Work Order automatically.</p>
+          <p>Status after approval: Work Request <code>approved</code>, Work Order <code>planning</code>.</p>
+        </li>
+        <li>
+          <h3>Plan Work Order</h3>
+          <p>The Maintenance Planner completes description of work, maintenance code, equipment condition, workplace requirements, expected man-hours, supply, artisans, and permit decision.</p>
+          <p>Permit decision must be one of: <strong>No permit required</strong>, <strong>PTW</strong>, <strong>LoA</strong>, or <strong>SFT</strong>.</p>
+        </li>
+        <li>
+          <h3>Approve Plan</h3>
+          <p>The Maintenance Approver approves the plan. If PTW / LoA / SFT is required, the Work Order moves to permit decision and waits for a linked safety document.</p>
+          <p>Status after approval: Work Order <code>permit_decision</code>, permit status <code>required</code>.</p>
+        </li>
+        <li>
+          <h3>Prepare PTW / LoA / SFT</h3>
+          <p>The Shift Leader opens <strong>PTW, LoA & SFT</strong> or uses the Work Order permit button. Select the correct form type, confirm KKS, enter location, issued-to person, isolations, precautions, and assessments.</p>
+          <p>Status after saving: Permit <code>prepared</code>.</p>
+        </li>
+        <li>
+          <h3>Issue and Receive Permit</h3>
+          <p>Issue the permit after confirming precautions and controller name. The work party must then receive the permit before execution can start.</p>
+          <p>Valid permit sequence: <code>prepared</code> to <code>issued</code> to <code>received</code>.</p>
+        </li>
+        <li>
+          <h3>Confirm Execution</h3>
+          <p>The Shift Leader confirms execution only after the linked permit is <code>received</code>. SIPAM blocks execution if the required permit is missing or only issued.</p>
+        </li>
+        <li>
+          <h3>Complete Work</h3>
+          <p>The responsible technician enters completion summary, actual man-hours, failure mode/cause, downtime start, and restored time if applicable.</p>
+          <p>Status after completion: Work Order <code>work_check</code>.</p>
+        </li>
+        <li>
+          <h3>Clear and Cancel Permit</h3>
+          <p>The Shift Leader clears the work location and cancels the permit after restoration. SIPAM will not allow Work Order acceptance while the linked permit remains prepared, issued, received, or cleared.</p>
+          <p>Final permit status must be <code>cancelled</code>.</p>
+        </li>
+        <li>
+          <h3>Accept and Close Work Order</h3>
+          <p>The Maintenance Approver reviews the completed work. If satisfactory, enter acceptance remarks and click <strong>Accept work</strong>.</p>
+          <p>Final status: Work Order <code>closed</code>. The source Event / Notification closes automatically.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Status Rules</h2>
+      <table class="manual-table">
+        <thead><tr><th>Record</th><th>Status sequence</th><th>Important rule</th></tr></thead>
+        <tbody>
+          <tr><td>Event / Notification</td><td><code>open</code> to <code>closed</code></td><td>Auto-closes after linked Work Order is accepted.</td></tr>
+          <tr><td>Work Request</td><td><code>submitted</code> to <code>approved</code> or <code>declined</code></td><td>Only open Events can originate a Work Request.</td></tr>
+          <tr><td>Work Order</td><td><code>planning</code> to <code>plan_approval</code> to <code>permit_decision</code> to <code>execution</code> to <code>work_check</code> to <code>closed</code></td><td>Required planning fields must be completed before plan submission.</td></tr>
+          <tr><td>Permit</td><td><code>prepared</code> to <code>issued</code> to <code>received</code> to <code>cleared</code> to <code>cancelled</code></td><td>Work Order cannot close until linked permit is cancelled.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Sample Record</h2>
+      <p>Commissioning sample created in the live app:</p>
+      <div class="manual-reference">
+        <code>EL-2026-0005</code>
+        <code>WR-2026-0004</code>
+        <code>WO-2026-0002</code>
+        <code>PTW-2026-0003</code>
+      </div>
+      <p>Search these numbers in Event Log, Corrective Maintenance, or PTW, LoA & SFT to see the completed example.</p>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='manual.js', v='20260626-manual') }}"></script>
+</body>
+</html>

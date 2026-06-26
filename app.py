@@ -2106,6 +2106,15 @@ def index():
     return render_template("index.html", current_user=row_to_dict(g.current_user))
 
 
+@app.get("/manual/notification-to-ptw")
+@login_required
+def notification_to_ptw_manual():
+    return render_template(
+        "notification_ptw_manual.html",
+        current_user=row_to_dict(g.current_user),
+    )
+
+
 @app.get("/print/<entity_type>/<int:entity_id>")
 @login_required
 def print_document(entity_type: str, entity_id: int):
