@@ -4,45 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Maintenance Performance Report | Morupule B</title>
-  <style>
-    :root { --ink:#17272d; --muted:#5f7077; --line:#cfd9dc; --green:#2f7555; --red:#a53f42; --blue:#2e687b; }
-    * { box-sizing: border-box; }
-    body { margin: 0; color: var(--ink); background: #eef2f3; font: 10px Arial, sans-serif; }
-    .toolbar { position: sticky; top: 0; z-index: 2; padding: 10px; background: #17272d; text-align: right; }
-    .toolbar button { padding: 9px 14px; border: 0; border-radius: 3px; color: #fff; background: var(--green); font-weight: 700; cursor: pointer; }
-    main { width: min(1120px, calc(100% - 28px)); margin: 18px auto; padding: 24px 28px; background: #fff; box-shadow: 0 2px 12px #1b343d22; }
-    header { display: flex; justify-content: space-between; gap: 24px; padding-bottom: 14px; border-bottom: 3px solid var(--green); }
-    .brand { font-size: 15px; font-weight: 800; letter-spacing: 0; }
-    h1 { margin: 5px 0 0; font-size: 22px; letter-spacing: 0; }
-    .meta { min-width: 270px; display: grid; grid-template-columns: auto 1fr; gap: 5px 12px; align-content: end; }
-    .meta span { color: var(--muted); }
-    .meta strong { text-align: right; }
-    h2 { margin: 18px 0 8px; font-size: 13px; }
-    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-    .metric { min-height: 66px; padding: 10px; border: 1px solid var(--line); border-top: 3px solid var(--blue); }
-    .metric.green { border-top-color: var(--green); }
-    .metric.red { border-top-color: var(--red); }
-    .metric small, .metric strong, .metric span { display: block; }
-    .metric small { color: var(--muted); font-weight: 700; text-transform: uppercase; }
-    .metric strong { margin: 5px 0 3px; font-size: 20px; }
-    .metric span { color: var(--muted); }
-    .two-column { display: grid; grid-template-columns: 1.2fr .8fr; gap: 14px; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 6px 7px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
-    th { background: #edf2f3; font-size: 9px; text-transform: uppercase; }
-    td.number, th.number { text-align: right; }
-    .status-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .status-box { border: 1px solid var(--line); }
-    .status-box h3 { margin: 0; padding: 7px; background: #edf2f3; font-size: 10px; }
-    .status-row { display: flex; justify-content: space-between; padding: 5px 7px; border-top: 1px solid var(--line); text-transform: capitalize; }
-    .empty { padding: 8px; color: var(--muted); }
-    footer { margin-top: 18px; padding-top: 8px; display: flex; justify-content: space-between; color: var(--muted); border-top: 1px solid var(--line); }
-    @media print { body { background: #fff; } .toolbar { display: none; } main { width: 100%; margin: 0; padding: 0; box-shadow: none; } @page { size: A4 landscape; margin: 10mm; } }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='print.css') }}">
+  <script defer src="{{ url_for('static', filename='print.js') }}"></script>
 </head>
 <body>
-  <div class="toolbar"><button type="button" onclick="window.print()">Print / Save PDF</button></div>
-  <main>
+  <div class="toolbar"><button type="button" id="printCommand">Print / Save PDF</button></div>
+  <main class="report-page management-report">
     <header>
       <div><div class="brand">SI/PAM | Morupule B Power Station</div><h1>Monthly Maintenance Performance Report</h1></div>
       <div class="meta">

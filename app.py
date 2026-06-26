@@ -5729,7 +5729,7 @@ def get_safety_permit(permit_id: int) -> dict:
         """
         SELECT
             p.*, a.kks_code, a.description AS asset_description,
-            wo.order_no, wr.request_no
+            wo.order_no, wr.request_no, wr.main_department
         FROM safety_permits p
         JOIN assets a ON a.id = p.asset_id
         LEFT JOIN work_orders wo ON wo.id = p.work_order_id

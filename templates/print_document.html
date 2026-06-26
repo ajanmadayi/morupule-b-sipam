@@ -4,66 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ document_no }} | {{ title }}</title>
-  <style>
-    @page { size: A4; margin: 14mm; }
-    * { box-sizing: border-box; }
-    body { margin: 0; color: #18252b; font: 10px Arial, sans-serif; }
-    header { display: grid; grid-template-columns: 58px 1fr 155px; border: 1px solid #263b43; }
-    .mark { display: grid; place-items: center; background: #18343c; color: white; font-size: 17px; font-weight: bold; }
-    .heading { padding: 10px 12px; }
-    .heading strong, .heading span { display: block; }
-    .heading strong { font-size: 16px; }
-    .heading span { margin-top: 4px; color: #52636a; }
-    .document-meta { border-left: 1px solid #263b43; }
-    .document-meta div { padding: 5px 7px; display: flex; justify-content: space-between; border-bottom: 1px solid #cfd8dc; }
-    .document-meta div:last-child { border-bottom: 0; }
-    h1 { margin: 18px 0 8px; font-size: 18px; }
-    h2 { margin: 15px 0 0; padding: 6px 8px; background: #eaf0f2; border: 1px solid #b9c7cc; font-size: 11px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; border-left: 1px solid #b9c7cc; }
-    .grid div { min-height: 43px; padding: 7px 8px; border-right: 1px solid #b9c7cc; border-bottom: 1px solid #b9c7cc; }
-    label { display: block; margin-bottom: 4px; color: #68777e; font-size: 8px; font-weight: bold; text-transform: uppercase; }
-    p { margin: 0; line-height: 1.5; white-space: pre-wrap; }
-    .text-block { min-height: 70px; padding: 9px; border: 1px solid #b9c7cc; border-top: 0; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 6px; border: 1px solid #b9c7cc; text-align: left; vertical-align: top; }
-    th { background: #f2f5f6; font-size: 8px; text-transform: uppercase; }
-    .check { font-weight: bold; }
-    .signatures { display: grid; grid-template-columns: 1fr 1fr; }
-    .signature { min-height: 65px; padding: 8px; border: 1px solid #b9c7cc; border-top: 0; }
-    footer { margin-top: 16px; padding-top: 6px; display: flex; justify-content: space-between; border-top: 1px solid #b9c7cc; color: #68777e; font-size: 8px; }
-    .print-command { position: fixed; top: 12px; right: 12px; padding: 9px 13px; border: 0; background: #397b58; color: white; font-weight: bold; cursor: pointer; }
-    .official-form { color: #111; font-size: 9px; }
-    .official-title { margin: 8px 0 6px; display: grid; grid-template-columns: 1fr 205px; gap: 8px; align-items: start; }
-    .official-title h1 { margin: 0; font-size: 16px; text-align: center; }
-    .official-title .meta-box { border: 1px solid #111; }
-    .official-title .meta-box div { min-height: 20px; padding: 3px 5px; display: flex; justify-content: space-between; border-bottom: 1px solid #111; }
-    .official-title .meta-box div:last-child { border-bottom: 0; }
-    .plant-strip { margin-bottom: 6px; padding: 4px 6px; border: 1px solid #111; text-align: center; font-weight: 700; }
-    .official-grid { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid #111; border-left: 1px solid #111; }
-    .official-grid.two { grid-template-columns: repeat(2, 1fr); }
-    .official-grid .span-2 { grid-column: span 2; }
-    .official-grid .span-3 { grid-column: span 3; }
-    .official-grid .span-4 { grid-column: 1 / -1; }
-    .official-cell { min-height: 25px; padding: 4px 5px; border-right: 1px solid #111; border-bottom: 1px solid #111; }
-    .official-cell label { margin: 0 0 2px; color: #111; font-size: 7px; }
-    .official-note { margin: 6px 0; padding: 5px 6px; border: 1px solid #111; line-height: 1.35; }
-    .official-section { margin-top: 7px; border: 1px solid #111; break-inside: avoid; }
-    .official-section h2 { margin: 0; padding: 4px 6px; border: 0; border-bottom: 1px solid #111; background: #e7e7e7; color: #111; font-size: 10px; }
-    .official-section .body { padding: 5px 6px; line-height: 1.4; }
-    .official-section p { line-height: 1.4; }
-    .official-line-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; border-top: 1px solid #111; }
-    .official-line-grid div { min-height: 32px; padding: 4px 5px; border-right: 1px solid #111; }
-    .official-line-grid div:last-child { border-right: 0; }
-    .declaration-table th, .declaration-table td { height: 24px; border-color: #111; }
-    .declaration-table th { background: #e7e7e7; color: #111; }
-    .wo-heading { margin: 8px 0 6px; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid #111; border-left: 1px solid #111; }
-    .wo-heading div { min-height: 24px; padding: 4px 5px; border-right: 1px solid #111; border-bottom: 1px solid #111; }
-    .official-footer { margin-top: 8px; display: flex; justify-content: space-between; color: #111; font-size: 9px; }
-    @media print { .print-command { display: none; } }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='print.css') }}">
+  <script defer src="{{ url_for('static', filename='print.js') }}"></script>
 </head>
 <body>
-  <button class="print-command" onclick="window.print()">Print / Save PDF</button>
+  <button class="print-command" id="printCommand" type="button">Print / Save PDF</button>
+  {% if entity_type not in ("corrective", "permit") %}
   <header>
     <div class="mark">SP</div>
     <div class="heading"><strong>Morupule B Power Station</strong><span>SI/PAM Controlled Record</span></div>
@@ -74,6 +20,7 @@
     </div>
   </header>
   <h1>{{ title }}</h1>
+  {% endif %}
 
   {% if entity_type == "event" %}
   <div class="grid">
@@ -88,81 +35,99 @@
     {% for row in record.comments %}<tr><td>{{ row.entry_no }}</td><td>{{ row.observation }}</td><td>{{ row.created_by }}<br>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No sub-entries.</td></tr>{% endfor %}
   </table>
   {% elif entity_type == "corrective" %}
-  <section class="official-form">
-    <div class="wo-heading">
-      <div><label>Work Order</label><strong>{{ record.order_no or "-" }}</strong></div>
-      <div><label>Work Request</label><strong>{{ record.request_no }}</strong></div>
-      <div><label>Start Date</label>{{ record.planned_start or record.created_at }}</div>
-      <div><label>End Date</label>{{ record.planned_end or "-" }}</div>
-      <div><label>KKS</label>{{ record.kks_code }}</div>
-      <div><label>Location / Asset</label>{{ record.asset_description or "-" }}</div>
-      <div><label>Main Department</label>{{ record.main_department }}</div>
-      <div><label>Print Date</label>{{ printed_at }}</div>
+  {% set wo_start_date = (record.planned_start or record.created_at or "")[:10] %}
+  {% set wo_end_date = record.planned_end[:10] if record.planned_end else "-" %}
+  {% set wo_print_date = printed_at[:10] ~ " " ~ printed_at[11:] %}
+  <section class="wo-form">
+    <div class="wo-top">
+      <div class="wo-flash">SP</div>
+      <div class="wo-title">
+        <div>Morupule B Power Station - Palapye 4x150 MW</div>
+        <strong>Work Order: {{ record.order_no or "-" }}</strong>
+        <strong>{{ record.name or record.observation }}</strong>
+      </div>
+      <div class="wo-brand">steag</div>
     </div>
-    <div class="plant-strip">Morupule B Power Station - Palapye 4x150 MW</div>
-
-    <section class="official-section">
-      <h2>1. Details</h2>
-      <div class="body">
-        <div class="official-grid">
-          <div class="official-cell span-2"><label>Originator</label>{{ record.author or record.created_by or "-" }}</div>
-          <div class="official-cell"><label>Approved by</label>{{ record.approved_by or "-" }}</div>
-          <div class="official-cell"><label>Priority</label>{{ record.priority }}{% if record.target_response_at %} - Target {{ record.target_response_at }}{% endif %}</div>
-          <div class="official-cell span-2"><label>Maintenance Code</label>{{ record.maintenance_code or "-" }}</div>
-          <div class="official-cell"><label>PTW / LoA / SFT</label>{{ record.permit_requirement|upper }}</div>
-          <div class="official-cell"><label>Workflow</label>{{ record.workflow_step or record.status }}</div>
-        </div>
-        <div class="official-note"><strong>Description of Request:</strong><br>{{ record.observation }}</div>
-        <div class="official-note"><strong>Remarks (Scaffolding etc):</strong><br>{{ record.workplace_requirements or "-" }}</div>
+    <div class="wo-meta">
+      <div>
+        <p><span>Maintenance Code:</span> {{ record.maintenance_code or "Other" }}</p>
+        <p><span>Location:</span> {{ record.location or "" }}</p>
+        <p><span>Asset:</span> {{ record.asset_description or "-" }}</p>
+        <p><span>KKS:</span> {{ record.kks_code }}</p>
+        <p><span>Main Department:</span> {{ record.main_department }}</p>
       </div>
-    </section>
-
-    <section class="official-section">
-      <h2>2. Job Specification (To be filled in by Maintenance Section)</h2>
-      <div class="body">
-        <div class="official-grid">
-          <div class="official-cell span-2"><label>Plan for</label>{{ record.planned_by or "-" }}</div>
-          <div class="official-cell"><label>Estimated Hours</label>{{ record.expected_man_hours if record.expected_man_hours is not none else "0" }}</div>
-          <div class="official-cell"><label>Equipment Condition</label>{{ record.equipment_condition or "-" }}</div>
-        </div>
-        <div class="official-note"><strong>Description of Work:</strong><br>{{ record.description_of_work or "Not yet planned." }}</div>
-        <table>
-          <tr><th>Stores Order Number</th><th>Date Ordered</th><th>By</th><th>Material / Supply</th><th>Quantity</th></tr>
-          {% for row in record.supplies %}
-          <tr><td>{{ row.store_order_no or "-" }}</td><td>-</td><td>{{ row.created_by or "-" }}</td><td>{{ row.description }}</td><td>{{ row.quantity or "-" }} {{ row.unit or "" }}</td></tr>
-          {% else %}
-          <tr><td colspan="5">No stores or supply items recorded.</td></tr>
-          {% endfor %}
-        </table>
+      <div>
+        <p><span>Work Request:</span> {{ record.request_no }}</p>
+        <p><span>Start Date:</span> {{ wo_start_date }}</p>
+        <p><span>End Date:</span> {{ wo_end_date }}</p>
+        <p><span>Print Date:</span> {{ wo_print_date }}</p>
       </div>
-    </section>
+    </div>
 
-    <section class="official-section">
-      <h2>3. Artisans</h2>
-      <table class="declaration-table">
-        <tr><th>Artisan</th><th>Co. Number</th><th>Date</th><th>x 1</th><th>x 1.5</th><th>x 2</th><th>Actual Hours</th></tr>
-        {% for row in record.artisans %}
-        <tr><td>{{ row.person_name }}</td><td>{{ row.employee_no or "-" }}</td><td>{{ record.execution_completed_at or "-" }}</td><td>{{ row.planned_hours }}</td><td></td><td></td><td>{{ row.actual_hours if row.actual_hours is not none else "-" }}</td></tr>
-        {% else %}
-        {% for _ in range(5) %}<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>{% endfor %}
-        {% endfor %}
-      </table>
-      <div class="official-note"><strong>Maintenance Feedback:</strong><br>{{ record.completion_summary or "Pending." }}<br><br><strong>Failure cause / finding:</strong> {{ record.failure_cause or "Not recorded." }}</div>
-    </section>
+    <h2 class="bar">1. Details</h2>
+    <div class="wo-lines two-col">
+      <div>
+        <p><span>Originator:</span><b>{{ record.author or record.created_by or "-" }}</b></p>
+        <p><span>Approved by:</span><b>{{ record.approved_by or "-" }}</b></p>
+        <p><span>PTW:</span><i></i></p>
+        <p><span>Description of Request:</span><b>{{ record.observation }}</b></p>
+        <p><span>Remarks (Scaffolding etc):</span><b>{{ record.workplace_requirements or "" }}</b></p>
+      </div>
+      <div>
+        <p><span>Signature:</span><i></i></p>
+        <p><span>Signature:</span><i></i></p>
+        <p><span>Priority:</span><b>{{ record.priority }}{% if record.target_response_at %} - Target {{ record.target_response_at }}{% endif %}</b></p>
+      </div>
+    </div>
 
-    <section class="official-section">
-      <h2>4. Signatures</h2>
-      <div class="official-line-grid">
-        <div><label>Permit to Work (PTW) Number</label>{{ record.linked_permit_no or "-" }}</div>
-        <div><label>Checked by / Signature</label>{{ record.accepted_by or "-" }}</div>
-        <div><label>Name / Date</label>{{ record.accepted_at or "-" }}</div>
+    <h2 class="bar">2. Job Specification (To be filled in by Maintenance Section)</h2>
+    <div class="wo-lines two-col job-spec">
+      <div>
+        <p><span>Plan for:</span><i></i></p>
+        <p><span>Description of Work:</span><b>{{ record.description_of_work or "Not yet planned." }}</b></p>
+        <p><span>Estimated Hours:</span><b>{{ record.expected_man_hours if record.expected_man_hours is not none else "0" }}</b></p>
+        <p><span>Stores Order Number:</span><i></i></p>
+        <p><span>Date ordered:</span><i></i></p>
       </div>
-      <div class="official-line-grid">
-        <div><label>Completed by / Signature</label>{{ record.execution_completed_by or "-" }}</div>
-        <div><label>Actual man-hours</label>{{ record.actual_man_hours if record.actual_man_hours is not none else "-" }}</div>
-        <div><label>Work Order No.</label>{{ record.order_no or "-" }}</div>
+      <div>
+        <p><span>Signature:</span><i></i></p>
+        <p class="spacer"></p>
+        <p><span>Signature:</span><i></i></p>
+        <p><span>By:</span><i></i></p>
       </div>
-    </section>
+    </div>
+
+    <h2 class="bar">3. Artisans</h2>
+    <table class="wo-artisans">
+      <tr><th>Artisan</th><th>Co. Number</th><th>Date</th><th>x 1</th><th>x 1.5</th><th>x 2</th></tr>
+      <tr>
+        <td>{% for row in record.artisans %}{{ row.person_name }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for row in record.artisans %}{{ row.employee_no or "" }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for row in record.artisans %}{{ record.execution_completed_at or "" }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td>{% for row in record.artisans %}{{ row.planned_hours }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+    <div class="wo-feedback">
+      <span>Maintenance Feedback:</span>
+      <p>{{ record.completion_summary or "" }}</p>
+      <div class="wo-checks"><span>Yes:</span><b></b><span>No:</span><b></b></div>
+    </div>
+
+    <h2 class="bar">4. Signatures</h2>
+    <div class="wo-signatures">
+      <p><span>Permit to Work (PTW) Number:</span><i>{{ record.linked_permit_no or "" }}</i></p>
+      <div>
+        <p><span>Name:</span><i></i></p>
+        <p><span>Signature:</span><i></i></p>
+      </div>
+      <div>
+        <p><span>Name:</span><i></i></p>
+        <p><span>Checked by Signature:</span><i></i></p>
+      </div>
+    </div>
+    <div class="wo-footer"><span>Work Order No. {{ record.order_no or "-" }}</span><span>Page 1 of 1</span></div>
   </section>
   {% elif entity_type == "preventive_task" %}
   <div class="grid">
@@ -219,137 +184,85 @@
   {% set discipline = "Electrical" if form_type[:10] == "electrical" else "Mechanical" %}
   {% set form_code = "LOA" if form_type[-3:] == "loa" else ("SFT" if form_type[-3:] == "sft" else "PTW") %}
   {% set form_title = discipline ~ " Limitation-of-Access" if form_code == "LOA" else (discipline ~ " Sanction-for-Test" if form_code == "SFT" else discipline ~ " Permit-to-Work") %}
-  <section class="official-form">
-    <div class="official-title">
-      <h1>{{ form_title }}</h1>
-      <div class="meta-box">
-        <div><span>{{ form_code }} No.</span><strong>{{ record.permit_no }}</strong></div>
-        <div><span>Request No.</span><strong>{{ record.request_no or "-" }}</strong></div>
-        <div><span>Work Order</span><strong>{{ record.order_no or "-" }}</strong></div>
+  {% set permit_from = (record.issued_at or record.created_at or "")[:16] %}
+  {% set permit_to = record.cancelled_at[:16] if record.cancelled_at else "0" %}
+  <section class="safety-form">
+    <div class="safety-top">
+      <div class="wo-flash">SP</div>
+      <div class="safety-title">
+        <div>Morupule B Power Station - Palapye 4x150 MW</div>
+        <strong>{{ form_title }}</strong>
+        {% if form_code != "LOA" %}<span>LOB No.: {{ record.order_no or "-" }} &nbsp;&nbsp;&nbsp;&nbsp; Key No.: 1</span>{% endif %}
+      </div>
+      <div class="wo-brand">steag</div>
+      <div class="safety-meta left">
+        <p><span>{{ form_code }} No.:</span> {{ record.permit_no }}</p>
+        <p><span>Location:</span> {{ record.location }}</p>
+        <p><span>Asset:</span> {{ record.kks_code }}</p>
+        <p><span>KKS:</span> {{ record.kks_code }}</p>
+        <p><span>Equipment:</span> {{ record.asset_description or "-" }}</p>
+      </div>
+      <div class="safety-meta right">
+        <p><span>Request No.:</span> {{ record.request_no or "-" }}</p>
+        <p><span>Valid from:</span> {{ permit_from }}</p>
+        <p><span>Valid to:</span> {{ permit_to }}</p>
+        <p><span>Dept.:</span> {{ record.main_department or record.employer or "-" }}</p>
       </div>
     </div>
-    <div class="plant-strip">Morupule B Power Station - Palapye 4x150 MW</div>
-    <div class="official-grid">
-      <div class="official-cell"><label>Location</label>{{ record.location }}</div>
-      <div class="official-cell"><label>Valid from</label>{{ record.issued_at or record.created_at }}</div>
-      <div class="official-cell"><label>Valid to</label>{{ record.cancelled_at or "-" }}</div>
-      <div class="official-cell"><label>KKS</label>{{ record.kks_code }}</div>
-      <div class="official-cell span-2"><label>Equipment</label>{{ record.asset_description or "-" }}</div>
-      <div class="official-cell"><label>Department</label>{{ record.employer or "-" }}</div>
-      <div class="official-cell"><label>Asset</label>{{ record.kks_code }}</div>
+
+    <p class="safety-intro">{% if form_code == "LOA" %}This form is to be used for work on plant or apparatus for which a permit-to-work or sanction-for-test is not required.{% elif form_code == "SFT" %}This document shall be issued to a Senior Authorised Person in charge of testing and shall be retained by the recipient until the testing is completed or stopped.{% else %}This document shall be issued to a Competent Person in charge of work and shall be retained by the recipient until the work is completed or stopped. The apparatus specified must not be made live until this document is cancelled.{% endif %}</p>
+
+    <h2 class="safety-bar">1.0 Issue</h2>
+    <div class="safety-lines">
+      <p><span>1.1 Issued to (competent person):</span><b>{{ record.issued_to }}</b><span>In the employ of:</span><b>{{ record.employer }}</b></p>
+      <p><span>1.2 Location:</span><b>{{ record.location }}</b></p>
+      <p><span>{{ "1.3 Apparatus to be worked on:" if form_code != "LOA" else "1.3 Work to be carried out:" }}</span><b>{{ record.asset_description if form_code != "LOA" else record.work_description }}</b></p>
+      <p><span>{{ "1.4 Work to be carried out:" if form_code != "LOA" else "1.4 Limits of Access:" }}</span><b>{{ record.work_description if form_code != "LOA" else (record.limits_of_access or "-") }}</b></p>
+      {% if form_code != "LOA" %}<p><span>1.5 Points of isolation:</span><b>{{ record.electrical_isolations or record.mechanical_isolations or "-" }}</b></p><p><span>1.6 Pos. of Circuit Main Earths:</span><b>{{ record.circuit_main_earths or "-" }}</b></p>{% endif %}
+      <p><span>{{ "1.7 Other Precautions:" if form_code != "LOA" else "1.5 Precautions taken:" }}</span><b>{% set selected_count = namespace(value=0) %}{% for row in record.precautions %}{% if row.selected %}{% if selected_count.value > 0 %}, {% endif %}{{ row.precaution_text }}{% set selected_count.value = selected_count.value + 1 %}{% endif %}{% endfor %}{% if selected_count.value == 0 %}-{% endif %}</b></p>
+      {% if form_code != "LOA" %}<p class="safety-gap"><span>1.8 Number of additional earth units issued:</span><b>{{ record.additional_earths }}</b></p>{% endif %}
     </div>
 
-    <div class="official-note">
-      {% if form_code == "LOA" %}
-      This document shall be issued to a Competent Person in charge of work where Permit-to-Work or Sanction-for-Test is not applicable and shall be retained by the recipient until the work is completed or stopped.
-      {% elif form_code == "SFT" %}
-      This document shall be issued to a Senior Authorised Person in charge of testing and shall be retained by the recipient until the testing is completed or stopped.
-      {% else %}
-      This document shall be issued to a Competent Person in charge of work and shall be retained by the recipient until the work is completed or stopped. The apparatus specified must not be made live until this document is cancelled.
-      {% endif %}
-    </div>
+    <h2 class="safety-bar">{{ "1.9" if form_code != "LOA" else "1.6" }} Issuing Senior Authorized Person</h2>
+    <p class="safety-copy">I declare that it is safe to carry out the above work under the conditions specified on this {{ form_title }}.</p>
+    <div class="safety-sign-row"><span>Name: {{ record.issued_by or record.prepared_by }}</span><span>Signature:<i></i></span><span>Date & Time:<i></i></span></div>
 
-    <section class="official-section">
-      <h2>1.0 Issue</h2>
-      <div class="body">
-        <div class="official-grid">
-          <div class="official-cell span-2"><label>1.1 Issued to (competent person)</label>{{ record.issued_to }}</div>
-          <div class="official-cell span-2"><label>In the employ of</label>{{ record.employer }}</div>
-          <div class="official-cell"><label>1.2 Location</label>{{ record.location }}</div>
-          <div class="official-cell span-3"><label>{{ "1.3 Apparatus to be worked on" if form_code != "LOA" else "1.3 Work to be carried out" }}</label>{{ record.asset_description if form_code != "LOA" else record.work_description }}</div>
-          <div class="official-cell span-4"><label>{{ "1.4 Work to be carried out" if form_code != "LOA" else "1.4 Limits of Access" }}</label>{{ record.work_description if form_code != "LOA" else (record.limits_of_access or "-") }}</div>
-          <div class="official-cell span-2"><label>Electrical Isolations</label>{{ record.electrical_isolations or "-" }}</div>
-          <div class="official-cell span-2"><label>Mechanical Isolations</label>{{ record.mechanical_isolations or "-" }}</div>
-          <div class="official-cell span-2"><label>Position of Circuit Main Earths</label>{{ record.circuit_main_earths or "-" }}</div>
-          <div class="official-cell"><label>Additional earth units</label>{{ record.additional_earths }}</div>
-          <div class="official-cell"><label>Identity wristlets</label>{{ record.identity_wristlets }}</div>
-          <div class="official-cell span-4"><label>Other Precautions / Precautions taken</label>{% set selected_count = namespace(value=0) %}{% for row in record.precautions %}{% if row.selected %}{% if selected_count.value > 0 %}, {% endif %}{{ row.precaution_text }}{% set selected_count.value = selected_count.value + 1 %}{% endif %}{% endfor %}{% if selected_count.value == 0 %}-{% endif %}</div>
-        </div>
-        <p>I declare that it is safe to carry out the above work under the conditions specified on this {{ form_title }}.</p>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Issuing Senior Authorised Person</label>{{ record.issued_by or record.prepared_by }}</div>
-        <div><label>Signature</label></div>
-        <div><label>Date & Time</label>{{ record.issued_at or "-" }}</div>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Controller notified / consent</label>{{ record.controller_name or "-" }}</div>
-        <div><label>Location</label>{{ record.location }}</div>
-        <div><label>Date & Time</label>{{ record.issued_at or "-" }}</div>
-      </div>
-    </section>
+    <h2 class="safety-bar">{{ "1.10 Issued with consent of the Controller" if form_code != "LOA" else "1.7 Controller Notified" }}</h2>
+    <div class="safety-sign-row"><span>Name{% if form_code == "LOA" %} of Controller{% endif %}: {{ record.controller_name or "" }}</span><span>Location:<i></i></span><span>Date & Time:<i></i></span></div>
 
-    {% if form_code == "PTW" %}
-    <section class="official-section">
-      <h2>2.0 Declaration by Responsible Person</h2>
-      <div class="body">Is Responsible Person's Declaration applicable? Yes / No &nbsp;&nbsp; Declaration Number: __________</div>
-    </section>
+    {% if form_code in ("PTW", "SFT") %}
+    <h2 class="safety-bar">2.0 Declaration by responsible person to be completed in terms of safety rule E. 1.2, where applicable</h2>
+    <div class="safety-declaration"><span>Is Responsible Person's Declaration applicable?</span><table><tr><td>Yes</td><td></td><td>No</td><td></td><td>{{ form_code }} Number<i></i></td></tr></table></div>
     {% endif %}
 
-    <section class="official-section">
-      <h2>{{ "2.0" if form_code == "LOA" else ("2.0" if form_code == "SFT" else "3.0") }} Receipt</h2>
-      <div class="body">
-        <p>I, ............................................. being the competent person in charge of work, accept responsibility for carrying out work on the apparatus or area detailed on this {{ form_title }} and shall not carry out work on any other apparatus or area.</p>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Name</label>{{ record.received_by or record.issued_to }}</div>
-        <div><label>Signature</label></div>
-        <div><label>Date & Time</label>{{ record.received_at or "-" }}</div>
-      </div>
-    </section>
+    <h2 class="safety-bar">{{ "2.0" if form_code == "LOA" else ("3.0" if form_code == "SFT" else "4.0") }} Receipt</h2>
+    <p class="safety-copy">I, <i></i> being the {{ "Senior Authorised Person" if form_code == "SFT" else "Competent Person" }} in charge of work, declare that I accept responsibility for carrying out work on the apparatus or area detailed on this {{ form_title }} and shall not carry out work on any other apparatus or area.</p>
+    <div class="safety-sign-row"><span>Signature:<i></i></span><span>Date & Time:<i></i></span></div>
 
-    <section class="official-section">
-      <h2>{{ "3.0" if form_code == "LOA" else ("3.0" if form_code == "SFT" else "4.0") }} Clearance</h2>
-      <div class="body">
-        <p>I declare that all persons under my charge have been withdrawn and warned that it is no longer safe to work on the apparatus or area detailed on this document, and that tools, gear and loose material have been removed.</p>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Name of competent person</label>{{ record.cleared_by or "-" }}</div>
-        <div><label>Signature</label></div>
-        <div><label>Date & Time</label>{{ record.cleared_at or "-" }}</div>
-      </div>
-    </section>
+    <h2 class="safety-bar">{{ "3.0" if form_code == "LOA" else ("4.0" if form_code == "SFT" else "5.0") }} Clearance</h2>
+    <p class="safety-copy">I declare that all persons under my charge have been withdrawn and warned that it is no longer safe to work on the apparatus or area detailed on this document, and that tools, gear and loose material have been removed.</p>
+    <div class="safety-sign-row"><span>Name: {{ record.cleared_by or "" }}</span><span>Signature:<i></i></span><span>Date & Time:<i></i></span></div>
 
-    <section class="official-section">
-      <h2>{{ "4.0" if form_code == "LOA" else ("4.0" if form_code == "SFT" else "5.0") }} Cancellation</h2>
-      <div class="body">
-        <p>I declare that this {{ form_title }} has been cancelled with consent/notification of the Controller.</p>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Senior Authorised Person</label>{{ record.cancelled_by or "-" }}</div>
-        <div><label>Signature</label></div>
-        <div><label>Date & Time</label>{{ record.cancelled_at or "-" }}</div>
-      </div>
-      <div class="official-line-grid">
-        <div><label>Name of Controller</label>{{ record.controller_name or "-" }}</div>
-        <div><label>Location</label>{{ record.location }}</div>
-        <div><label>Date & Time</label>{{ record.cancelled_at or "-" }}</div>
-      </div>
-    </section>
+    <h2 class="safety-bar">{{ "4.0" if form_code == "LOA" else ("5.0" if form_code == "SFT" else "6.0") }} Cancellation</h2>
+    <p class="safety-copy">I declare that this {{ form_title }} has been cancelled.</p>
+    <div class="safety-sign-row"><span>Name of Senior Authorised Person: {{ record.cancelled_by or "" }}</span><span>Signature:<i></i></span><span>Date & Time:<i></i></span></div>
+    <h2 class="safety-bar">{{ "4.2" if form_code == "LOA" else ("5.2" if form_code == "SFT" else "6.2") }} Controller notification</h2>
+    <div class="safety-sign-row"><span>Name of Controller: {{ record.controller_name or "" }}</span><span>Location:<i></i></span><span>Date & Time:<i></i></span></div>
 
-    <section class="official-section">
-      <h2>Workman's Declaration</h2>
-      <div class="body">
-        <p>I/We, the undersigned, declare that I/We fully understand the nature of work to be carried out and that the apparatus or area on which it is safe to work has been shown to us.</p>
-      </div>
-      <table class="declaration-table">
-        <tr><th>Name</th><th>Signature</th><th>Date & Time</th></tr>
-        {% for _ in range(10) %}<tr><td>&nbsp;</td><td></td><td></td></tr>{% endfor %}
-      </table>
-    </section>
+    <h2 class="safety-bar">Workman's Declaration</h2>
+    <p class="safety-copy">I/We, the undersigned, declare that I/We fully understand the nature of work to be carried out and that the apparatus or area on which it is safe to work has been shown to us.</p>
+    <table class="safety-workers"><tr><th>Name</th><th>Signature</th><th>Date & Time</th></tr>{% for _ in range(8) %}<tr><td></td><td></td><td></td></tr>{% endfor %}</table>
 
-    <section class="official-section">
-      <h2>Special Assessments</h2>
-      <table><tr><th>Assessment</th><th>Answer</th><th>Remarks</th></tr>{% for row in record.assessments %}<tr><td>{{ row.assessment_type }}</td><td>{{ row.answer }}</td><td>{{ row.remarks or "-" }}</td></tr>{% else %}<tr><td colspan="3">No assessments recorded.</td></tr>{% endfor %}</table>
-    </section>
-    <div class="official-footer"><span>No. {{ record.permit_no }}</span><span>Page 1 of 1</span><span>{{ form_code }}</span></div>
+    <div class="safety-footer"><span>{{ form_code }} No. {{ record.permit_no }}</span><span>Page 1 of 1</span></div>
   </section>
   {% endif %}
 
-  <h2>Supporting attachments</h2>
-  <table><tr><th>Filename</th><th>Uploaded by</th><th>Time</th></tr>
-    {% for row in record.attachments %}<tr><td>{{ row.original_name }}</td><td>{{ row.uploaded_by_name }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No attachments.</td></tr>{% endfor %}
-  </table>
-  <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station SI/PAM</span></footer>
+  {% if entity_type not in ("corrective", "permit") %}
+    <h2>Supporting attachments</h2>
+    <table><tr><th>Filename</th><th>Uploaded by</th><th>Time</th></tr>
+      {% for row in record.attachments %}<tr><td>{{ row.original_name }}</td><td>{{ row.uploaded_by_name }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No attachments.</td></tr>{% endfor %}
+    </table>
+    <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station SI/PAM</span></footer>
+  {% endif %}
 </body>
 </html>
