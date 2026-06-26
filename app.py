@@ -6469,6 +6469,68 @@ def create_retained_backup() -> dict:
         shutil.rmtree(temporary_directory, ignore_errors=True)
 
 
+def create_migration_export() -> Path:
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    export_path = Path(tempfile.gettempdir()) / f"morupule-b-sipam-migration-export-{timestamp}-{uuid.uuid4().hex[:8]}.zip"
+    database = get_db()
+    tables = [
+        row["name"] for row in database.execute(
+            """
+            SELECT name FROM sqlite_master
+            WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+            ORDER BY name
+            """
+        ).fetchall()
+    ]
+    schema_rows = database.execute(
+        """
+        SELECT name, sql FROM sqlite_master
+        WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+        ORDER BY name
+        """
+    ).fetchall()
+    manifest = {
+        "station": "Morupule B Power Station",
+        "export_type": "migration_csv_bundle",
+        "export_created_at": datetime.now().isoformat(timespec="seconds"),
+        "export_created_by": g.current_user["full_name"],
+        "source_database": "SQLite",
+        "target_notes": "Use CSV files and schema reference for MySQL/PostgreSQL migration mapping. Password hashes are included in users.csv and must be handled as sensitive data.",
+        "table_count": len(tables),
+        "tables": [],
+    }
+    with zipfile.ZipFile(export_path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+        schema_text = "\n\n".join(row["sql"] + ";" for row in schema_rows if row["sql"])
+        archive.writestr("schema/sqlite_schema.sql", schema_text)
+        for table in tables:
+            rows = database.execute(f'SELECT * FROM "{table}"').fetchall()
+            columns = rows[0].keys() if rows else [
+                row["name"] for row in database.execute(f'PRAGMA table_info("{table}")').fetchall()
+            ]
+            output = io.StringIO()
+            writer = csv.writer(output)
+            writer.writerow(columns)
+            for row in rows:
+                writer.writerow([row[column] for column in columns])
+            archive.writestr(f"tables/{table}.csv", output.getvalue())
+            manifest["tables"].append({"name": table, "rows": len(rows)})
+        archive.writestr("manifest.json", json.dumps(manifest, indent=2, ensure_ascii=True))
+        archive.writestr(
+            "README.txt",
+            (
+                "Morupule B SIPAM migration export\n\n"
+                "Contents:\n"
+                "- manifest.json: export metadata and row counts\n"
+                "- schema/sqlite_schema.sql: current SQLite table definitions\n"
+                "- tables/*.csv: one CSV file per application table\n\n"
+                "This export is for database migration planning and ETL. "
+                "Use the normal full backup for restore/disaster recovery.\n"
+                "Treat users.csv as sensitive because it contains password hashes.\n"
+            ),
+        )
+    return export_path
+
+
 def verify_backup_file(path: Path, expected_sha256: str | None = None) -> dict:
     archive_hash = file_sha256(path)
     errors: list[str] = []
@@ -6546,6 +6608,18 @@ def download_system_backup():
     backup = create_retained_backup()
     path = Path(app.config["BACKUP_FOLDER"]) / backup["filename"]
     return send_file(path, as_attachment=True, download_name=path.name, mimetype="application/zip")
+
+
+@app.get("/api/system/migration-export")
+@roles_required("System Administrator")
+def download_migration_export():
+    path = create_migration_export()
+    return send_file(
+        path,
+        as_attachment=True,
+        download_name=path.name,
+        mimetype="application/zip",
+    )
 
 
 @app.get("/api/system/backups/<int:backup_id>/download")

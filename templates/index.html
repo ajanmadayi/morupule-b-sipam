@@ -464,7 +464,10 @@
       <section class="view" id="systemView">
         <div class="page-heading">
           <div><span class="eyebrow">Administration / System</span><h2>System Status</h2><p>Database integrity, storage, KKS imports, and backup</p></div>
-          <button class="button primary" id="createSystemBackup"><i data-lucide="archive"></i> Create full backup</button>
+          <div class="page-actions">
+            <a class="button secondary" href="/api/system/migration-export"><i data-lucide="database-zap"></i> Migration export</a>
+            <button class="button primary" id="createSystemBackup"><i data-lucide="archive"></i> Create full backup</button>
+          </div>
         </div>
         <div class="system-health-grid">
           <article><span class="metric-icon green"><i data-lucide="database"></i></span><div><small>Database</small><strong id="systemDatabaseSize">0 MB</strong><span id="systemIntegrity">Checking integrity</span></div></article>
@@ -491,7 +494,7 @@
         </div>
         <section class="panel system-backup-note">
           <i data-lucide="info"></i>
-          <div><strong>Full backup contents</strong><p>The archive contains a consistent SQLite snapshot, uploaded supporting documents, and a system manifest. Store it in an approved secure location.</p></div>
+          <div><strong>Backup and migration exports</strong><p>Full backup contains a consistent SQLite snapshot, uploaded supporting documents, and a system manifest for restore. Migration export contains CSV tables and schema reference for future MySQL/PostgreSQL migration planning.</p></div>
         </section>
       </section>
 
