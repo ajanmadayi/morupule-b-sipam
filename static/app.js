@@ -944,6 +944,10 @@ async function loadAssetWorkspace() {
   const query = document.querySelector("#assetSearch").value.trim();
   const parameters = new URLSearchParams({ limit: "200" });
   if (query) parameters.set("q", query);
+  const exportParameters = new URLSearchParams();
+  if (query) exportParameters.set("q", query);
+  document.querySelector("#downloadAssetDirectory").href =
+    `/api/assets.xlsx${exportParameters.toString() ? `?${exportParameters.toString()}` : ""}`;
   const response = await fetch(`/api/assets?${parameters.toString()}`);
   if (!response.ok) throw new Error("Unable to load KKS hierarchy");
   assetTreeItems = await response.json();

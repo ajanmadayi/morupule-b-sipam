@@ -289,7 +289,10 @@
       </section>
 
       <section class="view" id="assetsView">
-        <div class="page-heading"><div><span class="eyebrow">Assets / Asset directory</span><h2>KKS Asset Directory</h2><p>Process-related identification hierarchy supplied for Morupule B</p></div></div>
+        <div class="page-heading">
+          <div><span class="eyebrow">Assets / Asset directory</span><h2>KKS Asset Directory</h2><p>Process-related identification hierarchy supplied for Morupule B</p></div>
+          <div class="page-actions"><a class="button secondary" id="downloadAssetDirectory" href="/api/assets.xlsx" download><i data-lucide="download"></i> Export</a></div>
+        </div>
         <div class="asset-workspace">
           <aside class="panel asset-browser">
             <div class="asset-search"><i data-lucide="search"></i><input id="assetSearch" type="search" placeholder="Search KKS or description"></div>
@@ -721,6 +724,6 @@
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='app.js', v='20260626-print-refresh') }}"></script>
+  <script src="{{ url_for('static', filename='app.js', v='20260626-kks-export') }}"></script>
 </body>
 </html>

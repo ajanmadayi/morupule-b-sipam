@@ -21,6 +21,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from openpyxl import Workbook
 
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -2751,6 +2752,65 @@ def list_assets():
         parameters,
     ).fetchall()
     return jsonify([row_to_dict(row) for row in rows])
+
+
+@app.get("/api/assets.xlsx")
+@login_required
+def export_assets_workbook():
+    database = get_db()
+    query = str(request.args.get("q") or "").strip()
+    where = []
+    parameters: list[object] = []
+    if query:
+        where.append(
+            "(a.kks_code LIKE ? OR a.description LIKE ? OR COALESCE(a.responsible_area, '') LIKE ?)"
+        )
+        term = f"%{query}%"
+        parameters.extend([term, term, term])
+
+    where_sql = f"WHERE {' AND '.join(where)}" if where else ""
+    rows = database.execute(
+        f"""
+        SELECT
+            a.plant_code, a.system_code, a.equipment_code, a.component_code,
+            a.description, a.kks_code, a.responsible_area, a.hierarchy_level,
+            a.level_no, a.status, p.kks_code AS parent_kks_code,
+            a.source_kind, a.source_row
+        FROM assets a
+        LEFT JOIN assets p ON p.id = a.parent_id
+        {where_sql}
+        ORDER BY a.level_no, a.kks_code
+        """,
+        parameters,
+    )
+
+    workbook = Workbook(write_only=True)
+    sheet = workbook.create_sheet("kks_export")
+    sheet.append([
+        "PLANT CODE", "SYSTEM CODE", "EQUIPMENT CODE", "COMPONENT CODE",
+        "DESCRIPTION", "KKS code", "RESPONSIBLE AREA", "HIERARCHY LEVEL",
+        "LEVEL NO", "STATUS", "PARENT KKS", "SOURCE", "SOURCE ROW",
+    ])
+    for row in rows:
+        sheet.append([
+            row["plant_code"], row["system_code"], row["equipment_code"],
+            row["component_code"], row["description"], row["kks_code"],
+            row["responsible_area"], row["hierarchy_level"], row["level_no"],
+            row["status"], row["parent_kks_code"], row["source_kind"],
+            row["source_row"],
+        ])
+
+    output = io.BytesIO()
+    workbook.save(output)
+    output.seek(0)
+    suffix = "filtered" if query else "all"
+    filename = f"morupule-b-kks-assets-{suffix}-{date.today().isoformat()}.xlsx"
+    return send_file(
+        output,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    )
 
 
 @app.get("/api/assets/<int:asset_id>")
