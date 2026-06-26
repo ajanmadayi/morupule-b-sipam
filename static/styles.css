@@ -727,6 +727,27 @@ h1 { margin: 0; font-size: 22px; }
 .restore-run-row strong, .restore-run-row small { display: block; }
 .restore-run-row strong { font-size: 11px; }
 .restore-run-row small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.readiness-metrics { margin-bottom: 12px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.readiness-metrics article { min-height: 82px; padding: 13px; background: #fff; border: 1px solid var(--line); border-radius: 5px; }
+.readiness-metrics small, .readiness-metrics strong, .readiness-metrics span { display: block; }
+.readiness-metrics small { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.readiness-metrics strong { margin: 4px 0 3px; font-size: 21px; }
+.readiness-metrics span { color: var(--muted); font-size: 10px; }
+.readiness-toolbar { padding: 11px; display: grid; grid-template-columns: minmax(240px, 1fr) 190px 150px; gap: 8px; border-bottom: 1px solid var(--line); }
+.readiness-toolbar .search-field { grid-column: auto; }
+.readiness-heading, .readiness-row { display: grid; grid-template-columns: minmax(250px, 1.2fr) 140px 190px minmax(230px, 1fr) 145px 42px; gap: 9px; align-items: center; }
+.readiness-heading { min-height: 32px; padding: 0 13px; background: #f5f7f8; color: var(--muted); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.readiness-row { min-height: 78px; padding: 9px 13px; border-bottom: 1px solid #e8edef; }
+.readiness-row strong, .readiness-row small { display: block; }
+.readiness-row strong { font-size: 11px; }
+.readiness-row small { margin-top: 4px; color: var(--muted); font-size: 10px; }
+.readiness-row select, .readiness-row input, .readiness-row textarea, .readiness-toolbar select { width: 100%; min-height: 34px; padding: 7px 8px; border: 1px solid var(--line); border-radius: 4px; background: #fff; font-size: 11px; }
+.readiness-row textarea { resize: vertical; line-height: 1.35; }
+.readiness-owner { display: grid; gap: 5px; }
+.readiness-row.status-done { background: #f7fbf8; }
+.readiness-row.status-blocked { background: #fff7f7; }
+.readiness-row.status-in_progress { background: #f7fbfd; }
+.readiness-row.status-deferred { background: #faf8f0; }
 .system-record-counts { padding: 8px 13px 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; }
 .system-record-counts article { min-height: 39px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #edf0f1; }
 .system-record-counts span { color: var(--muted); font-size: 11px; }

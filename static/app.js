@@ -11,6 +11,7 @@ const views = {
   users: document.querySelector("#usersView"),
   logbookadmin: document.querySelector("#logbookadminView"),
   audit: document.querySelector("#auditView"),
+  readiness: document.querySelector("#readinessView"),
   system: document.querySelector("#systemView"),
   kksimport: document.querySelector("#kksimportView")
 };
@@ -27,6 +28,7 @@ const pageTitles = {
   users: "Users & Roles",
   logbookadmin: "Logbook Administration",
   audit: "Audit Trail",
+  readiness: "Pilot Readiness",
   system: "System Status",
   kksimport: "KKS Register Import"
 };
@@ -75,6 +77,7 @@ let selectedPermitId = null;
 let selectedPermit = null;
 let users = [];
 let adminLogbooks = [];
+let readinessItems = [];
 let editingLogbookId = null;
 let currentUser = null;
 let currentInfoboxUserId = null;
@@ -291,6 +294,7 @@ function openView(name) {
   if (name === "users") loadUsers().catch(showUserAdminError);
   if (name === "logbookadmin") loadAdminLogbooks().catch(showLogbookAdminError);
   if (name === "audit") loadAuditLogs().catch(showAuditError);
+  if (name === "readiness") loadReadiness().catch(showReadinessError);
   if (name === "system") loadSystemStatus().catch(showSystemError);
   if (name === "kksimport") loadKksImports().catch(showKksImportError);
 }
@@ -2832,6 +2836,107 @@ function showAuditError(error) {
   document.querySelector("#auditList").innerHTML = `<div class="error">${escapeHtml(error.message)}</div>`;
 }
 
+function readinessCategoryLabel(category) {
+  return {
+    application: "Application Readiness",
+    data: "Data Readiness",
+    access: "Access Readiness",
+    process: "Process Readiness",
+    training: "Training Readiness",
+    support: "Support Readiness",
+    open_items: "Open Items"
+  }[category] || category;
+}
+
+function readinessStatusLabel(status) {
+  return {
+    pending: "Pending",
+    in_progress: "In progress",
+    done: "Done",
+    blocked: "Blocked",
+    deferred: "Deferred"
+  }[status] || status;
+}
+
+function readinessFilters() {
+  return {
+    q: document.querySelector("#readinessSearch").value.trim().toLowerCase(),
+    category: document.querySelector("#readinessCategory").value,
+    status: document.querySelector("#readinessStatus").value
+  };
+}
+
+async function loadReadiness() {
+  const list = document.querySelector("#readinessList");
+  list.innerHTML = '<div class="loading">Loading pilot readiness checklist...</div>';
+  const response = await fetch("/api/readiness");
+  if (!response.ok) throw new Error("Unable to load pilot readiness checklist");
+  const result = await response.json();
+  readinessItems = result.items;
+  document.querySelector("#readinessTotal").textContent = result.summary.total;
+  document.querySelector("#readinessDone").textContent = result.summary.done;
+  document.querySelector("#readinessPercent").textContent = `${result.summary.completion_percent}% complete`;
+  document.querySelector("#readinessOpen").textContent =
+    (result.summary.pending + result.summary.in_progress).toLocaleString();
+  document.querySelector("#readinessBlocked").textContent = result.summary.blocked;
+  const categorySelect = document.querySelector("#readinessCategory");
+  const selectedCategory = categorySelect.value;
+  const categories = [...new Set(readinessItems.map(item => item.category))];
+  categorySelect.innerHTML = '<option value="">All categories</option>' +
+    categories.map(category => `<option value="${escapeHtml(category)}">${escapeHtml(readinessCategoryLabel(category))}</option>`).join("");
+  categorySelect.value = categories.includes(selectedCategory) ? selectedCategory : "";
+  renderReadiness();
+}
+
+function renderReadiness() {
+  const filters = readinessFilters();
+  const items = readinessItems.filter(item => {
+    const haystack = `${item.item} ${item.category} ${item.owner || ""} ${item.evidence || ""}`.toLowerCase();
+    return (!filters.q || haystack.includes(filters.q)) &&
+      (!filters.category || item.category === filters.category) &&
+      (!filters.status || item.status === filters.status);
+  });
+  document.querySelector("#readinessList").innerHTML = items.map(item => `
+    <article class="readiness-row status-${escapeHtml(item.status)}" data-readiness-id="${item.id}">
+      <div><strong>${escapeHtml(item.item)}</strong><small>${escapeHtml(readinessCategoryLabel(item.category))}</small></div>
+      <select data-readiness-field="status" aria-label="Status for ${escapeHtml(item.item)}">
+        ${["pending", "in_progress", "done", "blocked", "deferred"].map(status => `<option value="${status}" ${status === item.status ? "selected" : ""}>${escapeHtml(readinessStatusLabel(status))}</option>`).join("")}
+      </select>
+      <div class="readiness-owner">
+        <input data-readiness-field="owner" value="${escapeHtml(item.owner || "")}" placeholder="Owner">
+        <input data-readiness-field="target_date" type="date" value="${escapeHtml(item.target_date || "")}">
+      </div>
+      <textarea data-readiness-field="evidence" rows="2" placeholder="Evidence / notes">${escapeHtml(item.evidence || "")}</textarea>
+      <div><strong>${escapeHtml(item.updated_by || "Not updated")}</strong><small>${formatDate(item.updated_at)}</small></div>
+      <button class="icon-button compact-action" data-save-readiness="${item.id}" title="Save readiness item" aria-label="Save readiness item"><i data-lucide="save"></i></button>
+    </article>
+  `).join("") || '<div class="empty-list">No readiness items match the selected filters.</div>';
+  document.querySelectorAll("[data-save-readiness]").forEach(button => {
+    button.addEventListener("click", () => saveReadinessItem(Number(button.dataset.saveReadiness)).catch(showReadinessError));
+  });
+  lucide.createIcons();
+}
+
+async function saveReadinessItem(itemId) {
+  const row = document.querySelector(`[data-readiness-id="${itemId}"]`);
+  const payload = {};
+  row.querySelectorAll("[data-readiness-field]").forEach(field => {
+    payload[field.dataset.readinessField] = field.value;
+  });
+  const response = await fetch(`/api/readiness/${itemId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Unable to save readiness item");
+  await loadReadiness();
+}
+
+function showReadinessError(error) {
+  document.querySelector("#readinessList").innerHTML = `<div class="error">${escapeHtml(error.message)}</div>`;
+}
+
 function formatStorage(bytes) {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
@@ -3297,6 +3402,15 @@ document.querySelector("#resetAuditFilters").addEventListener("click", () => {
 document.querySelector("#runReport").addEventListener("click", () => loadReports().catch(showReportError));
 document.querySelector("#refreshSystemStatus").addEventListener("click", () => loadSystemStatus().catch(showSystemError));
 document.querySelector("#createSystemBackup").addEventListener("click", () => createSystemBackup().catch(showSystemError));
+document.querySelector("#refreshReadiness").addEventListener("click", () => loadReadiness().catch(showReadinessError));
+let readinessSearchTimer;
+document.querySelector("#readinessSearch").addEventListener("input", () => {
+  clearTimeout(readinessSearchTimer);
+  readinessSearchTimer = setTimeout(renderReadiness, 200);
+});
+["readinessCategory", "readinessStatus"].forEach(id => {
+  document.querySelector(`#${id}`).addEventListener("change", renderReadiness);
+});
 document.querySelector("#validateKksWorkbook").addEventListener("click", validateKksWorkbook);
 document.querySelector("#refreshKksImports").addEventListener("click", () => loadKksImports().catch(showKksImportError));
 

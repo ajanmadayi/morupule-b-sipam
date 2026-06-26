@@ -36,6 +36,7 @@
         <button class="nav-item admin-navigation" data-view="users" hidden><i data-lucide="users"></i><span>Users &amp; Roles</span></button>
         <button class="nav-item admin-navigation" data-view="logbookadmin" hidden><i data-lucide="book-marked"></i><span>Logbooks</span></button>
         <button class="nav-item admin-navigation" data-view="audit" hidden><i data-lucide="history"></i><span>Audit Trail</span></button>
+        <button class="nav-item admin-navigation" data-view="readiness" hidden><i data-lucide="list-checks"></i><span>Pilot Readiness</span></button>
         <button class="nav-item admin-navigation" data-view="system" hidden><i data-lucide="server-cog"></i><span>System Status</span></button>
         <button class="nav-item admin-navigation" data-view="kksimport" hidden><i data-lucide="file-up"></i><span>KKS Import</span></button>
       </nav>
@@ -413,6 +414,31 @@
           </div>
           <div class="audit-heading"><span>Time</span><span>Employee</span><span>Action</span><span>Target</span><span>Result</span><span></span></div>
           <div id="auditList"><div class="loading">Loading audit records...</div></div>
+        </section>
+      </section>
+
+      <section class="view" id="readinessView">
+        <div class="page-heading">
+          <div><span class="eyebrow">Administration / Go-live control</span><h2>Pilot Readiness</h2><p>Track pending actions before Morupule B pilot or production release</p></div>
+          <div class="page-actions">
+            <a class="button secondary" href="/api/readiness.csv" download><i data-lucide="download"></i> Export</a>
+            <button class="button primary" id="refreshReadiness"><i data-lucide="refresh-cw"></i> Refresh</button>
+          </div>
+        </div>
+        <div class="readiness-metrics">
+          <article><small>Total checks</small><strong id="readinessTotal">0</strong><span>Configured checklist items</span></article>
+          <article><small>Completed</small><strong id="readinessDone">0</strong><span id="readinessPercent">0% complete</span></article>
+          <article><small>Open</small><strong id="readinessOpen">0</strong><span>Pending or in progress</span></article>
+          <article><small>Blocked</small><strong id="readinessBlocked">0</strong><span>Needs decision or data</span></article>
+        </div>
+        <section class="panel readiness-panel">
+          <div class="readiness-toolbar">
+            <label class="search-field"><i data-lucide="search"></i><input id="readinessSearch" type="search" placeholder="Search readiness item, owner, or evidence"></label>
+            <select id="readinessCategory"><option value="">All categories</option></select>
+            <select id="readinessStatus"><option value="">All statuses</option><option value="pending">Pending</option><option value="in_progress">In progress</option><option value="done">Done</option><option value="blocked">Blocked</option><option value="deferred">Deferred</option></select>
+          </div>
+          <div class="readiness-heading"><span>Check</span><span>Status</span><span>Owner / Target</span><span>Evidence</span><span>Updated</span><span></span></div>
+          <div id="readinessList"><div class="loading">Loading pilot readiness checklist...</div></div>
         </section>
       </section>
 

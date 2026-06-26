@@ -74,6 +74,60 @@ SAFETY_FORM_TYPES = (
     "mechanical_sft",
 )
 
+PILOT_READINESS_ITEMS = (
+    ("application", "Latest clean delivery package identified"),
+    ("application", "Application starts successfully"),
+    ("application", "Login page opens"),
+    ("application", "Dashboard loads"),
+    ("application", "Smoke check passed"),
+    ("application", "Data-quality check passed"),
+    ("application", "Browser security headers verified"),
+    ("application", "Runtime folders created and access-controlled"),
+    ("data", "Approved Morupule B KKS register loaded"),
+    ("data", "KKS asset count reviewed"),
+    ("data", "Duplicate/inferred KKS import items reviewed"),
+    ("data", "Logbooks reviewed"),
+    ("data", "User list reviewed"),
+    ("data", "Seed/test records removed or approved for pilot"),
+    ("data", "First verified recovery point created"),
+    ("access", "Named Shift Leader accounts created"),
+    ("access", "Named Maintenance Approver accounts created"),
+    ("access", "Named Planner accounts created"),
+    ("access", "Technician accounts created"),
+    ("access", "System Administrator accounts limited to authorized users"),
+    ("access", "Seeded passwords changed"),
+    ("access", "Inactive/unneeded accounts disabled"),
+    ("access", "Role permissions checked against role matrix"),
+    ("process", "Event Log procedure agreed"),
+    ("process", "Work Request / notification procedure agreed"),
+    ("process", "CMPT priority procedure agreed"),
+    ("process", "Corrective approval procedure agreed"),
+    ("process", "Work Order planning procedure agreed"),
+    ("process", "PTW/LoA procedure agreed"),
+    ("process", "Preventive generation procedure agreed"),
+    ("process", "Shift Handover procedure agreed"),
+    ("process", "Infobox ownership and escalation routine agreed"),
+    ("training", "Training plan approved"),
+    ("training", "Shift Leaders trained"),
+    ("training", "Maintenance Approvers trained"),
+    ("training", "Maintenance Planners trained"),
+    ("training", "Technicians trained"),
+    ("training", "System Administrators trained"),
+    ("training", "Quick reference shared"),
+    ("training", "Demo walkthrough completed"),
+    ("support", "Pilot support owner named"),
+    ("support", "Issue reporting channel agreed"),
+    ("support", "Open-items register location agreed"),
+    ("support", "Backup owner named"),
+    ("support", "Restore approval owner named"),
+    ("support", "Daily review meeting agreed for pilot week"),
+    ("support", "Rollback decision owner named"),
+    ("open_items", "No Critical open items"),
+    ("open_items", "High open items have workaround and owner"),
+    ("open_items", "Medium/Low items approved for pilot or deferred"),
+    ("open_items", "Open-items register reviewed by sponsor"),
+)
+
 ATTACHMENT_ENTITIES = {
     "event": ("event_entries", "id"),
     "corrective": ("work_requests", "id"),
@@ -775,6 +829,20 @@ def init_db() -> None:
             status TEXT NOT NULL,
             details TEXT
         );
+
+        CREATE TABLE IF NOT EXISTS readiness_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            item_key TEXT NOT NULL UNIQUE,
+            category TEXT NOT NULL,
+            item TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'pending'
+                CHECK (status IN ('pending', 'in_progress', 'done', 'blocked', 'deferred')),
+            owner TEXT,
+            target_date TEXT,
+            evidence TEXT,
+            updated_by TEXT,
+            updated_at TEXT NOT NULL
+        );
         """
     )
     ensure_safety_permit_form_types(database)
@@ -801,6 +869,8 @@ def init_db() -> None:
             ON inbox_history(inbox_item_id, created_at DESC);
         CREATE INDEX IF NOT EXISTS idx_inbox_escalation_item
             ON inbox_escalation_history(inbox_item_id, created_at DESC);
+        CREATE INDEX IF NOT EXISTS idx_readiness_category
+            ON readiness_items(category, status);
         """
     )
     Path(app.config["DATABASE"]).parent.mkdir(parents=True, exist_ok=True)
@@ -821,6 +891,7 @@ def init_db() -> None:
         seed_safety_permits(database)
     if database.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         seed_infobox_master(database)
+    seed_readiness_items(database)
     ensure_responsibility_groups(database)
     ensure_user_columns(database)
     sync_infobox(database)
@@ -1576,6 +1647,26 @@ def seed_infobox_master(database: sqlite3.Connection) -> None:
             (3, 3), (3, 4),
             (4, 5),
             (5, 6),
+        ],
+    )
+
+
+def seed_readiness_items(database: sqlite3.Connection) -> None:
+    now = datetime.now().isoformat(timespec="seconds")
+    database.executemany(
+        """
+        INSERT OR IGNORE INTO readiness_items (
+            item_key, category, item, updated_at
+        ) VALUES (?, ?, ?, ?)
+        """,
+        [
+            (
+                f"{category}:{item.lower().replace(' ', '_').replace('/', '_')}",
+                category,
+                item,
+                now,
+            )
+            for category, item in PILOT_READINESS_ITEMS
         ],
     )
 
@@ -6085,6 +6176,113 @@ def list_audit_actions():
         "SELECT DISTINCT action FROM audit_logs ORDER BY action"
     ).fetchall()
     return jsonify([row["action"] for row in rows])
+
+
+def readiness_summary(rows: list[sqlite3.Row]) -> dict:
+    summary = {
+        "total": len(rows),
+        "pending": 0,
+        "in_progress": 0,
+        "done": 0,
+        "blocked": 0,
+        "deferred": 0,
+    }
+    for row in rows:
+        summary[row["status"]] += 1
+    summary["completion_percent"] = round(
+        summary["done"] / summary["total"] * 100, 1
+    ) if summary["total"] else 0
+    return summary
+
+
+@app.get("/api/readiness")
+@roles_required("System Administrator")
+def list_readiness_items():
+    rows = get_db().execute(
+        """
+        SELECT id, item_key, category, item, status, owner, target_date,
+            evidence, updated_by, updated_at
+        FROM readiness_items
+        ORDER BY
+            CASE category
+                WHEN 'application' THEN 1
+                WHEN 'data' THEN 2
+                WHEN 'access' THEN 3
+                WHEN 'process' THEN 4
+                WHEN 'training' THEN 5
+                WHEN 'support' THEN 6
+                WHEN 'open_items' THEN 7
+                ELSE 8
+            END,
+            id
+        """
+    ).fetchall()
+    return jsonify({
+        "items": [row_to_dict(row) for row in rows],
+        "summary": readiness_summary(rows),
+    })
+
+
+@app.get("/api/readiness.csv")
+@roles_required("System Administrator")
+def export_readiness_items():
+    rows = get_db().execute(
+        """
+        SELECT category, item, status, owner, target_date, evidence,
+            updated_by, updated_at
+        FROM readiness_items ORDER BY category, id
+        """
+    ).fetchall()
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "category", "item", "status", "owner", "target_date",
+        "evidence", "updated_by", "updated_at",
+    ])
+    for row in rows:
+        writer.writerow([row[key] or "" for key in row.keys()])
+    return Response(
+        output.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=morupule-b-sipam-readiness.csv"},
+    )
+
+
+@app.patch("/api/readiness/<int:item_id>")
+@roles_required("System Administrator")
+def update_readiness_item(item_id: int):
+    payload = request.get_json(silent=True) or {}
+    status = str(payload.get("status") or "pending").strip()
+    if status not in {"pending", "in_progress", "done", "blocked", "deferred"}:
+        return jsonify({"error": "Invalid readiness status"}), 400
+    owner = str(payload.get("owner") or "").strip() or None
+    target_date = str(payload.get("target_date") or "").strip() or None
+    if target_date:
+        try:
+            date.fromisoformat(target_date)
+        except ValueError:
+            return jsonify({"error": "Target date must be YYYY-MM-DD"}), 400
+    evidence = str(payload.get("evidence") or "").strip() or None
+    updated_at = datetime.now().isoformat(timespec="seconds")
+    cursor = get_db().execute(
+        """
+        UPDATE readiness_items
+        SET status = ?, owner = ?, target_date = ?, evidence = ?,
+            updated_by = ?, updated_at = ?
+        WHERE id = ?
+        """,
+        (
+            status, owner, target_date, evidence,
+            g.current_user["full_name"], updated_at, item_id,
+        ),
+    )
+    if cursor.rowcount == 0:
+        abort(404)
+    get_db().commit()
+    row = get_db().execute(
+        "SELECT * FROM readiness_items WHERE id = ?", (item_id,)
+    ).fetchone()
+    return jsonify(row_to_dict(row))
 
 
 @app.get("/api/system/status")
