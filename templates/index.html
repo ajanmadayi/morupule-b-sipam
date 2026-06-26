@@ -67,6 +67,23 @@
           <article><span class="metric-icon green"><i data-lucide="component"></i></span><div><small>Active assets</small><strong id="activeAssets">0</strong><span>KKS records loaded</span></div></article>
           <article><span class="metric-icon amber"><i data-lucide="book-open"></i></span><div><small>Logbooks</small><strong id="logbookCount">0</strong><span>Operational records</span></div></article>
         </div>
+        <section class="panel dashboard-readiness-panel" id="dashboardReadinessPanel" hidden>
+          <div>
+            <span class="eyebrow">Pilot readiness</span>
+            <h3>Go-live control status</h3>
+            <p id="dashboardReadinessHint">Loading readiness tracker...</p>
+          </div>
+          <div class="dashboard-readiness-metrics">
+            <article><small>Done</small><strong id="dashboardReadinessDone">0</strong></article>
+            <article><small>Blocked</small><strong id="dashboardReadinessBlocked">0</strong></article>
+            <article><small>Pending</small><strong id="dashboardReadinessPending">0</strong></article>
+            <article><small>Complete</small><strong id="dashboardReadinessPercent">0%</strong></article>
+          </div>
+          <div class="dashboard-readiness-actions">
+            <button class="button secondary" id="openReadinessTracker"><i data-lucide="list-checks"></i> Open tracker</button>
+            <a class="button secondary" href="/print/readiness-report" target="_blank" rel="noopener"><i data-lucide="printer"></i> Print report</a>
+          </div>
+        </section>
         <div class="dashboard-layout">
           <section class="panel">
             <div class="panel-header"><div><h3>Latest event entries</h3><p>All authorized operational logbooks</p></div><button class="text-button" id="openAllEvents">Open Event Log</button></div>

@@ -75,6 +75,15 @@ h1 { margin: 0; font-size: 22px; }
 .metric-grid small { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .metric-grid strong { margin: 3px 0; font-size: 22px; }
 .metric-grid article div span { color: var(--muted); font-size: 11px; }
+.dashboard-readiness-panel { margin-bottom: 12px; padding: 13px; display: grid; grid-template-columns: minmax(220px, 1fr) minmax(360px, 1.4fr) auto; gap: 14px; align-items: center; }
+.dashboard-readiness-panel h3 { margin: 0; font-size: 16px; }
+.dashboard-readiness-panel p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
+.dashboard-readiness-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.dashboard-readiness-metrics article { min-height: 54px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
+.dashboard-readiness-metrics small, .dashboard-readiness-metrics strong { display: block; }
+.dashboard-readiness-metrics small { color: var(--muted); font-size: 9px; font-weight: 700; text-transform: uppercase; }
+.dashboard-readiness-metrics strong { margin-top: 3px; font-size: 18px; }
+.dashboard-readiness-actions { display: flex; gap: 7px; justify-content: flex-end; }
 .dashboard-layout { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .65fr); gap: 12px; }
 .panel { min-width: 0; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 5px; }
 .panel-header { min-height: 58px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); }
@@ -828,6 +837,8 @@ h1 { margin: 0; font-size: 22px; }
   .kks-import-layout { grid-template-columns: 1fr; }
   .report-layout { grid-template-columns: 1fr; }
   .report-status-grid { grid-template-columns: 1fr 1fr; }
+  .dashboard-readiness-panel { grid-template-columns: 1fr; }
+  .dashboard-readiness-actions { justify-content: flex-start; }
   .dashboard-layout, .event-layout, .corrective-layout, .handover-layout { grid-template-columns: 1fr; }
   .permit-workspace { grid-template-columns: 1fr; }
   .asset-workspace { grid-template-columns: 250px minmax(0, 1fr); }

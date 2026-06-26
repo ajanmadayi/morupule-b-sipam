@@ -2415,7 +2415,13 @@ def dashboard():
         """,
         (g.current_user["id"], g.current_user["id"]),
     ).fetchone()
-    return jsonify(row_to_dict(row))
+    payload = row_to_dict(row)
+    if g.current_user["role_name"] == "System Administrator":
+        readiness_rows = database.execute(
+            "SELECT status FROM readiness_items"
+        ).fetchall()
+        payload["readiness"] = readiness_summary(readiness_rows)
+    return jsonify(payload)
 
 
 @app.get("/api/reports/summary")

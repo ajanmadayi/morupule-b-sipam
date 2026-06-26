@@ -416,6 +416,16 @@ async function loadDashboard() {
   document.querySelector("#preventiveBadge").textContent = summary.preventive_due || 0;
   document.querySelector("#permitBadge").textContent = summary.active_permits || 0;
   document.querySelector("#infoboxBadge").textContent = summary.my_infobox || 0;
+  const readinessPanel = document.querySelector("#dashboardReadinessPanel");
+  readinessPanel.hidden = !summary.readiness;
+  if (summary.readiness) {
+    document.querySelector("#dashboardReadinessDone").textContent = summary.readiness.done || 0;
+    document.querySelector("#dashboardReadinessBlocked").textContent = summary.readiness.blocked || 0;
+    document.querySelector("#dashboardReadinessPending").textContent = summary.readiness.pending || 0;
+    document.querySelector("#dashboardReadinessPercent").textContent = `${summary.readiness.completion_percent || 0}%`;
+    document.querySelector("#dashboardReadinessHint").textContent =
+      `${summary.readiness.total || 0} checks tracked. Blocked items need Morupule B owner approval.`;
+  }
   document.querySelector("#recentEvents").innerHTML = events.slice(0, 6).map(item => `
     <article class="recent-event">
       <div><code>${escapeHtml(item.entry_no)}</code><small>${formatDate(item.event_date)}</small></div>
@@ -3266,6 +3276,7 @@ window.addEventListener("hashchange", () => {
 });
 document.querySelector("#menuButton").addEventListener("click", () => sidebar.classList.toggle("open"));
 document.querySelector("#dashboardNewEntry").addEventListener("click", () => openEntryModal());
+document.querySelector("#openReadinessTracker").addEventListener("click", () => openView("readiness"));
 document.querySelector("#newMainEntry").addEventListener("click", () => openEntryModal());
 document.querySelector("#newShiftHandover").addEventListener("click", () => openShiftHandoverModal().catch(showHandoverError));
 document.querySelector("#handoverStatusFilter").addEventListener("change", () => { selectedHandoverId = null; loadShiftHandovers().catch(showHandoverError); });
