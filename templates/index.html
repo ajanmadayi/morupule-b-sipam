@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260626-print-refresh') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260626-notification-flow') }}">
 </head>
 <body>
   <div class="app-shell">
@@ -192,6 +192,14 @@
           <article><small>Active orders</small><strong id="activeOrders">0</strong><span>Approved work in progress</span></article>
           <article><small>Awaiting check</small><strong id="awaitingCheck">0</strong><span>Execution completed</span></article>
           <article><small>Response overdue</small><strong id="overdueRequests">0</strong><span>CMPT target exceeded</span></article>
+        </div>
+        <div class="notification-flow" aria-label="Notification workflow">
+          <article><i data-lucide="notebook-tabs"></i><span>Event / Notification</span></article>
+          <article><i data-lucide="file-plus-2"></i><span>Work Request</span></article>
+          <article><i data-lucide="clipboard-list"></i><span>Work Order</span></article>
+          <article><i data-lucide="shield-check"></i><span>PTW / LoA / SFT</span></article>
+          <article><i data-lucide="wrench"></i><span>Execution</span></article>
+          <article><i data-lucide="check-circle-2"></i><span>Acceptance &amp; Close</span></article>
         </div>
         <div class="corrective-layout">
           <section class="panel corrective-register">
