@@ -805,6 +805,11 @@ h1 { margin: 0; font-size: 22px; }
 .manual-note { padding: 8px 10px; border-left: 3px solid var(--green); background: var(--green-soft); }
 .manual-reference { display: flex; flex-wrap: wrap; gap: 8px; }
 .manual-reference code { padding: 7px 9px; border: 1px solid var(--line); border-radius: 4px; background: #f8fafb; }
+.training-link-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.training-link-grid a { min-height: 84px; padding: 12px; display: grid; align-content: start; gap: 6px; border: 1px solid var(--line); border-radius: 5px; background: #f8fafb; color: inherit; text-decoration: none; }
+.training-link-grid.compact a { min-height: 66px; }
+.training-link-grid strong { font-size: 13px; }
+.training-link-grid span { color: var(--muted); font-size: 11px; line-height: 1.45; }
 @media (max-width: 1100px) {
   .metric-grid { grid-template-columns: 1fr 1fr; }
   .corrective-metrics { grid-template-columns: 1fr 1fr; }
@@ -932,6 +937,7 @@ h1 { margin: 0; font-size: 22px; }
 @media (max-width: 720px) {
   .manual-header { grid-template-columns: 1fr; }
   .manual-header nav { flex-wrap: wrap; }
+  .training-link-grid { grid-template-columns: 1fr; }
   .manual-flow { grid-template-columns: 1fr 1fr; }
   .manual-flow article:nth-child(even) { border-right: 0; }
   .manual-flow article:nth-child(n+3) { border-top: 1px solid var(--line); }

@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Training & Handover Center | Morupule B SIPAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260626-training-center') }}">
+</head>
+<body class="manual-page">
+  <main class="manual-shell">
+    <header class="manual-header">
+      <div><span class="brand-mark">SP</span></div>
+      <div>
+        <span class="eyebrow">Morupule B SIPAM</span>
+        <h1>Training & Handover Center</h1>
+        <p>Single access point for operating manuals, workflow handover reports, exports, and go-live readiness evidence.</p>
+      </div>
+      <nav>
+        <a class="button secondary" href="/">Back to SIPAM</a>
+        <button class="button primary" id="printManual" type="button">Print / Save PDF</button>
+      </nav>
+    </header>
+
+    <section class="manual-card">
+      <h2>Core Operating Guides</h2>
+      <div class="training-link-grid">
+        <a href="/manual/user-manual" target="_blank" rel="noopener"><strong>User Manual</strong><span>Full SIPAM operating guide for all modules.</span></a>
+        <a href="/manual/notification-to-ptw" target="_blank" rel="noopener"><strong>Notification to PTW Manual</strong><span>Step-by-step workflow from Event Log to Work Order, PTW, closure, and acceptance.</span></a>
+        <a href="/print/readiness-report" target="_blank" rel="noopener"><strong>Pilot Readiness Report</strong><span>Printable handover report with done, blocked, evidence, and approval table.</span></a>
+        <a href="/print/management-report" target="_blank" rel="noopener"><strong>Management Report</strong><span>Maintenance performance, CMPT, reliability, backlog, and permit activity.</span></a>
+      </div>
+    </section>
+
+    <section class="manual-card">
+      <h2>Live Control Registers</h2>
+      <table class="manual-table">
+        <thead><tr><th>Register</th><th>Purpose</th><th>Link</th></tr></thead>
+        <tbody>
+          <tr><td>Pilot Readiness</td><td>Track all go-live checks, evidence, owners, and blocked business decisions.</td><td><a href="/#readiness">Open in Administration</a></td></tr>
+          <tr><td>KKS Asset Directory</td><td>Search and review the Morupule B KKS hierarchy and linked work history.</td><td><a href="/#assets">Open Asset Directory</a></td></tr>
+          <tr><td>System Status</td><td>Review database integrity, backup records, import history, and restore status.</td><td><a href="/#system">Open System Status</a></td></tr>
+          <tr><td>Users & Roles</td><td>Maintain placeholder or final employee accounts and reset passwords.</td><td><a href="/#users">Open Users & Roles</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Exports</h2>
+      <div class="training-link-grid compact">
+        <a href="/api/assets.xlsx"><strong>KKS Export</strong><span>Download current KKS asset directory as Excel.</span></a>
+        <a href="/api/events.csv"><strong>Event Log CSV</strong><span>Download operational event records.</span></a>
+        <a href="/api/corrective.csv"><strong>Corrective CSV</strong><span>Download work request and work order records.</span></a>
+        <a href="/api/readiness.csv"><strong>Readiness CSV</strong><span>Download pilot readiness tracker evidence.</span></a>
+      </div>
+    </section>
+
+    <section class="manual-card">
+      <h2>Training Source Documents Considered</h2>
+      <table class="manual-table">
+        <thead><tr><th>Document</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td>SIPAM - Event log</td><td>Event Log / notification entry behavior and sub-entry workflow.</td></tr>
+          <tr><td>SIPAM - CorrectiveMaintenance</td><td>Work Request, Work Order, CMPT, planning, execution, acceptance.</td></tr>
+          <tr><td>SIPAM - PreventiveMaintenance</td><td>Schedule types, recurrent tasks, generation, calendar, feedback.</td></tr>
+          <tr><td>PTW / LoA / SFT safety forms</td><td>Permit issue, receipt, clearance, cancellation, and official print layout.</td></tr>
+          <tr><td>KKS code documents</td><td>Asset directory structure and KKS import validation.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Current Training Accounts</h2>
+      <table class="manual-table">
+        <thead><tr><th>Employee number</th><th>Temporary role</th><th>Initial password</th></tr></thead>
+        <tbody>
+          <tr><td><code>USER1</code></td><td>Shift Leader</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER2</code></td><td>Maintenance Approver</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER3</code></td><td>Maintenance Planner</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER4</code></td><td>C&amp;I Technician</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER5</code></td><td>Electrical Technician</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER6</code></td><td>Mechanical Technician</td><td><code>ChangeMe@2026</code></td></tr>
+          <tr><td><code>USER7</code></td><td>System Administrator</td><td><code>ChangeMe@2026</code></td></tr>
+        </tbody>
+      </table>
+      <p class="manual-note">Replace placeholder names and passwords with final Morupule B employee details before pilot approval.</p>
+    </section>
+
+    <section class="manual-card">
+      <h2>Handover Notes</h2>
+      <ol class="manual-steps">
+        <li><h3>Use the User Manual for training</h3><p>Walk through Event Log, Corrective Maintenance, PTW, Preventive Maintenance, Reports, and Administration with role-specific users.</p></li>
+        <li><h3>Use Pilot Readiness for sign-off</h3><p>Blocked items should be assigned to Morupule B owners and closed only after confirmation.</p></li>
+        <li><h3>Use System Status before pilot</h3><p>Create and verify a full backup before using the application with production pilot data.</p></li>
+      </ol>
+    </section>
+
+    <footer class="manual-card">
+      <p>Generated {{ generated_at }} for {{ current_user.full_name }}.</p>
+    </footer>
+  </main>
+  <script src="{{ url_for('static', filename='manual.js', v='20260626-training-center') }}"></script>
+</body>
+</html>

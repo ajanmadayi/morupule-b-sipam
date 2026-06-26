@@ -2215,6 +2215,16 @@ def user_manual():
     )
 
 
+@app.get("/manual/training-center")
+@login_required
+def training_center():
+    return render_template(
+        "training_center.html",
+        current_user=row_to_dict(g.current_user),
+        generated_at=datetime.now().strftime("%d %b %Y %H:%M"),
+    )
+
+
 @app.get("/print/<entity_type>/<int:entity_id>")
 @login_required
 def print_document(entity_type: str, entity_id: int):
