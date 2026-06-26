@@ -32,6 +32,7 @@ svg { width: 17px; height: 17px; stroke-width: 1.8; }
 .nav-label { display: block; margin: 0 10px 7px; color: #71868e; font-size: 12px; font-weight: 700; text-transform: uppercase; }
 .secondary-label { margin-top: 22px; }
 .nav-item { width: 100%; min-height: 41px; padding: 0 10px; display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; align-items: center; gap: 9px; border: 0; border-radius: 4px; background: transparent; color: #b9c7cc; text-align: left; font-size: 14px; }
+a.nav-item { text-decoration: none; }
 .nav-item:hover, .nav-item.active { background: #29444f; color: #fff; }
 .nav-item.active { box-shadow: inset 3px 0 #69ae80; }
 .nav-item b { min-width: 20px; height: 19px; padding: 0 5px; display: grid; place-items: center; border-radius: 10px; background: #654044; color: #ffd2d4; font-size: 11px; }

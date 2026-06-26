@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User Manual | Morupule B SIPAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260626-user-manual') }}">
+</head>
+<body class="manual-page">
+  <main class="manual-shell">
+    <header class="manual-header">
+      <div><span class="brand-mark">SP</span></div>
+      <div>
+        <span class="eyebrow">Morupule B SIPAM</span>
+        <h1>User Manual</h1>
+        <p>Operating guide for Event Log, KKS Asset Directory, Corrective Maintenance, PTW / LoA / SFT, Preventive Maintenance, reports, and administration.</p>
+      </div>
+      <nav>
+        <a class="button secondary" href="/">Back to SIPAM</a>
+        <button class="button primary" id="printManual" type="button">Print / Save PDF</button>
+      </nav>
+    </header>
+
+    <section class="manual-card">
+      <h2>Daily Navigation</h2>
+      <table class="manual-table">
+        <thead><tr><th>Module</th><th>Use it for</th><th>Main users</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard</td><td>Current open entries, daily events, KKS asset count, and quick operating overview.</td><td>All users</td></tr>
+          <tr><td>My Infobox</td><td>Personal and team pending actions: approvals, handovers, permits, and work checks.</td><td>All roles</td></tr>
+          <tr><td>Event Log</td><td>Operational notifications, shift log entries, sub-entries, event closure, and work request creation.</td><td>Shift Leader, authorized logbook users</td></tr>
+          <tr><td>Asset Directory</td><td>Search KKS, review asset hierarchy, linked events, work requests, preventive tasks, and permits.</td><td>All users</td></tr>
+          <tr><td>Corrective Maintenance</td><td>Work Request, Work Order planning, execution, completion, and acceptance.</td><td>Maintenance and Operations</td></tr>
+          <tr><td>Preventive Maintenance</td><td>Recurrent schedules, generated PM tasks, calendar planning, and completion feedback.</td><td>Maintenance Planner, technicians</td></tr>
+          <tr><td>PTW, LoA & SFT</td><td>Prepare, issue, receive, clear, cancel, print, and track safety forms.</td><td>Shift Leader, permit users</td></tr>
+          <tr><td>Reports</td><td>Operational and maintenance performance, CMPT compliance, failures, downtime, exports, and print report.</td><td>Supervisors, management</td></tr>
+          <tr><td>Administration</td><td>User roles, logbooks, audit trail, system status, backups, KKS import.</td><td>System Administrator</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Login and Roles</h2>
+      <ol class="manual-steps">
+        <li><h3>Sign in</h3><p>Open SIPAM and enter your employee number and password. User permissions are controlled by your assigned role.</p></li>
+        <li><h3>Role-based screens</h3><p>Some actions appear only for the correct role. Example: Shift Leader can prepare permits, Maintenance Planner can prepare work plans, Maintenance Approver can approve and accept work.</p></li>
+        <li><h3>Sign out</h3><p>Use the sign-out button in the top right when finished, especially on shared computers.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Event Log / Notification</h2>
+      <ol class="manual-steps">
+        <li><h3>Create a main event</h3><p>Open <strong>Event Log</strong>, click <strong>New main entry</strong>, select logbook, KKS asset, date/time, observation, and informant.</p></li>
+        <li><h3>Add sub-entry</h3><p>Select a main event and click <strong>New sub-entry</strong> to add follow-up comments without creating another main notification.</p></li>
+        <li><h3>Create Work Request</h3><p>For maintenance action, open an open main event and click <strong>Create work request</strong>. The Work Request inherits the KKS relationship.</p></li>
+        <li><h3>Close event</h3><p>Events can be closed manually with a reason, or automatically when the linked Work Order is accepted and closed.</p></li>
+      </ol>
+      <p class="manual-note">In this app, the word notification means the Event Log entry that starts the maintenance workflow.</p>
+    </section>
+
+    <section class="manual-card">
+      <h2>KKS Asset Directory</h2>
+      <ol class="manual-steps">
+        <li><h3>Search asset</h3><p>Open <strong>Asset Directory</strong> and search by KKS code, description, or responsible area.</p></li>
+        <li><h3>Review history</h3><p>Select a KKS to see linked Events, Corrective Maintenance, Preventive Maintenance, and Permits.</p></li>
+        <li><h3>Export KKS</h3><p>Click <strong>Export</strong> to download the full KKS directory. Search first if you want only filtered KKS records.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Corrective Maintenance</h2>
+      <div class="manual-flow">
+        <article><strong>1</strong><span>Work Request</span></article>
+        <article><strong>2</strong><span>Approve</span></article>
+        <article><strong>3</strong><span>Plan Work Order</span></article>
+        <article><strong>4</strong><span>Permit Decision</span></article>
+        <article><strong>5</strong><span>Execution</span></article>
+        <article><strong>6</strong><span>Acceptance</span></article>
+      </div>
+      <ol class="manual-steps">
+        <li><h3>Submitted Work Request</h3><p>New Work Requests appear as <code>submitted</code>. Maintenance Approver reviews and either approves or declines.</p></li>
+        <li><h3>Work Order planning</h3><p>Planner enters description of work, maintenance code, equipment condition, workplace requirements, expected man-hours, supply, artisans, and permit requirement.</p></li>
+        <li><h3>Permit decision</h3><p>Choose <strong>No permit required</strong>, <strong>PTW</strong>, <strong>LoA</strong>, or <strong>SFT</strong>. Required permits must be linked before execution.</p></li>
+        <li><h3>Complete work</h3><p>Technician records completion summary, actual man-hours, failure mode/cause, downtime start, and restored time where applicable.</p></li>
+        <li><h3>Accept work</h3><p>Maintenance Approver accepts the work after checking completion. Work Order status becomes <code>closed</code>.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>PTW, LoA & SFT</h2>
+      <ol class="manual-steps">
+        <li><h3>Prepare permit</h3><p>Open <strong>PTW, LoA & SFT</strong> or use the permit button from a Work Order. Select form type and complete KKS, location, issued-to, employer, isolations, precautions, and assessments.</p></li>
+        <li><h3>Issue permit</h3><p>Issue only after safety precautions are confirmed. Controller name and remarks are required.</p></li>
+        <li><h3>Receive permit</h3><p>Work party receives the permit before execution starts. Work Orders requiring a permit cannot enter execution until the permit is <code>received</code>.</p></li>
+        <li><h3>Clear and cancel</h3><p>After work is complete, clear the work location and cancel the permit. Work Order acceptance is blocked until linked permit is <code>cancelled</code>.</p></li>
+        <li><h3>Print permit</h3><p>Open a permit and click <strong>Print record</strong> for the formal PTW / LoA / SFT print format.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Preventive Maintenance</h2>
+      <ol class="manual-steps">
+        <li><h3>Create schedule type</h3><p>Define interval, strategy, calendar unit, tolerance, and task type.</p></li>
+        <li><h3>Create recurrent task</h3><p>Select primary KKS, additional assets, department, duration, start date, and recurrence details.</p></li>
+        <li><h3>Generate calendar</h3><p>Use the preventive calendar to preview and generate monthly PM tasks.</p></li>
+        <li><h3>Complete PM task</h3><p>Open a generated task, enter actual man-hours and completion feedback.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Reports, Print, and Export</h2>
+      <table class="manual-table">
+        <thead><tr><th>Action</th><th>Where</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>Print record</td><td>Event, Work Request, Asset, Permit, Preventive task</td><td>Formal print/PDF page.</td></tr>
+          <tr><td>Export CSV</td><td>Event Log, Corrective Maintenance, Reports, Preventive calendar</td><td>Filtered spreadsheet-ready data.</td></tr>
+          <tr><td>Export KKS</td><td>Asset Directory</td><td>Excel workbook containing all or filtered KKS.</td></tr>
+          <tr><td>Management report</td><td>Reports</td><td>Printable monthly performance report.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="manual-card">
+      <h2>Administration</h2>
+      <ol class="manual-steps">
+        <li><h3>Users & Roles</h3><p>Create users, assign role, activate/deactivate accounts, and reset passwords.</p></li>
+        <li><h3>Logbooks</h3><p>Create and maintain operational logbooks and responsibility rules.</p></li>
+        <li><h3>Audit Trail</h3><p>Review sign-ins, created records, updates, approvals, and workflow actions.</p></li>
+        <li><h3>System Status</h3><p>Check database health, KKS import history, record counts, backups, and restore history.</p></li>
+        <li><h3>KKS Import</h3><p>Validate and commit KKS Excel workbooks. Only System Administrator can import KKS.</p></li>
+      </ol>
+    </section>
+
+    <section class="manual-card">
+      <h2>Quick Reference</h2>
+      <div class="manual-reference">
+        <code>Event Log = Notification</code>
+        <code>WR = Work Request</code>
+        <code>WO = Work Order</code>
+        <code>PTW = Permit to Work</code>
+        <code>LoA = Limitation of Access</code>
+        <code>SFT = Sanction for Test</code>
+      </div>
+      <p>Sample completed workflow: <code>EL-2026-0005</code>, <code>WR-2026-0004</code>, <code>WO-2026-0002</code>, <code>PTW-2026-0003</code>.</p>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='manual.js', v='20260626-user-manual') }}"></script>
+</body>
+</html>

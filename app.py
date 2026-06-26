@@ -2115,6 +2115,15 @@ def notification_to_ptw_manual():
     )
 
 
+@app.get("/manual/user-manual")
+@login_required
+def user_manual():
+    return render_template(
+        "user_manual.html",
+        current_user=row_to_dict(g.current_user),
+    )
+
+
 @app.get("/print/<entity_type>/<int:entity_id>")
 @login_required
 def print_document(entity_type: str, entity_id: int):
