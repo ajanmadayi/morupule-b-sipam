@@ -449,7 +449,7 @@ def init_db() -> None:
             workplace_requirements TEXT NOT NULL DEFAULT '',
             expected_man_hours REAL NOT NULL DEFAULT 0,
             permit_requirement TEXT NOT NULL DEFAULT 'undecided'
-                CHECK (permit_requirement IN ('undecided', 'none', 'ptw', 'loa')),
+                CHECK (permit_requirement IN ('undecided', 'none', 'ptw', 'loa', 'sft')),
             permit_status TEXT NOT NULL DEFAULT 'not_required'
                 CHECK (permit_status IN ('not_required', 'required', 'issued', 'cancelled')),
             plan_approved_by TEXT,
@@ -781,6 +781,7 @@ def init_db() -> None:
     ensure_asset_columns(database)
     ensure_work_request_columns(database)
     ensure_work_order_columns(database)
+    ensure_work_order_permit_requirement_options(database)
     ensure_work_order_artisan_columns(database)
     ensure_preventive_task_columns(database)
     ensure_inbox_columns(database)
@@ -894,6 +895,95 @@ def ensure_work_order_columns(database: sqlite3.Connection) -> None:
             database.execute(
                 f"ALTER TABLE work_orders ADD COLUMN {name} {declaration}"
             )
+
+
+def ensure_work_order_permit_requirement_options(database: sqlite3.Connection) -> None:
+    row = database.execute(
+        """
+        SELECT sql FROM sqlite_master
+        WHERE type = 'table' AND name = 'work_orders'
+        """
+    ).fetchone()
+    if not row or "'sft'" in (row["sql"] or ""):
+        return
+
+    database.commit()
+    database.execute("PRAGMA foreign_keys = OFF")
+    try:
+        database.executescript(
+            """
+            CREATE TABLE work_orders_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_no TEXT NOT NULL UNIQUE,
+                work_request_id INTEGER NOT NULL UNIQUE REFERENCES work_requests(id),
+                workflow_step TEXT NOT NULL CHECK (
+                    workflow_step IN (
+                        'planning', 'plan_approval', 'permit_decision', 'execution',
+                        'work_check', 'rework', 'closed'
+                    )
+                ),
+                description_of_work TEXT NOT NULL DEFAULT '',
+                maintenance_code TEXT NOT NULL DEFAULT '',
+                equipment_condition TEXT NOT NULL DEFAULT '',
+                workplace_requirements TEXT NOT NULL DEFAULT '',
+                expected_man_hours REAL NOT NULL DEFAULT 0,
+                permit_requirement TEXT NOT NULL DEFAULT 'undecided'
+                    CHECK (permit_requirement IN ('undecided', 'none', 'ptw', 'loa', 'sft')),
+                permit_status TEXT NOT NULL DEFAULT 'not_required'
+                    CHECK (permit_status IN ('not_required', 'required', 'issued', 'cancelled')),
+                plan_approved_by TEXT,
+                execution_confirmed_by TEXT,
+                execution_started_at TEXT,
+                acceptance_status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK (acceptance_status IN ('pending', 'accepted', 'denied')),
+                acceptance_reason TEXT,
+                closed_by TEXT,
+                completion_summary TEXT,
+                actual_man_hours REAL,
+                failure_mode TEXT,
+                failure_cause TEXT,
+                downtime_started_at TEXT,
+                restored_at TEXT,
+                downtime_hours REAL,
+                execution_completed_by TEXT,
+                execution_completed_at TEXT,
+                acceptance_note TEXT,
+                acceptance_checked_by TEXT,
+                acceptance_checked_at TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+            );
+
+            INSERT INTO work_orders_new (
+                id, order_no, work_request_id, workflow_step,
+                description_of_work, maintenance_code, equipment_condition,
+                workplace_requirements, expected_man_hours, permit_requirement,
+                permit_status, plan_approved_by, execution_confirmed_by,
+                execution_started_at, acceptance_status, acceptance_reason,
+                closed_by, completion_summary, actual_man_hours, failure_mode,
+                failure_cause, downtime_started_at, restored_at, downtime_hours,
+                execution_completed_by, execution_completed_at, acceptance_note,
+                acceptance_checked_by, acceptance_checked_at, created_at, updated_at
+            )
+            SELECT
+                id, order_no, work_request_id, workflow_step,
+                description_of_work, maintenance_code, equipment_condition,
+                workplace_requirements, expected_man_hours, permit_requirement,
+                permit_status, plan_approved_by, execution_confirmed_by,
+                execution_started_at, acceptance_status, acceptance_reason,
+                closed_by, completion_summary, actual_man_hours, failure_mode,
+                failure_cause, downtime_started_at, restored_at, downtime_hours,
+                execution_completed_by, execution_completed_at, acceptance_note,
+                acceptance_checked_by, acceptance_checked_at, created_at, updated_at
+            FROM work_orders;
+
+            DROP TABLE work_orders;
+            ALTER TABLE work_orders_new RENAME TO work_orders;
+            """
+        )
+        database.commit()
+    finally:
+        database.execute("PRAGMA foreign_keys = ON")
 
 
 def ensure_work_request_columns(database: sqlite3.Connection) -> None:
@@ -4367,10 +4457,10 @@ def update_work_order(order_id: int):
     permit_requirement = str(payload.get("permit_requirement") or order["permit_requirement"])
     permit_status = order["permit_status"]
     if action == "approve_plan":
-        if permit_requirement not in {"none", "ptw", "loa"}:
-            return jsonify({"error": "Select PTW, LoA, or no permit requirement"}), 400
+        if permit_requirement not in {"none", "ptw", "loa", "sft"}:
+            return jsonify({"error": "Select PTW, LoA, SFT, or no permit requirement"}), 400
         permit_status = "not_required" if permit_requirement == "none" else "required"
-    if action == "confirm_execution" and order["permit_requirement"] in {"ptw", "loa"}:
+    if action == "confirm_execution" and order["permit_requirement"] in {"ptw", "loa", "sft"}:
         linked_permit = database.execute(
             """
             SELECT permit_no, status FROM safety_permits
@@ -4385,8 +4475,22 @@ def update_work_order(order_id: int):
             return jsonify({
                 "error": f"{linked_permit['permit_no']} must be received before execution"
             }), 409
-    if action == "accept_work" and permit_status == "issued":
-        return jsonify({"error": "Issued PTW/LoA must be cancelled before closing"}), 409
+    if action == "accept_work" and order["permit_requirement"] in {"ptw", "loa", "sft"}:
+        open_permit = database.execute(
+            """
+            SELECT permit_no, status FROM safety_permits
+            WHERE work_order_id = ? AND status != 'cancelled'
+            ORDER BY id DESC LIMIT 1
+            """,
+            (order_id,),
+        ).fetchone()
+        if open_permit is not None:
+            return jsonify({
+                "error": (
+                    f"{open_permit['permit_no']} is still {open_permit['status']}. "
+                    "Cancel the linked permit before accepting and closing the work order."
+                )
+            }), 409
     completion_summary = order["completion_summary"]
     actual_man_hours = order["actual_man_hours"]
     failure_mode = order["failure_mode"]
@@ -4625,7 +4729,7 @@ def update_work_order_permit(order_id: int):
     ).fetchone()
     if order is None:
         abort(404)
-    if order["permit_requirement"] not in {"ptw", "loa"}:
+    if order["permit_requirement"] not in {"ptw", "loa", "sft"}:
         return jsonify({"error": "This work order does not require a permit"}), 409
     if status == "cancelled" and order["permit_status"] != "issued":
         return jsonify({"error": "Only an issued permit can be cancelled"}), 409

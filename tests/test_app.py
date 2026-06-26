@@ -1262,6 +1262,24 @@ class MorupuleSipamTestCase(unittest.TestCase):
         self.assertEqual(execution.status_code, 200)
         self.assertEqual(execution.get_json()["workflow_step"], "execution")
         self.assertIsNotNone(execution.get_json()["execution_started_at"])
+        completed = self.client.patch(
+            "/api/work-orders/1",
+            json={
+                "action": "complete_work",
+                "completion_summary": "Permit-controlled repair completed.",
+                "actual_man_hours": 4,
+            },
+        )
+        self.assertEqual(completed.status_code, 200)
+        blocked_close = self.client.patch(
+            "/api/work-orders/1",
+            json={
+                "action": "accept_work",
+                "acceptance_note": "Functional test passed.",
+            },
+        )
+        self.assertEqual(blocked_close.status_code, 409)
+        self.assertIn("Cancel the linked permit", blocked_close.get_json()["error"])
 
     def test_approver_can_return_plan_to_planner_with_reason(self):
         self.login_as(4)
@@ -2136,6 +2154,69 @@ class MorupuleSipamTestCase(unittest.TestCase):
 
         order = self.client.get(f"/api/corrective/{request_record['id']}").get_json()
         self.assertEqual(order["permit_status"], "cancelled")
+
+    def test_work_order_can_require_sft_and_link_sft_permit(self):
+        request_record = self.client.post(
+            "/api/corrective",
+            json={
+                "asset_id": 8,
+                "name": "SFT integration test work",
+                "type_of_work": "Electrical test",
+                "main_department": "Electrical Maintenance",
+                "cmpt_primary": "A",
+                "cmpt_impacts": ["A"],
+                "cmpt_severity": 3,
+                "cmpt_likelihood": "D",
+                "observation": "Work requires controlled testing after isolation.",
+            },
+        ).get_json()
+        approved_request = self.client.patch(
+            f"/api/corrective/{request_record['id']}/decision",
+            json={"decision": "approved"},
+        ).get_json()
+        work_order_id = approved_request["work_order_id"]
+        self.client.patch(
+            f"/api/work-orders/{work_order_id}",
+            json={
+                "action": "submit_plan",
+                "description_of_work": "Carry out controlled electrical testing.",
+                "maintenance_code": "COR-ELEC",
+                "equipment_condition": "Degraded",
+                "expected_man_hours": 3,
+            },
+        )
+        approved_plan = self.client.patch(
+            f"/api/work-orders/{work_order_id}",
+            json={"action": "approve_plan", "permit_requirement": "sft"},
+        )
+        self.assertEqual(approved_plan.status_code, 200)
+        self.assertEqual(approved_plan.get_json()["permit_requirement"], "sft")
+
+        created = self.client.post(
+            "/api/permits",
+            json={
+                "work_order_id": work_order_id,
+                "asset_id": 8,
+                "form_type": "electrical_sft",
+                "work_description": "Controlled test after maintenance.",
+                "location": "Unit 1 BAS ash side",
+                "issued_to": "Electrical Tester",
+                "employer": "Morupule B Power Station",
+                "electrical_isolations": "Isolate and prove dead before test.",
+                "prepared_by": "Test Shift Leader",
+                "precautions_confirmed": True,
+                "precautions": ["isolate_energy", "lock_tag", "prove_dead", "ppe"],
+                "assessments": {
+                    "hot_work": {"answer": "no"},
+                    "height_work": {"answer": "no"},
+                    "confined_space": {"answer": "na"},
+                },
+            },
+        )
+        self.assertEqual(created.status_code, 201)
+        self.assertTrue(created.get_json()["permit_no"].startswith("SFT-"))
+        detail = self.client.get(f"/api/corrective/{request_record['id']}").get_json()
+        self.assertEqual(detail["linked_permits"][0]["form_type"], "electrical_sft")
 
     def test_permit_issue_requires_confirmed_precautions(self):
         created = self.client.post(

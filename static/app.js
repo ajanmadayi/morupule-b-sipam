@@ -1174,7 +1174,7 @@ function renderCorrectiveDetail() {
     hasRole("Maintenance Planner");
   const planDisabled = canEditPlan ? "" : "disabled";
   const activeLinkedPermit = (item.linked_permits || []).find(permit => permit.status !== "cancelled");
-  const permitControl = hasRole("Shift Leader") && item.work_order_id && item.workflow_step === "permit_decision" && ["ptw", "loa"].includes(item.permit_requirement)
+  const permitControl = hasRole("Shift Leader") && item.work_order_id && item.workflow_step === "permit_decision" && ["ptw", "loa", "sft"].includes(item.permit_requirement)
     ? activeLinkedPermit
       ? `<button class="button secondary" id="openLinkedPermit"><i data-lucide="shield-check"></i>Open ${escapeHtml(activeLinkedPermit.permit_no)}</button>`
       : `<button class="button secondary" id="preparePermitForOrder"><i data-lucide="shield-plus"></i>Prepare ${item.permit_requirement.toUpperCase()}</button>`
@@ -1211,7 +1211,7 @@ function renderCorrectiveDetail() {
           <label><span>Maintenance code</span><input id="maintenanceCode" maxlength="30" value="${escapeHtml(item.maintenance_code || "")}" placeholder="Approved maintenance code" ${planDisabled}></label>
           <label><span>Equipment condition</span><select id="equipmentCondition" ${planDisabled}><option value="">Select condition</option><option value="Operating" ${item.equipment_condition === "Operating" ? "selected" : ""}>Operating</option><option value="Degraded" ${item.equipment_condition === "Degraded" ? "selected" : ""}>Degraded</option><option value="Failed" ${item.equipment_condition === "Failed" ? "selected" : ""}>Failed</option><option value="Out of service" ${item.equipment_condition === "Out of service" ? "selected" : ""}>Out of service</option></select></label>
           <label><span>Expected man hours</span><input id="planHours" type="number" min="0" step=".5" value="${Number(item.expected_man_hours || 0)}" ${planDisabled}></label>
-          <label><span>PTW / LoA decision</span><select id="permitRequirement" ${planDisabled}><option value="undecided" ${item.permit_requirement === "undecided" ? "selected" : ""}>Undecided</option><option value="none" ${item.permit_requirement === "none" ? "selected" : ""}>No permit required</option><option value="ptw" ${item.permit_requirement === "ptw" ? "selected" : ""}>Permit to Work</option><option value="loa" ${item.permit_requirement === "loa" ? "selected" : ""}>Limitation of Access</option></select></label>
+          <label><span>PTW / LoA / SFT decision</span><select id="permitRequirement" ${planDisabled}><option value="undecided" ${item.permit_requirement === "undecided" ? "selected" : ""}>Undecided</option><option value="none" ${item.permit_requirement === "none" ? "selected" : ""}>No permit required</option><option value="ptw" ${item.permit_requirement === "ptw" ? "selected" : ""}>Permit to Work</option><option value="loa" ${item.permit_requirement === "loa" ? "selected" : ""}>Limitation of Access</option><option value="sft" ${item.permit_requirement === "sft" ? "selected" : ""}>Sanction for Test</option></select></label>
         </div>
       </div>
       <div class="corrective-columns">
