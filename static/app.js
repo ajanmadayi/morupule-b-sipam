@@ -274,7 +274,8 @@ function localDateTimeValue() {
   return now.toISOString().slice(0, 16);
 }
 
-function openView(name) {
+function openView(name, updateHash = true) {
+  if (!views[name]) name = "dashboard";
   Object.values(views).forEach(view => view.classList.remove("active"));
   views[name].classList.add("active");
   pageTitle.textContent = pageTitles[name];
@@ -297,6 +298,9 @@ function openView(name) {
   if (name === "readiness") loadReadiness().catch(showReadinessError);
   if (name === "system") loadSystemStatus().catch(showSystemError);
   if (name === "kksimport") loadKksImports().catch(showKksImportError);
+  if (updateHash && window.location.hash !== `#${name}`) {
+    window.history.replaceState(null, "", `#${name}`);
+  }
 }
 
 async function loadFoundation() {
@@ -311,7 +315,7 @@ async function loadFoundation() {
   populateMasterData();
   applyRolePermissions();
   initializeReportDates();
-  await loadDashboard();
+  openView(window.location.hash.slice(1) || "dashboard", false);
 }
 
 function populateMasterData() {
@@ -3256,6 +3260,9 @@ function showGlobalError(error) {
 
 document.querySelectorAll(".nav-item[data-view]").forEach(button => {
   button.addEventListener("click", () => openView(button.dataset.view));
+});
+window.addEventListener("hashchange", () => {
+  openView(window.location.hash.slice(1) || "dashboard", false);
 });
 document.querySelector("#menuButton").addEventListener("click", () => sidebar.classList.toggle("open"));
 document.querySelector("#dashboardNewEntry").addEventListener("click", () => openEntryModal());
