@@ -994,6 +994,30 @@ footer {
   font-size: 9px;
 }
 
+.readiness-report .text-block {
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border: 1px solid #cfd8dd;
+  background: #f7faf8;
+  line-height: 1.5;
+}
+
+.readiness-table td {
+  vertical-align: top;
+}
+
+.readiness-table .status-done td {
+  background: #f3fbf6;
+}
+
+.readiness-table .status-blocked td {
+  background: #fff5f5;
+}
+
+.readiness-table .status-in_progress td {
+  background: #f3f9fc;
+}
+
 @media print {
   .print-command {
     display: none;

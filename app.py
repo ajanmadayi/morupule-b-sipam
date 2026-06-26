@@ -2759,6 +2759,52 @@ def print_management_report():
     )
 
 
+@app.get("/print/readiness-report")
+@roles_required("System Administrator")
+def print_readiness_report():
+    rows = get_db().execute(
+        """
+        SELECT id, item_key, category, item, status, owner, target_date,
+            evidence, updated_by, updated_at
+        FROM readiness_items
+        ORDER BY
+            CASE category
+                WHEN 'application' THEN 1
+                WHEN 'data' THEN 2
+                WHEN 'access' THEN 3
+                WHEN 'process' THEN 4
+                WHEN 'training' THEN 5
+                WHEN 'support' THEN 6
+                WHEN 'open_items' THEN 7
+                ELSE 8
+            END,
+            id
+        """
+    ).fetchall()
+    items = [row_to_dict(row) for row in rows]
+    categories: dict[str, list[dict]] = {}
+    for item in items:
+        categories.setdefault(item["category"], []).append(item)
+    labels = {
+        "application": "Application Readiness",
+        "data": "Data Readiness",
+        "access": "Access Readiness",
+        "process": "Process Readiness",
+        "training": "Training Readiness",
+        "support": "Support Readiness",
+        "open_items": "Open Items",
+    }
+    return render_template(
+        "readiness_report.html",
+        items=items,
+        categories=categories,
+        category_labels=labels,
+        summary=readiness_summary(rows),
+        generated_at=datetime.now().strftime("%d %b %Y %H:%M"),
+        generated_by=g.current_user["full_name"],
+    )
+
+
 @app.get("/api/reports/activity.csv")
 def export_activity_report():
     start, end = report_date_range()
