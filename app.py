@@ -894,6 +894,7 @@ def init_db() -> None:
     seed_readiness_items(database)
     ensure_responsibility_groups(database)
     ensure_user_columns(database)
+    ensure_product_branding(database)
     sync_infobox(database)
     database.execute(
         """
@@ -1236,6 +1237,60 @@ def ensure_user_columns(database: sqlite3.Connection) -> None:
         (default_hash,),
     )
 
+
+
+def ensure_product_branding(database: sqlite3.Connection) -> None:
+    """Update legacy visible labels while preserving technical env/database names."""
+    database.execute(
+        """
+        UPDATE users
+        SET full_name = 'S-PULSE Administrator'
+        WHERE employee_no = 'MBPS-ADMIN'
+          AND full_name IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET employer = 'STEAG Energy Services'
+        WHERE employer = 'Morupule B Power Station'
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET prepared_by = 'S-PULSE Administrator'
+        WHERE prepared_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET issued_by = 'S-PULSE Administrator'
+        WHERE issued_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET received_by = 'S-PULSE Administrator'
+        WHERE received_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET cleared_by = 'S-PULSE Administrator'
+        WHERE cleared_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
+    database.execute(
+        """
+        UPDATE safety_permits
+        SET cancelled_by = 'S-PULSE Administrator'
+        WHERE cancelled_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
+        """
+    )
 
 def ensure_responsibility_groups(database: sqlite3.Connection) -> None:
     database.executemany(
