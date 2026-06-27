@@ -2166,6 +2166,7 @@ def audit_successful_mutations(response):
         and request.method in {"POST", "PATCH", "DELETE"}
         and response.status_code < 400
         and getattr(g, "current_user", None) is not None
+        and not getattr(g, "skip_audit", False)
     ):
         record_audit(
             audit_action_name(request.method, request.path),
@@ -6683,6 +6684,108 @@ def verify_backup_file(path: Path, expected_sha256: str | None = None) -> dict:
         "manifest": manifest,
     }
 
+
+
+OPERATIONAL_RESET_TABLES = (
+    "inbox_escalation_history",
+    "inbox_history",
+    "inbox_recipients",
+    "inbox_items",
+    "attachments",
+    "permit_transition_history",
+    "permit_special_assessments",
+    "permit_precautions",
+    "safety_permits",
+    "preventive_tasks",
+    "recurrent_task_history",
+    "recurrent_task_assets",
+    "recurrent_tasks",
+    "schedule_types",
+    "work_order_history",
+    "work_order_artisans",
+    "work_order_supplies",
+    "work_orders",
+    "work_request_edit_history",
+    "work_requests",
+    "shift_handover_events",
+    "shift_handovers",
+    "event_deletion_log",
+    "event_edit_history",
+    "event_state_history",
+    "event_entry_logbooks",
+    "event_entries",
+    "audit_logs",
+    "readiness_items",
+    "kks_import_issues",
+    "kks_import_runs",
+    "kks_staged_imports",
+)
+
+
+def clear_operational_data(database: sqlite3.Connection) -> dict:
+    counts_before: dict[str, int] = {}
+    deleted_counts: dict[str, int] = {}
+    database.execute("PRAGMA foreign_keys = ON")
+    for table_name in OPERATIONAL_RESET_TABLES:
+        exists = database.execute(
+            "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?",
+            (table_name,),
+        ).fetchone()
+        if not exists:
+            continue
+        counts_before[table_name] = database.execute(
+            f'SELECT COUNT(*) FROM "{table_name}"'
+        ).fetchone()[0]
+        cursor = database.execute(f'DELETE FROM "{table_name}"')
+        deleted_counts[table_name] = max(cursor.rowcount, 0)
+    for sequence_name in OPERATIONAL_RESET_TABLES:
+        database.execute("DELETE FROM sqlite_sequence WHERE name = ?", (sequence_name,))
+    cleanup_upload_files()
+    sync_infobox(database)
+    database.commit()
+    return {"before": counts_before, "deleted": deleted_counts}
+
+
+def cleanup_upload_files() -> int:
+    upload_root = Path(app.config["UPLOAD_FOLDER"]).resolve()
+    if not upload_root.exists():
+        return 0
+    removed = 0
+    for path in upload_root.rglob("*"):
+        if path.is_file():
+            path.unlink(missing_ok=True)
+            removed += 1
+    for directory in sorted(
+        [path for path in upload_root.rglob("*") if path.is_dir()],
+        key=lambda item: len(item.parts),
+        reverse=True,
+    ):
+        try:
+            directory.rmdir()
+        except OSError:
+            pass
+    return removed
+
+
+@app.post("/api/system/reset-operational-data")
+@roles_required("System Administrator")
+def reset_operational_data():
+    g.skip_audit = True
+    payload = request.get_json(silent=True) or {}
+    if str(payload.get("confirmation") or "").strip() != "RESET S-PULSE DATA":
+        return jsonify({
+            "error": "Type RESET S-PULSE DATA to remove all operational records"
+        }), 400
+    safety_backup = create_retained_backup()
+    database = get_db()
+    reset_result = clear_operational_data(database)
+
+    return jsonify({
+        "status": "reset_complete",
+        "kept": ["assets", "users", "logbooks", "responsibility groups"],
+        "safety_backup": safety_backup["filename"],
+        **reset_result,
+    })
 
 @app.get("/api/system/backups")
 @roles_required("System Administrator")

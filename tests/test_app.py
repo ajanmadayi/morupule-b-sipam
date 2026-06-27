@@ -329,6 +329,48 @@ class SpulseTestCase(unittest.TestCase):
             404,
         )
 
+    def test_reset_operational_data_keeps_assets_and_users(self):
+        uploaded = self.client.post(
+            "/api/attachments/event/1",
+            data={"file": (BytesIO(b"reset evidence"), "reset.txt")},
+            content_type="multipart/form-data",
+        )
+        self.assertEqual(uploaded.status_code, 201)
+        rejected = self.client.post(
+            "/api/system/reset-operational-data",
+            json={"confirmation": "reset"},
+        )
+        self.assertEqual(rejected.status_code, 400)
+
+        reset = self.client.post(
+            "/api/system/reset-operational-data",
+            json={"confirmation": "RESET S-PULSE DATA"},
+        )
+        self.assertEqual(reset.status_code, 200)
+        result = reset.get_json()
+        self.assertEqual(result["status"], "reset_complete")
+        self.assertIn("assets", result["kept"])
+        self.assertTrue(result["safety_backup"].startswith("spulse-backup-"))
+
+        with app.app_context():
+            database = get_db()
+            self.assertGreater(database.execute("SELECT COUNT(*) FROM assets").fetchone()[0], 0)
+            self.assertGreater(database.execute("SELECT COUNT(*) FROM users").fetchone()[0], 0)
+            self.assertGreater(database.execute("SELECT COUNT(*) FROM logbooks").fetchone()[0], 0)
+            for table_name in (
+                "event_entries", "work_requests", "work_orders",
+                "safety_permits", "recurrent_tasks", "preventive_tasks",
+                "attachments", "inbox_items", "audit_logs", "readiness_items",
+            ):
+                self.assertEqual(
+                    database.execute(f'SELECT COUNT(*) FROM "{table_name}"').fetchone()[0],
+                    0,
+                    table_name,
+                )
+        self.assertFalse(any(Path(app.config["UPLOAD_FOLDER"]).rglob("*")))
+        dashboard = self.client.get("/api/dashboard").get_json()
+        self.assertEqual(dashboard["open_events"], 0)
+        self.assertEqual(dashboard["active_permits"], 0)
     def test_non_administrator_cannot_access_system_status(self):
         self.login_as(1)
         self.assertEqual(self.client.get("/api/system/status").status_code, 403)
