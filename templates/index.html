@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Morupule B Power Station S-PULSE">
-  <title>Morupule B S-PULSE</title>
+  <meta name="description" content="S-PULSE - Smart Plant Unified Log, Safety & Engineering">
+  <title>S-PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <img class="brand-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
-        <div><strong>S-PULSE</strong><small>Morupule B Power Station</small></div>
+        <div><strong>S-PULSE</strong><small>Smart Plant Unified Log, Safety &amp; Engineering</small></div>
       </div>
       <nav>
         <span class="nav-label">Operations</span>
@@ -48,7 +48,7 @@
       <header class="topbar">
         <div class="topbar-title">
           <button class="icon-button menu-button" id="menuButton" aria-label="Open navigation"><i data-lucide="menu"></i></button>
-          <div><small>Morupule B / Operations</small><h1 id="pageTitle">Operations Dashboard</h1></div>
+          <div><small>S-PULSE / Operations</small><h1 id="pageTitle">Operations Dashboard</h1></div>
         </div>
         <div class="user-session">
           <div class="user-box"><span class="avatar">{{ current_user.initials }}</span><span><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role_name }}</small></span></div>
@@ -90,7 +90,7 @@
             <div id="recentEvents" class="recent-events"><div class="loading">Loading entries...</div></div>
           </section>
           <aside class="panel reference-panel">
-            <div class="panel-header"><div><h3>S-PULSE foundation</h3><p>Current commissioned scope</p></div></div>
+            <div class="panel-header"><div><h3>S-PULSE foundation</h3><p>Smart Plant Unified Log, Safety &amp; Engineering</p></div></div>
             <div class="reference-list">
               <article><i data-lucide="notebook-tabs"></i><span><strong>Event Log</strong><small>Main entries, comments, logbook visibility</small></span><b>Active</b></article>
               <article><i data-lucide="network"></i><span><strong>KKS Asset Directory</strong><small>Unit to equipment component hierarchy</small></span><b>Active</b></article>
@@ -755,7 +755,7 @@
           <label class="span-2"><span>Work to be carried out</span><textarea name="work_description" rows="3" required></textarea></label>
           <label class="span-2"><span>Location</span><input name="location" required></label>
           <label><span>Issued to</span><input name="issued_to" required></label>
-          <label><span>Employer</span><input name="employer" required value="Morupule B Power Station"></label>
+          <label><span>Employer</span><input name="employer" required value="STEAG Energy Services"></label>
           <label class="span-2"><span>Electrical isolations</span><textarea name="electrical_isolations" rows="2"></textarea></label>
           <label class="span-2"><span>Mechanical isolations</span><textarea name="mechanical_isolations" rows="2"></textarea></label>
           <label class="span-2"><span>Position of circuit main earths</span><input name="circuit_main_earths"></label>

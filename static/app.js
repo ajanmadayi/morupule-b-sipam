@@ -2405,7 +2405,7 @@ function renderEmptySafetyPermitDetail() {
 async function openSafetyPermitModal(workOrder = null) {
   const form = document.querySelector("#safetyPermitForm");
   form.reset();
-  form.elements.employer.value = "Morupule B Power Station";
+  form.elements.employer.value = "STEAG Energy Services";
   form.elements.prepared_by.value = currentUser.full_name;
   document.querySelector("#safetyPermitMessage").textContent = "";
   setAssetPicker("safetyPermitAsset");
@@ -3032,8 +3032,8 @@ async function verifySystemBackup(id) {
 }
 
 async function restoreSystemBackup(id) {
-  const confirmation = window.prompt("Type RESTORE MORUPULE B S-PULSE to replace the current database and attachments:");
-  if (confirmation !== "RESTORE MORUPULE B S-PULSE") return;
+  const confirmation = window.prompt("Type RESTORE S-PULSE to replace the current database and attachments:");
+  if (confirmation !== "RESTORE S-PULSE") return;
   const response = await fetch(`/api/system/backups/${id}/restore`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ confirmation })

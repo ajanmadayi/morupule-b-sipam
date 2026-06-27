@@ -12,7 +12,7 @@
   {% if entity_type not in ("corrective", "permit") %}
   <header>
     <img class="print-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
-    <div class="heading"><strong>Morupule B Power Station</strong><span>S-PULSE Controlled Record</span></div>
+    <div class="heading"><strong>S-PULSE</strong><span>Smart Plant Unified Log, Safety &amp; Engineering</span></div>
     <div class="document-meta">
       <div><span>Document</span><strong>{{ document_no }}</strong></div>
       <div><span>Revision</span><strong>Live</strong></div>
@@ -42,7 +42,7 @@
     <div class="wo-top">
       <div class="wo-flash">SP</div>
       <div class="wo-title">
-        <div>Morupule B Power Station - Palapye 4x150 MW</div>
+        <div>Smart Plant Unified Log, Safety &amp; Engineering</div>
         <strong>Work Order: {{ record.order_no or "-" }}</strong>
         <strong>{{ record.name or record.observation }}</strong>
       </div>
@@ -190,7 +190,7 @@
     <div class="safety-top">
       <div class="wo-flash">SP</div>
       <div class="safety-title">
-        <div>Morupule B Power Station - Palapye 4x150 MW</div>
+        <div>Smart Plant Unified Log, Safety &amp; Engineering</div>
         <strong>{{ form_title }}</strong>
         {% if form_code != "LOA" %}<span>LOB No.: {{ record.order_no or "-" }} &nbsp;&nbsp;&nbsp;&nbsp; Key No.: 1</span>{% endif %}
       </div>
@@ -262,7 +262,7 @@
     <table><tr><th>Filename</th><th>Uploaded by</th><th>Time</th></tr>
       {% for row in record.attachments %}<tr><td>{{ row.original_name }}</td><td>{{ row.uploaded_by_name }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No attachments.</td></tr>{% endfor %}
     </table>
-    <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station S-PULSE</span></footer>
+    <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>S-PULSE Controlled Record</span></footer>
   {% endif %}
 </body>
 </html>

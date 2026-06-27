@@ -1550,7 +1550,7 @@ def seed_safety_permits(database: sqlite3.Connection) -> None:
                 "PTW-2026-0001", 1, 8, "electrical_ptw", "prepared",
                 "Inspect actuator command and feedback circuit.",
                 "Unit 1 BAS ash side, dome valve actuator",
-                "Boitumelo Kgosidintsi", "Morupule B Power Station",
+                "Boitumelo Kgosidintsi", "STEAG Energy Services",
                 "Isolate actuator 415 V supply and prove dead.",
                 "Secure actuator linkage against movement.",
                 "Apply local earth where required by switching instruction.",
@@ -1561,7 +1561,7 @@ def seed_safety_permits(database: sqlite3.Connection) -> None:
                 "LOA-2026-0001", None, 6, "mechanical_loa", "issued",
                 "Visual inspection of dome valve body and identification.",
                 "Unit 1 BAS ash side",
-                "Neo Dube", "Morupule B Power Station",
+                "Neo Dube", "STEAG Energy Services",
                 None, None, None, 0, 0,
                 "Inspection limited to external valve surfaces and accessible nameplate.",
                 1, "Kabelo Molefe", "Kabelo Molefe", "Thabo Ndlovu",
@@ -2382,7 +2382,7 @@ def print_document(entity_type: str, entity_id: int):
 
 @app.get("/api/health")
 def health():
-    return jsonify({"status": "ok", "station": "Morupule B Power Station"})
+    return jsonify({"status": "ok", "station": "STEAG Energy Services"})
 
 
 @app.get("/api/me")
@@ -6390,7 +6390,7 @@ def system_status():
         ).fetchall()
     ]
     return jsonify({
-        "station": "Morupule B Power Station",
+        "station": "STEAG Energy Services",
         "checked_at": datetime.now().isoformat(timespec="seconds"),
         "integrity": integrity,
         "foreign_key_issues": len(foreign_key_issues),
@@ -6491,7 +6491,7 @@ def create_migration_export() -> Path:
         """
     ).fetchall()
     manifest = {
-        "station": "Morupule B Power Station",
+        "station": "STEAG Energy Services",
         "export_type": "migration_csv_bundle",
         "export_created_at": datetime.now().isoformat(timespec="seconds"),
         "export_created_by": g.current_user["full_name"],
@@ -6519,7 +6519,7 @@ def create_migration_export() -> Path:
         archive.writestr(
             "README.txt",
             (
-                "Morupule B S-PULSE migration export\n\n"
+                "S-PULSE migration export\n\n"
                 "Contents:\n"
                 "- manifest.json: export metadata and row counts\n"
                 "- schema/sqlite_schema.sql: current SQLite table definitions\n"
@@ -6662,9 +6662,9 @@ def verify_retained_backup(backup_id: int):
 @roles_required("System Administrator")
 def restore_retained_backup(backup_id: int):
     payload = request.get_json(silent=True) or {}
-    if str(payload.get("confirmation") or "").strip() != "RESTORE MORUPULE B S-PULSE":
+    if str(payload.get("confirmation") or "").strip() != "RESTORE S-PULSE":
         return jsonify({
-            "error": "Type RESTORE MORUPULE B S-PULSE to authorize recovery"
+            "error": "Type RESTORE S-PULSE to authorize recovery"
         }), 400
     database = get_db()
     source_row = database.execute(
