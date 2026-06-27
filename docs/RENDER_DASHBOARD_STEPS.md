@@ -94,7 +94,7 @@ https://<your-render-service>.onrender.com/api/health
 Expected station:
 
 ```text
-Morupule B Power Station
+STEAG Energy Services
 ```
 
 2. Open the application URL.
@@ -106,7 +106,7 @@ MBPS-ADMIN / SIPAM@2026
 
 4. Change seeded password before pilot.
 5. Create named user accounts.
-6. Import or validate Morupule B KKS register.
+6. Import or validate S-PULSE KKS register.
 7. Create and verify first recovery point.
 
 ## Smoke Check

@@ -1,6 +1,6 @@
-# Morupule B SIPAM Operations Guide
+# S-PULSE Operations Guide
 
-This guide explains the working language and day-to-day flow of the Morupule B SIPAM web application.
+This guide explains the working language and day-to-day flow of the S-PULSE web application.
 
 ## Key Terms
 
@@ -22,7 +22,7 @@ This guide explains the working language and day-to-day flow of the Morupule B S
 
 In SI/PAM language, the practical starting point is a **Work Request**.
 
-Recommended Morupule B flow:
+Recommended S-PULSE flow:
 
 1. Search and select the correct KKS asset.
 2. Create an Event Log main entry if the issue was observed by Operations.

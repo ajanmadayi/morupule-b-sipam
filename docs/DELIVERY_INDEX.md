@@ -1,6 +1,6 @@
-# Morupule B SIPAM Delivery Index
+# S-PULSE Delivery Index
 
-This is the starting point for reviewing the Morupule B SIPAM delivery package.
+This is the starting point for reviewing the S-PULSE delivery package.
 
 ## Application
 
@@ -86,7 +86,7 @@ Before production or pilot:
 2. Set `SIPAM_SECRET_KEY`.
 3. Use HTTPS and set `SIPAM_COOKIE_SECURE=1`.
 4. Change seeded passwords.
-5. Load the approved Morupule B KKS register.
+5. Load the approved S-PULSE KKS register.
 6. Create named users and assign roles.
 7. Verify logbooks and permissions.
 8. Create and verify a first recovery point.

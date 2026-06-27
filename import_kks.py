@@ -152,7 +152,7 @@ def add_hierarchy_parents(records: dict[str, dict[str, object]]) -> int:
         if plant not in records:
             records[plant] = make_record(
                 kks_code=plant,
-                description=f"Morupule B plant area {plant}",
+                description=f"S-PULSE plant area {plant}",
                 level_no=0,
                 plant_code=plant,
                 source_kind="kks_inferred",
@@ -323,7 +323,7 @@ def import_records(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Import Morupule B KKS workbook.")
+    parser = argparse.ArgumentParser(description="Import S-PULSE KKS workbook.")
     parser.add_argument("workbook", type=Path)
     parser.add_argument(
         "--data-dir",

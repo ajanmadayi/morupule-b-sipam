@@ -1,12 +1,12 @@
 # Render Deployment Guide
 
-This guide explains how to run Morupule B SIPAM on Render.
+This guide explains how to run S-PULSE on Render.
 
 For click-by-click dashboard setup, use `docs/RENDER_DASHBOARD_STEPS.md`.
 
 ## Important Storage Note
 
-Morupule B SIPAM currently uses SQLite plus local uploaded files. On Render, these must be stored on a persistent disk.
+S-PULSE currently uses SQLite plus local uploaded files. On Render, these must be stored on a persistent disk.
 
 This project is configured to use:
 
@@ -83,7 +83,7 @@ https://<render-service-url>/api/health
 
 8. Sign in as administrator and change seeded passwords.
 9. Create named users and assign roles.
-10. Load or validate the Morupule B KKS register.
+10. Load or validate the S-PULSE KKS register.
 11. Create and verify first recovery point.
 
 ## First Login

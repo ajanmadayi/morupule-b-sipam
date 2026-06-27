@@ -1,4 +1,4 @@
-# Morupule B SIPAM Open Items Register
+# S-PULSE Open Items Register
 
 Use this register during UAT, pilot preparation, and handover meetings.
 

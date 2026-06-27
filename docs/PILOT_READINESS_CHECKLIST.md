@@ -1,4 +1,4 @@
-# Morupule B SIPAM Pilot Readiness Checklist
+# S-PULSE Pilot Readiness Checklist
 
 Use this checklist after UAT sign-off and before controlled pilot use.
 
@@ -19,7 +19,7 @@ Use this checklist after UAT sign-off and before controlled pilot use.
 
 | Check | Status | Evidence / Notes |
 | --- | --- | --- |
-| Approved Morupule B KKS register loaded | Pending / Done | |
+| Approved S-PULSE KKS register loaded | Pending / Done | |
 | KKS asset count reviewed | Pending / Done | |
 | Duplicate/inferred KKS import items reviewed | Pending / Done | |
 | Logbooks reviewed | Pending / Done | |

@@ -126,7 +126,7 @@ def run(args: argparse.Namespace) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Smoke-check the Morupule B SIPAM web app.")
+    parser = argparse.ArgumentParser(description="Smoke-check the S-PULSE web app.")
     parser.add_argument("--base-url", default="http://127.0.0.1:5035")
     parser.add_argument("--user", default="MBPS-0104")
     parser.add_argument("--password", default="SIPAM@2026")

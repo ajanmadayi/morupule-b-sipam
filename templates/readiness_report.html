@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pilot Readiness Report | Morupule B</title>
+  <title>Pilot Readiness Report | S-PULSE</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='print.css', v='20260627-steag') }}">
   <script defer src="{{ url_for('static', filename='print.js', v='20260626-readiness-report') }}"></script>
 </head>
@@ -23,13 +23,13 @@
     <section class="metrics">
       <article class="metric"><small>Total checks</small><strong>{{ summary.total }}</strong><span>Configured readiness controls</span></article>
       <article class="metric green"><small>Done</small><strong>{{ summary.done }}</strong><span>{{ summary.completion_percent }}% complete</span></article>
-      <article class="metric red"><small>Blocked</small><strong>{{ summary.blocked }}</strong><span>Requires Morupule B decision</span></article>
+      <article class="metric red"><small>Blocked</small><strong>{{ summary.blocked }}</strong><span>Requires S-PULSE decision</span></article>
       <article class="metric"><small>Pending</small><strong>{{ summary.pending }}</strong><span>Unclassified remaining work</span></article>
     </section>
 
     <h2>Decision Position</h2>
     <section class="text-block">
-      <p>The application-side checks that can be verified by system evidence have been closed. Remaining blocked items require Morupule B Operations, Maintenance, IT, or sponsor confirmation before pilot sign-off.</p>
+      <p>The application-side checks that can be verified by system evidence have been closed. Remaining blocked items require S-PULSE Operations, Maintenance, IT, or sponsor confirmation before pilot sign-off.</p>
     </section>
 
     {% for category, category_items in categories.items() %}

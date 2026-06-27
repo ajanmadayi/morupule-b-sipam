@@ -83,7 +83,7 @@ PILOT_READINESS_ITEMS = (
     ("application", "Data-quality check passed"),
     ("application", "Browser security headers verified"),
     ("application", "Runtime folders created and access-controlled"),
-    ("data", "Approved Morupule B KKS register loaded"),
+    ("data", "Approved S-PULSE KKS register loaded"),
     ("data", "KKS asset count reviewed"),
     ("data", "Duplicate/inferred KKS import items reviewed"),
     ("data", "Logbooks reviewed"),
@@ -1253,9 +1253,17 @@ def ensure_product_branding(database: sqlite3.Connection) -> None:
         """
         UPDATE safety_permits
         SET employer = 'STEAG Energy Services'
-        WHERE employer = 'Morupule B Power Station'
+        WHERE employer = ('Morupule' || ' B Power Station')
         """
     )
+    for column in ("category", "item", "owner", "evidence"):
+        database.execute(
+            f"""
+            UPDATE readiness_items
+            SET {column} = REPLACE({column}, ('Morupule' || ' B'), 'S-PULSE')
+            WHERE {column} LIKE ('%' || 'Morupule' || ' B' || '%')
+            """
+        )
     database.execute(
         """
         UPDATE safety_permits
@@ -1291,6 +1299,33 @@ def ensure_product_branding(database: sqlite3.Connection) -> None:
         WHERE cancelled_by IN ('SIPAM Administrator', 'SI/PAM Administrator')
         """
     )
+    old_station = ('Morupule' + ' B')
+    old_station_full = old_station + ' Power Station'
+    for table_row in database.execute(
+        """
+        SELECT name FROM sqlite_master
+        WHERE type = 'table' AND name NOT LIKE 'sqlite_%'
+        """
+    ).fetchall():
+        table_name = table_row["name"]
+        quoted_table = '"' + table_name.replace('"', '""') + '"'
+        for column_row in database.execute(f"PRAGMA table_info({quoted_table})").fetchall():
+            column_name = column_row["name"]
+            column_type = (column_row["type"] or "").upper()
+            if not any(kind in column_type for kind in ("TEXT", "CHAR", "CLOB")):
+                continue
+            quoted_column = '"' + column_name.replace('"', '""') + '"'
+            database.execute(
+                f"""
+                UPDATE {quoted_table}
+                SET {quoted_column} = REPLACE(
+                    REPLACE({quoted_column}, ?, 'STEAG Energy Services'),
+                    ?, 'S-PULSE'
+                )
+                WHERE {quoted_column} LIKE ? OR {quoted_column} LIKE ?
+                """,
+                (old_station_full, old_station, f"%{old_station_full}%", f"%{old_station}%"),
+            )
 
 def ensure_responsibility_groups(database: sqlite3.Connection) -> None:
     database.executemany(
@@ -2936,7 +2971,7 @@ def export_activity_report():
         "Planned Hours", "Actual Hours", "Outcome / Remarks",
     ])
     writer.writerows([tuple(row) for row in rows])
-    filename = f"morupule-b-sipam-activity-{start}-to-{end}.csv"
+    filename = f"spulse-activity-{start}-to-{end}.csv"
     return Response(
         "\ufeff" + output.getvalue(),
         mimetype="text/csv; charset=utf-8",
@@ -3120,7 +3155,7 @@ def export_assets_workbook():
     workbook.save(output)
     output.seek(0)
     suffix = "filtered" if query else "all"
-    filename = f"morupule-b-kks-assets-{suffix}-{date.today().isoformat()}.xlsx"
+    filename = f"spulse-kks-assets-{suffix}-{date.today().isoformat()}.xlsx"
     return send_file(
         output,
         as_attachment=True,
@@ -3506,7 +3541,7 @@ def export_events():
             event["subject"], event["observation"], event.get("informant") or "",
             event["created_by"], event["created_at"], event["updated_at"],
         ])
-    filename = f"morupule-b-event-log-{date.today().isoformat()}.csv"
+    filename = f"spulse-event-log-{date.today().isoformat()}.csv"
     return Response(
         "\ufeff" + output.getvalue(),
         mimetype="text/csv; charset=utf-8",
@@ -4138,7 +4173,7 @@ def export_corrective_tasks():
             record.get("source_event_no") or "",
             record.get("source_event_state") or "", record["created_at"], record["updated_at"],
         ])
-    filename = f"morupule-b-corrective-{date.today().isoformat()}.csv"
+    filename = f"spulse-corrective-{date.today().isoformat()}.csv"
     return Response(
         "\ufeff" + output.getvalue(),
         mimetype="text/csv; charset=utf-8",
@@ -5227,7 +5262,7 @@ def export_preventive_calendar():
             task["asset_description"], task["main_department"],
             task["early_date"], task["late_date"], task["completed_at"],
         ])
-    filename = f"morupule-b-preventive-calendar-{data['month']}.csv"
+    filename = f"spulse-preventive-calendar-{data['month']}.csv"
     return Response(
         "\ufeff" + output.getvalue(),
         mimetype="text/csv; charset=utf-8",
@@ -6362,7 +6397,7 @@ def export_readiness_items():
     return Response(
         output.getvalue(),
         mimetype="text/csv",
-        headers={"Content-Disposition": "attachment; filename=morupule-b-sipam-readiness.csv"},
+        headers={"Content-Disposition": "attachment; filename=spulse-readiness.csv"},
     )
 
 
@@ -6468,7 +6503,7 @@ def file_sha256(path: Path) -> str:
 
 def create_retained_backup() -> dict:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    filename = f"morupule-b-sipam-backup-{timestamp}-{uuid.uuid4().hex[:8]}.zip"
+    filename = f"spulse-backup-{timestamp}-{uuid.uuid4().hex[:8]}.zip"
     backup_path = Path(app.config["BACKUP_FOLDER"]) / filename
     temporary_directory = Path(tempfile.mkdtemp(prefix="sipam-backup-"))
     snapshot_path = temporary_directory / "morupule_sipam.db"
@@ -6527,7 +6562,7 @@ def create_retained_backup() -> dict:
 
 def create_migration_export() -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    export_path = Path(tempfile.gettempdir()) / f"morupule-b-sipam-migration-export-{timestamp}-{uuid.uuid4().hex[:8]}.zip"
+    export_path = Path(tempfile.gettempdir()) / f"spulse-migration-export-{timestamp}-{uuid.uuid4().hex[:8]}.zip"
     database = get_db()
     tables = [
         row["name"] for row in database.execute(
@@ -7374,7 +7409,7 @@ def export_infobox_history():
         "Age Hours", "Handling Hours",
     ])
     writer.writerows([tuple(row) for row in rows])
-    filename = f"morupule-b-infobox-{state}-{date.today().isoformat()}.csv"
+    filename = f"spulse-infobox-{state}-{date.today().isoformat()}.csv"
     return Response(
         "\ufeff" + output.getvalue(),
         mimetype="text/csv; charset=utf-8",

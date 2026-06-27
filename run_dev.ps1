@@ -25,7 +25,7 @@ if (Test-FlaskImport $VenvPython) {
 } elseif (Test-FlaskImport $BundledPython) {
     $PythonExe = $BundledPython
 } else {
-    Write-Host "Morupule B SIPAM dependencies are not installed." -ForegroundColor Yellow
+    Write-Host "S-PULSE dependencies are not installed." -ForegroundColor Yellow
     Write-Host ""
     Write-Host "Run this once from the project folder:"
     Write-Host "  py -m venv .venv"
@@ -38,5 +38,5 @@ if (Test-FlaskImport $VenvPython) {
 
 $env:SIPAM_PORT = [string]$Port
 Set-Location $ProjectRoot
-Write-Host "Starting Morupule B SIPAM on http://127.0.0.1:$Port/" -ForegroundColor Green
+Write-Host "Starting S-PULSE on http://127.0.0.1:$Port/" -ForegroundColor Green
 & $PythonExe app.py

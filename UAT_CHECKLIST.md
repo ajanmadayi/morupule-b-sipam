@@ -1,4 +1,4 @@
-# Morupule B SIPAM UAT Checklist
+# S-PULSE UAT Checklist
 
 Use this checklist for functional acceptance before a demo, pilot run, or deployment handover.
 

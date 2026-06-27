@@ -1,10 +1,10 @@
-# Morupule B SIPAM Backup And Restore Drill
+# S-PULSE Backup And Restore Drill
 
 Use this drill in a test environment before pilot or production approval.
 
 ## Purpose
 
-Confirm that Morupule B SIPAM recovery points can be created, verified, downloaded, and restored safely.
+Confirm that S-PULSE recovery points can be created, verified, downloaded, and restored safely.
 
 Do not perform restore testing against production data unless an approved outage and rollback plan are in place.
 

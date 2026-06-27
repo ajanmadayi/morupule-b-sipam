@@ -1,6 +1,6 @@
-# Morupule B SIPAM Demo Walkthrough
+# S-PULSE Demo Walkthrough
 
-Use this walkthrough to present the application to Morupule B stakeholders.
+Use this walkthrough to present the application to S-PULSE stakeholders.
 
 ## Demo Preparation
 
@@ -24,7 +24,7 @@ http://127.0.0.1:5035/
 Suggested introduction:
 
 ```text
-This Morupule B SIPAM web application is built around KKS-based operations and maintenance workflows. The main working records are Event Log entries, Work Requests, Work Orders, Preventive Maintenance tasks, PTW/LoA permits, Infobox tasks, and Shift Handovers. The system also includes administration, audit, reports, backup, restore, and KKS import controls.
+This S-PULSE web application is built around KKS-based operations and maintenance workflows. The main working records are Event Log entries, Work Requests, Work Orders, Preventive Maintenance tasks, PTW/LoA permits, Infobox tasks, and Shift Handovers. The system also includes administration, audit, reports, backup, restore, and KKS import controls.
 ```
 
 ## 1. Login And Navigation
@@ -246,7 +246,7 @@ Restore is intentionally controlled. It requires a verified backup and exact con
 Suggested closing:
 
 ```text
-The application now covers Morupule B operations logging, KKS asset history, corrective and preventive maintenance, permit control, shift handover, Infobox task routing, reporting, audit, KKS import, backup, and controlled restore. UAT can be completed using the checklist and sign-off template included in the delivery package.
+The application now covers S-PULSE operations logging, KKS asset history, corrective and preventive maintenance, permit control, shift handover, Infobox task routing, reporting, audit, KKS import, backup, and controlled restore. UAT can be completed using the checklist and sign-off template included in the delivery package.
 ```
 
 ## Questions To Expect

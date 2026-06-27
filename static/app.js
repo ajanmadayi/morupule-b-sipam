@@ -424,7 +424,7 @@ async function loadDashboard() {
     document.querySelector("#dashboardReadinessPending").textContent = summary.readiness.pending || 0;
     document.querySelector("#dashboardReadinessPercent").textContent = `${summary.readiness.completion_percent || 0}%`;
     document.querySelector("#dashboardReadinessHint").textContent =
-      `${summary.readiness.total || 0} checks tracked. Blocked items need Morupule B owner approval.`;
+      `${summary.readiness.total || 0} checks tracked. Blocked items need S-PULSE owner approval.`;
   }
   document.querySelector("#recentEvents").innerHTML = events.slice(0, 6).map(item => `
     <article class="recent-event">
@@ -3015,7 +3015,7 @@ async function createSystemBackup() {
     const match = disposition.match(/filename\*?=(?:UTF-8''|\")?([^\";]+)/i);
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = decodeURIComponent(match?.[1] || "morupule-b-sipam-backup.zip");
+    link.download = decodeURIComponent(match?.[1] || "spulse-backup.zip");
     link.click();
     URL.revokeObjectURL(link.href);
     await loadSystemStatus();

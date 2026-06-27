@@ -1,4 +1,4 @@
-# Morupule B SIPAM Quick Reference
+# S-PULSE Quick Reference
 
 Short daily-use guide for common SIPAM roles.
 

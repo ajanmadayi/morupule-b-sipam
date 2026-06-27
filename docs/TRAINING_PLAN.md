@@ -1,6 +1,6 @@
-# Morupule B SIPAM Training Plan
+# S-PULSE Training Plan
 
-This plan is for training Morupule B users before pilot or production use.
+This plan is for training S-PULSE users before pilot or production use.
 
 ## Training Objectives
 

@@ -1,6 +1,6 @@
-# Morupule B SIPAM Requirements Traceability
+# S-PULSE Requirements Traceability
 
-This matrix maps the delivered Morupule B SIPAM application features to the functional areas expected from the supplied SI/PAM and CMMS workflow references.
+This matrix maps the delivered S-PULSE application features to the functional areas expected from the supplied SI/PAM and CMMS workflow references.
 
 ## Traceability Status
 

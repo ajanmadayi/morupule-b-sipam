@@ -1,6 +1,6 @@
-# Morupule B SIPAM Role And Permission Matrix
+# S-PULSE Role And Permission Matrix
 
-This matrix describes the intended operating permissions for each user role in the Morupule B SIPAM application.
+This matrix describes the intended operating permissions for each user role in the S-PULSE application.
 
 ## Roles
 
@@ -101,7 +101,7 @@ System Administrator should not:
 - Restore production data without approved outage and backup confirmation.
 - Commit KKS imports without reviewing validation results.
 
-## Recommended Morupule B Role Assignment
+## Recommended S-PULSE Role Assignment
 
 | Function | Suggested SIPAM Role |
 | --- | --- |

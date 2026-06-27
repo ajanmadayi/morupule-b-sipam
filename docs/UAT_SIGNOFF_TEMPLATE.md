@@ -1,4 +1,4 @@
-# Morupule B SIPAM UAT Sign-Off Template
+# S-PULSE UAT Sign-Off Template
 
 Use this template after completing `UAT_CHECKLIST.md`.
 
@@ -6,7 +6,7 @@ Use this template after completing `UAT_CHECKLIST.md`.
 
 | Field | Value |
 | --- | --- |
-| Application | Morupule B SIPAM |
+| Application | S-PULSE |
 | Test environment URL | |
 | Build / package name | |
 | Test start date | |

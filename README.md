@@ -1,6 +1,6 @@
-# Morupule B SIPAM
+# S-PULSE
 
-Fresh web implementation of the SI/PAM workflows for Morupule B Power Station.
+Fresh web implementation of the SI/PAM workflows for STEAG Energy Services.
 
 Start with [docs/DELIVERY_INDEX.md](docs/DELIVERY_INDEX.md) when reviewing the handover package.
 

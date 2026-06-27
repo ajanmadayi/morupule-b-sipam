@@ -139,7 +139,7 @@ def run_checks(database_path: Path) -> tuple[list[str], list[str]]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Offline SQLite data-quality check for Morupule B SIPAM.")
+    parser = argparse.ArgumentParser(description="Offline SQLite data-quality check for S-PULSE.")
     parser.add_argument(
         "--database",
         default=str(Path(__file__).resolve().parents[1] / "morupule_sipam.db"),

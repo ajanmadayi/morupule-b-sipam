@@ -1,17 +1,17 @@
-# Morupule B SIPAM Release Notes
+# S-PULSE Release Notes
 
 ## Release
 
 | Field | Value |
 | --- | --- |
-| Application | Morupule B SIPAM |
+| Application | S-PULSE |
 | Release type | UAT / pilot handover build |
 | Release date | 2026-06-24 |
-| Package | `morupule-b-sipam-delivery-*.zip` |
+| Package | `spulse-delivery-*.zip` |
 
 ## Summary
 
-This release delivers a Morupule B-focused SI/PAM web application covering operations logging, KKS asset history, corrective maintenance, preventive maintenance, PTW/LoA, Infobox workflow routing, shift handover, management reporting, administration, KKS import, audit, backup, and controlled restore.
+This release delivers a S-PULSE-focused SI/PAM web application covering operations logging, KKS asset history, corrective maintenance, preventive maintenance, PTW/LoA, Infobox workflow routing, shift handover, management reporting, administration, KKS import, audit, backup, and controlled restore.
 
 ## Delivered Modules
 

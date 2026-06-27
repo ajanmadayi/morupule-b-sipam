@@ -1,10 +1,10 @@
-# Morupule B SIPAM Deployment Runbook
+# S-PULSE Deployment Runbook
 
-This runbook is for preparing a pilot or production-style deployment of the Morupule B SIPAM web application.
+This runbook is for preparing a pilot or production-style deployment of the S-PULSE web application.
 
 ## 1. Server Prerequisites
 
-- Windows server or workstation approved for Morupule B application hosting.
+- Windows server or workstation approved for S-PULSE application hosting.
 - Python 3.11 or newer.
 - Network access for users who will open the web application.
 - A controlled folder for the application source.
@@ -102,7 +102,7 @@ After first sign-in as administrator:
 2. Create named user accounts.
 3. Assign roles according to `docs/ROLE_PERMISSION_MATRIX.md`.
 4. Review configured logbooks.
-5. Import or validate the approved Morupule B KKS register.
+5. Import or validate the approved S-PULSE KKS register.
 6. Confirm Dashboard and Asset Directory record counts.
 7. Create a first recovery point.
 8. Verify the recovery point.
@@ -198,7 +198,7 @@ For production use:
 
 - Host behind an approved WSGI server or reverse proxy.
 - Serve through HTTPS.
-- Restrict server access to authorized Morupule B users.
+- Restrict server access to authorized S-PULSE users.
 - Keep runtime folders backed up and access-controlled.
 - Monitor disk growth for uploads and backups.
 

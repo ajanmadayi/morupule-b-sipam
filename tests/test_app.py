@@ -16,7 +16,7 @@ from app import (
 )
 
 
-class MorupuleSipamTestCase(unittest.TestCase):
+class SpulseTestCase(unittest.TestCase):
     def setUp(self):
         self.temp_dir = tempfile.TemporaryDirectory()
         app.config.update(
@@ -59,7 +59,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
     def test_health_and_dashboard(self):
         health = self.client.get("/api/health")
         self.assertEqual(health.status_code, 200)
-        self.assertEqual(health.get_json()["station"], "Morupule B Power Station")
+        self.assertEqual(health.get_json()["station"], "STEAG Energy Services")
 
         dashboard = self.client.get("/api/dashboard")
         self.assertEqual(dashboard.status_code, 200)
@@ -295,7 +295,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
             self.assertTrue(any(name.startswith("uploads/") for name in names))
             manifest = json.loads(archive.read("manifest.json"))
             self.assertEqual(manifest["integrity"], "ok")
-            self.assertEqual(manifest["backup_created_by"], "SIPAM Administrator")
+            self.assertEqual(manifest["backup_created_by"], "S-PULSE Administrator")
         backup.close()
         backups = self.client.get("/api/system/backups").get_json()
         self.assertEqual(len(backups), 1)
@@ -365,7 +365,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
         self.assertEqual(rejected.status_code, 400)
         restored = self.client.post(
             f"/api/system/backups/{recovery_point['id']}/restore",
-            json={"confirmation": "RESTORE MORUPULE B SIPAM"},
+            json={"confirmation": "RESTORE S-PULSE"},
         )
         self.assertEqual(restored.status_code, 200)
         result = restored.get_json()
@@ -2090,7 +2090,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
                 "work_description": "Test mechanical permit.",
                 "location": "Unit 1 BAS ash side",
                 "issued_to": "Test Technician",
-                "employer": "Morupule B Power Station",
+                "employer": "STEAG Energy Services",
                 "mechanical_isolations": "Secure linkage.",
                 "prepared_by": "Test Shift Leader",
                 "precautions_confirmed": True,
@@ -2149,7 +2149,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
         )
         self.assertEqual(
             permit["transition_history"][0]["performed_by"],
-            "SIPAM Administrator",
+            "S-PULSE Administrator",
         )
 
         order = self.client.get(f"/api/corrective/{request_record['id']}").get_json()
@@ -2201,7 +2201,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
                 "work_description": "Controlled test after maintenance.",
                 "location": "Unit 1 BAS ash side",
                 "issued_to": "Electrical Tester",
-                "employer": "Morupule B Power Station",
+                "employer": "STEAG Energy Services",
                 "electrical_isolations": "Isolate and prove dead before test.",
                 "prepared_by": "Test Shift Leader",
                 "precautions_confirmed": True,
@@ -2227,7 +2227,7 @@ class MorupuleSipamTestCase(unittest.TestCase):
                 "work_description": "Unconfirmed test access.",
                 "location": "BAS ash side",
                 "issued_to": "Test Person",
-                "employer": "Morupule B Power Station",
+                "employer": "STEAG Energy Services",
                 "prepared_by": "Test Shift Leader",
                 "precautions_confirmed": False,
                 "precautions": ["ppe"],

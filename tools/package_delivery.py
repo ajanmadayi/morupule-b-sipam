@@ -57,7 +57,7 @@ def collect_files(root: Path) -> list[Path]:
 
 def build_manifest(root: Path, files: list[Path]) -> dict:
     return {
-        "application": "Morupule B SIPAM",
+        "application": "S-PULSE",
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "source_root": str(root),
         "file_count": len(files),
@@ -90,7 +90,7 @@ def create_package(root: Path, output: Path) -> tuple[Path, dict]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Create a clean Morupule B SIPAM delivery ZIP.")
+    parser = argparse.ArgumentParser(description="Create a clean S-PULSE delivery ZIP.")
     parser.add_argument(
         "--root",
         default=str(Path(__file__).resolve().parents[1]),
@@ -99,7 +99,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         default="",
-        help="Output ZIP path. Defaults to dist/morupule-b-sipam-delivery-<timestamp>.zip",
+        help="Output ZIP path. Defaults to dist/spulse-delivery-<timestamp>.zip",
     )
     args = parser.parse_args()
 
@@ -108,7 +108,7 @@ def main() -> int:
         print(f"FAILED: root not found: {root}", file=sys.stderr)
         return 1
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    output = Path(args.output) if args.output else root / "dist" / f"morupule-b-sipam-delivery-{timestamp}.zip"
+    output = Path(args.output) if args.output else root / "dist" / f"spulse-delivery-{timestamp}.zip"
     try:
         archive, manifest = create_package(root, output)
     except Exception as error:
