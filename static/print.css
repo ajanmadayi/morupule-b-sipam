@@ -69,6 +69,25 @@ header {
   font-weight: 700;
 }
 
+.print-logo {
+  width: 58px;
+  height: 44px;
+  object-fit: contain;
+  align-self: center;
+  justify-self: center;
+  padding: 4px;
+  background: #fff;
+}
+
+.wo-logo {
+  width: 112px;
+  height: 46px;
+  object-fit: contain;
+  justify-self: end;
+  margin: 7px 10px 0 0;
+  padding: 3px;
+  background: #fff;
+}
 .heading {
   padding: 10px 12px;
 }
@@ -1039,3 +1058,5 @@ footer {
     print-color-adjust: exact;
   }
 }
+
+

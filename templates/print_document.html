@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ document_no }} | {{ title }}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='print.css', v='20260626-print-refresh') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='print.css', v='20260627-steag') }}">
   <script defer src="{{ url_for('static', filename='print.js', v='20260626-print-refresh') }}"></script>
 </head>
 <body>
   <button class="print-command" id="printCommand" type="button">Print / Save PDF</button>
   {% if entity_type not in ("corrective", "permit") %}
   <header>
-    <div class="mark">SP</div>
+    <img class="print-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
     <div class="heading"><strong>Morupule B Power Station</strong><span>SI/PAM Controlled Record</span></div>
     <div class="document-meta">
       <div><span>Document</span><strong>{{ document_no }}</strong></div>
@@ -46,7 +46,7 @@
         <strong>Work Order: {{ record.order_no or "-" }}</strong>
         <strong>{{ record.name or record.observation }}</strong>
       </div>
-      <div class="wo-brand">steag</div>
+      <img class="wo-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
     </div>
     <div class="wo-meta">
       <div>
@@ -194,7 +194,7 @@
         <strong>{{ form_title }}</strong>
         {% if form_code != "LOA" %}<span>LOB No.: {{ record.order_no or "-" }} &nbsp;&nbsp;&nbsp;&nbsp; Key No.: 1</span>{% endif %}
       </div>
-      <div class="wo-brand">steag</div>
+      <img class="wo-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
       <div class="safety-meta left">
         <p><span>{{ form_code }} No.:</span> {{ record.permit_no }}</p>
         <p><span>Location:</span> {{ record.location }}</p>
@@ -266,3 +266,5 @@
   {% endif %}
 </body>
 </html>
+
+
