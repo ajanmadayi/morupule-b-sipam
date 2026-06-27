@@ -1225,7 +1225,7 @@ def ensure_user_columns(database: sqlite3.Connection) -> None:
             employee_no, full_name, initials, department, role_name,
             password_hash, status
         ) VALUES (
-            'MBPS-ADMIN', 'SIPAM Administrator', 'SA', 'Information Systems',
+            'MBPS-ADMIN', 'S-PULSE Administrator', 'SA', 'Information Systems',
             'System Administrator', ?, 'active'
         )
         """,
@@ -6519,7 +6519,7 @@ def create_migration_export() -> Path:
         archive.writestr(
             "README.txt",
             (
-                "Morupule B SIPAM migration export\n\n"
+                "Morupule B S-PULSE migration export\n\n"
                 "Contents:\n"
                 "- manifest.json: export metadata and row counts\n"
                 "- schema/sqlite_schema.sql: current SQLite table definitions\n"
@@ -6662,9 +6662,9 @@ def verify_retained_backup(backup_id: int):
 @roles_required("System Administrator")
 def restore_retained_backup(backup_id: int):
     payload = request.get_json(silent=True) or {}
-    if str(payload.get("confirmation") or "").strip() != "RESTORE MORUPULE B SIPAM":
+    if str(payload.get("confirmation") or "").strip() != "RESTORE MORUPULE B S-PULSE":
         return jsonify({
-            "error": "Type RESTORE MORUPULE B SIPAM to authorize recovery"
+            "error": "Type RESTORE MORUPULE B S-PULSE to authorize recovery"
         }), 400
     database = get_db()
     source_row = database.execute(

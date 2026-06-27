@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Morupule B Power Station SIPAM">
-  <title>Morupule B SIPAM</title>
+  <meta name="description" content="Morupule B Power Station S-PULSE">
+  <title>Morupule B S-PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
@@ -16,7 +16,7 @@
     <aside class="sidebar" id="sidebar">
       <div class="brand">
         <img class="brand-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
-        <div><strong>SI/PAM</strong><small>Morupule B Power Station</small></div>
+        <div><strong>S-PULSE</strong><small>Morupule B Power Station</small></div>
       </div>
       <nav>
         <span class="nav-label">Operations</span>
@@ -90,7 +90,7 @@
             <div id="recentEvents" class="recent-events"><div class="loading">Loading entries...</div></div>
           </section>
           <aside class="panel reference-panel">
-            <div class="panel-header"><div><h3>SIPAM foundation</h3><p>Current commissioned scope</p></div></div>
+            <div class="panel-header"><div><h3>S-PULSE foundation</h3><p>Current commissioned scope</p></div></div>
             <div class="reference-list">
               <article><i data-lucide="notebook-tabs"></i><span><strong>Event Log</strong><small>Main entries, comments, logbook visibility</small></span><b>Active</b></article>
               <article><i data-lucide="network"></i><span><strong>KKS Asset Directory</strong><small>Unit to equipment component hierarchy</small></span><b>Active</b></article>
@@ -103,7 +103,7 @@
 
       <section class="view" id="infoboxView">
         <div class="page-heading">
-          <div><span class="eyebrow">Personal information box</span><h2>My Infobox</h2><p>Workflow actions assigned through SIPAM responsibilities</p></div>
+          <div><span class="eyebrow">Personal information box</span><h2>My Infobox</h2><p>Workflow actions assigned through S-PULSE responsibilities</p></div>
           <div class="signed-in-context"><span class="avatar">{{ current_user.initials }}</span><span><strong>{{ current_user.full_name }}</strong><small>{{ current_user.role_name }}</small></span></div>
         </div>
         <div class="infobox-metrics">
@@ -328,7 +328,7 @@
             <div id="assetList"><div class="loading">Loading KKS hierarchy...</div></div>
           </aside>
           <section class="panel asset-detail-workspace" id="assetDetailWorkspace">
-            <div class="empty-detail"><i data-lucide="component"></i><strong>Select an asset</strong><p>Equipment history and linked SIPAM records will appear here.</p></div>
+            <div class="empty-detail"><i data-lucide="component"></i><strong>Select an asset</strong><p>Equipment history and linked S-PULSE records will appear here.</p></div>
           </section>
         </div>
       </section>
@@ -782,8 +782,6 @@
     </div>
   </div>
 
-  <script src="{{ url_for('static', filename='app.js', v='20260626-workflow-final') }}"></script>
+  <script src="{{ url_for('static', filename='app.js', v='20260627-spulse') }}"></script>
 </body>
 </html>
-
-

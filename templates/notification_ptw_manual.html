@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Notification to PTW Manual | Morupule B SIPAM</title>
+  <title>Notification to PTW Manual | Morupule B S-PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
     <header class="manual-header">
       <div><img class="manual-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services"></div>
       <div>
-        <span class="eyebrow">Morupule B SIPAM user manual</span>
+        <span class="eyebrow">Morupule B S-PULSE user manual</span>
         <h1>Notification to PTW Workflow</h1>
         <p>How to create a plant notification, convert it to a Work Request, issue a Work Order, control PTW / LoA / SFT, and close the record.</p>
       </div>
       <nav>
-        <a class="button secondary" href="/">Back to SIPAM</a>
+        <a class="button secondary" href="/">Back to S-PULSE</a>
         <button class="button primary" id="printManual" type="button">Print / Save PDF</button>
       </nav>
     </header>
@@ -65,7 +65,7 @@
         </li>
         <li>
           <h3>Approve Work Request</h3>
-          <p>The Maintenance Approver reviews the request. If valid, click <strong>Approve request</strong>. SIPAM creates the Work Order automatically.</p>
+          <p>The Maintenance Approver reviews the request. If valid, click <strong>Approve request</strong>. S-PULSE creates the Work Order automatically.</p>
           <p>Status after approval: Work Request <code>approved</code>, Work Order <code>planning</code>.</p>
         </li>
         <li>
@@ -90,7 +90,7 @@
         </li>
         <li>
           <h3>Confirm Execution</h3>
-          <p>The Shift Leader confirms execution only after the linked permit is <code>received</code>. SIPAM blocks execution if the required permit is missing or only issued.</p>
+          <p>The Shift Leader confirms execution only after the linked permit is <code>received</code>. S-PULSE blocks execution if the required permit is missing or only issued.</p>
         </li>
         <li>
           <h3>Complete Work</h3>
@@ -99,7 +99,7 @@
         </li>
         <li>
           <h3>Clear and Cancel Permit</h3>
-          <p>The Shift Leader clears the work location and cancels the permit after restoration. SIPAM will not allow Work Order acceptance while the linked permit remains prepared, issued, received, or cleared.</p>
+          <p>The Shift Leader clears the work location and cancels the permit after restoration. S-PULSE will not allow Work Order acceptance while the linked permit remains prepared, issued, received, or cleared.</p>
           <p>Final permit status must be <code>cancelled</code>.</p>
         </li>
         <li>
@@ -138,5 +138,3 @@
   <script src="{{ url_for('static', filename='manual.js', v='20260626-manual') }}"></script>
 </body>
 </html>
-
-

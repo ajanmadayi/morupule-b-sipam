@@ -12,7 +12,7 @@
   {% if entity_type not in ("corrective", "permit") %}
   <header>
     <img class="print-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
-    <div class="heading"><strong>Morupule B Power Station</strong><span>SI/PAM Controlled Record</span></div>
+    <div class="heading"><strong>Morupule B Power Station</strong><span>S-PULSE Controlled Record</span></div>
     <div class="document-meta">
       <div><span>Document</span><strong>{{ document_no }}</strong></div>
       <div><span>Revision</span><strong>Live</strong></div>
@@ -262,9 +262,7 @@
     <table><tr><th>Filename</th><th>Uploaded by</th><th>Time</th></tr>
       {% for row in record.attachments %}<tr><td>{{ row.original_name }}</td><td>{{ row.uploaded_by_name }}</td><td>{{ row.created_at }}</td></tr>{% else %}<tr><td colspan="3">No attachments.</td></tr>{% endfor %}
     </table>
-    <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station SI/PAM</span></footer>
+    <footer><span>Printed by {{ printed_by }} at {{ printed_at }}</span><span>Morupule B Power Station S-PULSE</span></footer>
   {% endif %}
 </body>
 </html>
-
-

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Training & Handover Center | Morupule B SIPAM</title>
+  <title>Training & Handover Center | Morupule B S-PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
     <header class="manual-header">
       <div><img class="manual-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services"></div>
       <div>
-        <span class="eyebrow">Morupule B SIPAM</span>
+        <span class="eyebrow">Morupule B S-PULSE</span>
         <h1>Training & Handover Center</h1>
         <p>Single access point for operating manuals, workflow handover reports, exports, and go-live readiness evidence.</p>
       </div>
       <nav>
-        <a class="button secondary" href="/">Back to SIPAM</a>
+        <a class="button secondary" href="/">Back to S-PULSE</a>
         <button class="button primary" id="printManual" type="button">Print / Save PDF</button>
       </nav>
     </header>
@@ -27,7 +27,7 @@
     <section class="manual-card">
       <h2>Core Operating Guides</h2>
       <div class="training-link-grid">
-        <a href="/manual/user-manual" target="_blank" rel="noopener"><strong>User Manual</strong><span>Full SIPAM operating guide for all modules.</span></a>
+        <a href="/manual/user-manual" target="_blank" rel="noopener"><strong>User Manual</strong><span>Full S-PULSE operating guide for all modules.</span></a>
         <a href="/manual/notification-to-ptw" target="_blank" rel="noopener"><strong>Notification to PTW Manual</strong><span>Step-by-step workflow from Event Log to Work Order, PTW, closure, and acceptance.</span></a>
         <a href="/print/readiness-report" target="_blank" rel="noopener"><strong>Pilot Readiness Report</strong><span>Printable handover report with done, blocked, evidence, and approval table.</span></a>
         <a href="/print/management-report" target="_blank" rel="noopener"><strong>Management Report</strong><span>Maintenance performance, CMPT, reliability, backlog, and permit activity.</span></a>
@@ -63,9 +63,9 @@
       <table class="manual-table">
         <thead><tr><th>Document</th><th>Used for</th></tr></thead>
         <tbody>
-          <tr><td>SIPAM - Event log</td><td>Event Log / notification entry behavior and sub-entry workflow.</td></tr>
-          <tr><td>SIPAM - CorrectiveMaintenance</td><td>Work Request, Work Order, CMPT, planning, execution, acceptance.</td></tr>
-          <tr><td>SIPAM - PreventiveMaintenance</td><td>Schedule types, recurrent tasks, generation, calendar, feedback.</td></tr>
+          <tr><td>S-PULSE - Event log</td><td>Event Log / notification entry behavior and sub-entry workflow.</td></tr>
+          <tr><td>S-PULSE - CorrectiveMaintenance</td><td>Work Request, Work Order, CMPT, planning, execution, acceptance.</td></tr>
+          <tr><td>S-PULSE - PreventiveMaintenance</td><td>Schedule types, recurrent tasks, generation, calendar, feedback.</td></tr>
           <tr><td>PTW / LoA / SFT safety forms</td><td>Permit issue, receipt, clearance, cancellation, and official print layout.</td></tr>
           <tr><td>KKS code documents</td><td>Asset directory structure and KKS import validation.</td></tr>
         </tbody>
@@ -105,5 +105,3 @@
   <script src="{{ url_for('static', filename='manual.js', v='20260626-training-center') }}"></script>
 </body>
 </html>
-
-

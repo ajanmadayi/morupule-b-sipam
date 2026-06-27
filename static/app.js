@@ -307,7 +307,7 @@ async function loadFoundation() {
   const [assetsResponse, logbooksResponse, meResponse] = await Promise.all([
     fetch("/api/assets?reference=1"), fetch("/api/logbooks"), fetch("/api/me")
   ]);
-  if (!assetsResponse.ok || !logbooksResponse.ok || !meResponse.ok) throw new Error("Unable to load SIPAM master data");
+  if (!assetsResponse.ok || !logbooksResponse.ok || !meResponse.ok) throw new Error("Unable to load S-PULSE master data");
   assets = await assetsResponse.json();
   logbooks = await logbooksResponse.json();
   currentUser = await meResponse.json();
@@ -643,7 +643,7 @@ async function toggleInfoboxHistory(itemId) {
     <div class="infobox-history-entry">
       <i data-lucide="${entry.action === "claimed" ? "hand" : entry.action === "released" ? "undo-2" : entry.action === "completed" ? "check" : entry.action === "escalated" ? "triangle-alert" : entry.action === "reset" ? "rotate-ccw" : "users"}"></i>
       <strong>${escapeHtml(entry.action)}</strong>
-      <span>${escapeHtml(entry.user_name || "SIPAM workflow")}</span>
+      <span>${escapeHtml(entry.user_name || "S-PULSE workflow")}</span>
       <small>${escapeHtml(entry.details || "")}</small>
       <time>${formatDate(entry.created_at)}</time>
     </div>
@@ -3032,8 +3032,8 @@ async function verifySystemBackup(id) {
 }
 
 async function restoreSystemBackup(id) {
-  const confirmation = window.prompt("Type RESTORE MORUPULE B SIPAM to replace the current database and attachments:");
-  if (confirmation !== "RESTORE MORUPULE B SIPAM") return;
+  const confirmation = window.prompt("Type RESTORE MORUPULE B S-PULSE to replace the current database and attachments:");
+  if (confirmation !== "RESTORE MORUPULE B S-PULSE") return;
   const response = await fetch(`/api/system/backups/${id}/restore`, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ confirmation })
