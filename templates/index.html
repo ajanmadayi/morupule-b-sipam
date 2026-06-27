@@ -3,20 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="S-PULSE - Smart Plant Unified Log, Safety & Engineering">
+  <meta name="description" content="S-PULSE - Plant Unified Log, Safety & Engineering">
   <title>S-PULSE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260627-spulse-layout') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='20260627-spulse-fullform') }}">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
       <div class="brand">
-        <img class="brand-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services">
-        <div class="brand-copy"><strong>S-PULSE</strong><small>Smart Plant Unified Log,<br>Safety &amp; Engineering</small></div>
+        <div class="brand-main"><img class="brand-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services"><strong>S-PULSE</strong></div>
+        <small>Plant Unified Log, Safety &amp; Engineering</small>
       </div>
       <nav>
         <span class="nav-label">Operations</span>
@@ -90,7 +90,7 @@
             <div id="recentEvents" class="recent-events"><div class="loading">Loading entries...</div></div>
           </section>
           <aside class="panel reference-panel">
-            <div class="panel-header"><div><h3>S-PULSE foundation</h3><p>Smart Plant Unified Log, Safety &amp; Engineering</p></div></div>
+            <div class="panel-header"><div><h3>S-PULSE foundation</h3><p>Plant Unified Log, Safety &amp; Engineering</p></div></div>
             <div class="reference-list">
               <article><i data-lucide="notebook-tabs"></i><span><strong>Event Log</strong><small>Main entries, comments, logbook visibility</small></span><b>Active</b></article>
               <article><i data-lucide="network"></i><span><strong>KKS Asset Directory</strong><small>Unit to equipment component hierarchy</small></span><b>Active</b></article>

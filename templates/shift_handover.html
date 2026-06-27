@@ -11,7 +11,7 @@
   <div class="toolbar"><button type="button" id="printCommand">Print handover</button></div>
   <main class="report-page handover-report">
     <header>
-      <div class="brand"><img class="handover-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services"><div><h1>Operations Shift Handover</h1><p>S-PULSE / Smart Plant Unified Log, Safety & Engineering</p></div></div>
+      <div class="brand"><img class="handover-logo" src="{{ url_for('static', filename='steag-energy-services.png', v='20260627-steag') }}" alt="STEAG Energy Services"><div><h1>Operations Shift Handover</h1><p>S-PULSE / Plant Unified Log, Safety & Engineering</p></div></div>
       <div class="meta"><strong>{{ start }} to {{ end }}</strong><p>{{ logbooks|join(", ") }}</p><small>Generated {{ generated_at }}</small></div>
     </header>
     <section class="summary"><div><span>Entries</span><strong>{{ events|length }}</strong></div><div><span>Open issues</span><strong>{{ open_count }}</strong></div><div><span>Linked work requests</span><strong>{{ linked_request_count }}</strong></div></section>
