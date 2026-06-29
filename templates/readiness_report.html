@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pilot Readiness Report | S-PULSE</title>
+  <title>Go-Live Readiness Report | S-PULSE</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='print.css', v='20260627-steag') }}">
   <script defer src="{{ url_for('static', filename='print.js', v='20260626-readiness-report') }}"></script>
 </head>
@@ -11,7 +11,7 @@
   <div class="toolbar"><button type="button" id="printCommand">Print / Save PDF</button></div>
   <main class="report-page management-report readiness-report">
     <header>
-      <div><div class="brand">S-PULSE | Plant Unified Log, Safety & Engineering</div><h1>Pilot Readiness Report</h1></div>
+      <div><div class="brand">S-PULSE | Plant Unified Log, Safety & Engineering</div><h1>Go-Live Readiness Report</h1></div>
       <div class="meta">
         <span>Generated</span><strong>{{ generated_at }}</strong>
         <span>Prepared by</span><strong>{{ generated_by }}</strong>
@@ -29,7 +29,7 @@
 
     <h2>Decision Position</h2>
     <section class="text-block">
-      <p>The application-side checks that can be verified by system evidence have been closed. Remaining blocked items require S-PULSE Operations, Maintenance, IT, or sponsor confirmation before pilot sign-off.</p>
+      <p>The application-side checks that can be verified by system evidence have been closed. Remaining blocked items require S-PULSE Operations, Maintenance, IT, or sponsor confirmation before go-live sign-off.</p>
     </section>
 
     {% for category, category_items in categories.items() %}

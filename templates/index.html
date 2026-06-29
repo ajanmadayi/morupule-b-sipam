@@ -37,7 +37,7 @@
         <button class="nav-item admin-navigation" data-view="users" hidden><i data-lucide="users"></i><span>Users &amp; Roles</span></button>
         <button class="nav-item admin-navigation" data-view="logbookadmin" hidden><i data-lucide="book-marked"></i><span>Logbooks</span></button>
         <button class="nav-item admin-navigation" data-view="audit" hidden><i data-lucide="history"></i><span>Audit Trail</span></button>
-        <button class="nav-item admin-navigation" data-view="readiness" hidden><i data-lucide="list-checks"></i><span>Pilot Readiness</span></button>
+        <button class="nav-item admin-navigation" data-view="readiness" hidden><i data-lucide="list-checks"></i><span>Go-Live Readiness</span></button>
         <button class="nav-item admin-navigation" data-view="system" hidden><i data-lucide="server-cog"></i><span>System Status</span></button>
         <button class="nav-item admin-navigation" data-view="kksimport" hidden><i data-lucide="file-up"></i><span>KKS Import</span></button>
       </nav>
@@ -437,7 +437,7 @@
 
       <section class="view" id="readinessView">
         <div class="page-heading">
-          <div><span class="eyebrow">Administration / Go-live control</span><h2>Pilot Readiness</h2><p>Track pending actions before S-PULSE pilot or production release</p></div>
+          <div><span class="eyebrow">Administration / Go-live control</span><h2>Go-Live Readiness</h2><p>Track pending actions before S-PULSE go-live or production release</p></div>
           <div class="page-actions">
             <a class="button secondary" href="/print/readiness-report" target="_blank" rel="noopener"><i data-lucide="printer"></i> Print report</a>
             <a class="button secondary" href="/api/readiness.csv" download><i data-lucide="download"></i> Export</a>
@@ -457,7 +457,7 @@
             <select id="readinessStatus"><option value="">All statuses</option><option value="pending">Pending</option><option value="in_progress">In progress</option><option value="done">Done</option><option value="blocked">Blocked</option><option value="deferred">Deferred</option></select>
           </div>
           <div class="readiness-heading"><span>Check</span><span>Status</span><span>Owner / Target</span><span>Evidence</span><span>Updated</span><span></span></div>
-          <div id="readinessList"><div class="loading">Loading pilot readiness checklist...</div></div>
+          <div id="readinessList"><div class="loading">Loading go-live readiness checklist...</div></div>
         </section>
       </section>
 

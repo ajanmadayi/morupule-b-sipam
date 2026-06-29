@@ -88,7 +88,7 @@ PILOT_READINESS_ITEMS = (
     ("data", "Duplicate/inferred KKS import items reviewed"),
     ("data", "Logbooks reviewed"),
     ("data", "User list reviewed"),
-    ("data", "Seed/test records removed or approved for pilot"),
+    ("data", "Seed/test records removed or approved for go-live"),
     ("data", "First verified recovery point created"),
     ("access", "Named Shift Leader accounts created"),
     ("access", "Named Maintenance Approver accounts created"),
@@ -120,11 +120,11 @@ PILOT_READINESS_ITEMS = (
     ("support", "Open-items register location agreed"),
     ("support", "Backup owner named"),
     ("support", "Restore approval owner named"),
-    ("support", "Daily review meeting agreed for pilot week"),
+    ("support", "Daily review meeting agreed for go-live week"),
     ("support", "Rollback decision owner named"),
     ("open_items", "No Critical open items"),
     ("open_items", "High open items have workaround and owner"),
-    ("open_items", "Medium/Low items approved for pilot or deferred"),
+    ("open_items", "Medium/Low items approved for go-live or deferred"),
     ("open_items", "Open-items register reviewed by sponsor"),
 )
 
@@ -891,7 +891,8 @@ def init_db() -> None:
         seed_safety_permits(database)
     if database.execute("SELECT COUNT(*) FROM users").fetchone()[0] == 0:
         seed_infobox_master(database)
-    seed_readiness_items(database)
+    if os.environ.get("SIPAM_SEED_READINESS", "0") == "1":
+        seed_readiness_items(database)
     ensure_responsibility_groups(database)
     ensure_user_columns(database)
     ensure_product_branding(database)

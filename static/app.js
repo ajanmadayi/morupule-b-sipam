@@ -28,7 +28,7 @@ const pageTitles = {
   users: "Users & Roles",
   logbookadmin: "Logbook Administration",
   audit: "Audit Trail",
-  readiness: "Pilot Readiness",
+  readiness: "Go-Live Readiness",
   system: "System Status",
   kksimport: "KKS Register Import"
 };
@@ -2908,9 +2908,9 @@ function readinessFilters() {
 
 async function loadReadiness() {
   const list = document.querySelector("#readinessList");
-  list.innerHTML = '<div class="loading">Loading pilot readiness checklist...</div>';
+  list.innerHTML = '<div class="loading">Loading go-live readiness checklist...</div>';
   const response = await fetch("/api/readiness");
-  if (!response.ok) throw new Error("Unable to load pilot readiness checklist");
+  if (!response.ok) throw new Error("Unable to load go-live readiness checklist");
   const result = await response.json();
   readinessItems = result.items;
   document.querySelector("#readinessTotal").textContent = result.summary.total;
