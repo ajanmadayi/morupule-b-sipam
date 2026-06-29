@@ -62,10 +62,10 @@
           <button class="button primary" id="dashboardNewEntry"><i data-lucide="plus"></i> New event entry</button>
         </div>
         <div class="metric-grid">
-          <article><span class="metric-icon red"><i data-lucide="circle-alert"></i></span><div><small>Open entries</small><strong id="openEvents">0</strong><span>Require follow-up</span></div></article>
-          <article><span class="metric-icon blue"><i data-lucide="calendar-days"></i></span><div><small>Events today</small><strong id="eventsToday">0</strong><span>Across all logbooks</span></div></article>
-          <article><span class="metric-icon green"><i data-lucide="component"></i></span><div><small>Active assets</small><strong id="activeAssets">0</strong><span>KKS records loaded</span></div></article>
-          <article><span class="metric-icon amber"><i data-lucide="book-open"></i></span><div><small>Logbooks</small><strong id="logbookCount">0</strong><span>Operational records</span></div></article>
+          <button class="metric-action" type="button" data-dashboard-shortcut="open-events"><span class="metric-icon red"><i data-lucide="circle-alert"></i></span><div><small>Open entries</small><strong id="openEvents">0</strong><span>Require follow-up</span></div></button>
+          <button class="metric-action" type="button" data-dashboard-shortcut="events-today"><span class="metric-icon blue"><i data-lucide="calendar-days"></i></span><div><small>Events today</small><strong id="eventsToday">0</strong><span>Across all logbooks</span></div></button>
+          <button class="metric-action" type="button" data-dashboard-shortcut="assets"><span class="metric-icon green"><i data-lucide="component"></i></span><div><small>Active assets</small><strong id="activeAssets">0</strong><span>KKS records loaded</span></div></button>
+          <button class="metric-action" type="button" data-dashboard-shortcut="logbooks"><span class="metric-icon amber"><i data-lucide="book-open"></i></span><div><small>Logbooks</small><strong id="logbookCount">0</strong><span>Operational records</span></div></button>
         </div>
         <section class="panel dashboard-readiness-panel" id="dashboardReadinessPanel" hidden>
           <div>

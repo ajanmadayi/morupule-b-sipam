@@ -400,6 +400,32 @@ function canPerformOrderAction(item, action) {
   return hasRole(...roles);
 }
 
+function clearEventFilters() {
+  document.querySelector("#eventSearch").value = "";
+  selectedLogbookIds.clear();
+  renderLogbookFilter();
+  document.querySelector("#startDate").value = "";
+  document.querySelector("#endDate").value = "";
+  document.querySelector("#stateFilter").value = "";
+}
+
+function openDashboardShortcut(shortcut) {
+  if (shortcut === "assets") {
+    document.querySelector("#assetSearch").value = "";
+    openView("assets");
+    return;
+  }
+  clearEventFilters();
+  if (shortcut === "open-events") {
+    document.querySelector("#stateFilter").value = "open";
+  }
+  if (shortcut === "events-today") {
+    const today = eventDateValue(new Date());
+    document.querySelector("#startDate").value = today;
+    document.querySelector("#endDate").value = today;
+  }
+  openView("events");
+}
 async function loadDashboard() {
   const [summaryResponse, eventsResponse] = await Promise.all([
     fetch("/api/dashboard"), fetch("/api/events")
@@ -3276,6 +3302,9 @@ window.addEventListener("hashchange", () => {
 });
 document.querySelector("#menuButton").addEventListener("click", () => sidebar.classList.toggle("open"));
 document.querySelector("#dashboardNewEntry").addEventListener("click", () => openEntryModal());
+document.querySelectorAll("[data-dashboard-shortcut]").forEach(button => {
+  button.addEventListener("click", () => openDashboardShortcut(button.dataset.dashboardShortcut));
+});
 document.querySelector("#openReadinessTracker").addEventListener("click", () => openView("readiness"));
 document.querySelector("#newMainEntry").addEventListener("click", () => openEntryModal());
 document.querySelector("#newShiftHandover").addEventListener("click", () => openShiftHandoverModal().catch(showHandoverError));
@@ -3462,12 +3491,7 @@ document.querySelector("#toggleEventAutoRefresh").addEventListener("click", even
 });
 document.querySelector("#endDate").max = eventDateValue(new Date());
 document.querySelector("#resetEventFilters").addEventListener("click", () => {
-  document.querySelector("#eventSearch").value = "";
-  selectedLogbookIds.clear();
-  renderLogbookFilter();
-  document.querySelector("#startDate").value = "";
-  document.querySelector("#endDate").value = "";
-  document.querySelector("#stateFilter").value = "";
+  clearEventFilters();
   loadEvents().catch(showEventError);
 });
 

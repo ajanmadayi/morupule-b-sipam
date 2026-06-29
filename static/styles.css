@@ -67,7 +67,9 @@ h1 { margin: 0; font-size: 22px; }
 .icon-button { width: 35px; height: 35px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: #52646b; }
 .menu-button { display: none; }
 .metric-grid { margin-bottom: 13px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-.metric-grid article { min-height: 82px; padding: 13px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: 5px; }
+.metric-grid article, .metric-action { min-height: 82px; padding: 13px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; align-items: start; background: #fff; border: 1px solid var(--line); border-radius: 5px; }
+.metric-action { width: 100%; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.metric-action:hover, .metric-action:focus-visible { border-color: #7fb39a; box-shadow: 0 0 0 3px rgba(47, 117, 85, .12); outline: 0; }
 .metric-icon { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 4px; }
 .metric-icon.red { color: var(--red); background: var(--red-soft); }
 .metric-icon.blue { color: var(--blue); background: var(--blue-soft); }
@@ -76,7 +78,7 @@ h1 { margin: 0; font-size: 22px; }
 .metric-grid small, .metric-grid strong, .metric-grid span { display: block; }
 .metric-grid small { color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
 .metric-grid strong { margin: 3px 0; font-size: 22px; }
-.metric-grid article div span { color: var(--muted); font-size: 11px; }
+.metric-grid article div span, .metric-action div span { color: var(--muted); font-size: 11px; }
 .dashboard-readiness-panel { margin-bottom: 12px; padding: 13px; display: grid; grid-template-columns: minmax(220px, 1fr) minmax(360px, 1.4fr) auto; gap: 14px; align-items: center; }
 .dashboard-readiness-panel h3 { margin: 0; font-size: 16px; }
 .dashboard-readiness-panel p { margin: 4px 0 0; color: var(--muted); font-size: 11px; }
